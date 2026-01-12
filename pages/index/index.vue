@@ -1,18 +1,44 @@
 <template>
   <view class="container">
-    <!-- 底图层：全屏艺术地图 -->
-    <view class="map-layer">
-      <image class="main-map" src="/static/index/main_map.png" mode="aspectFill"></image>
-      
-      <!-- 模拟标记点 -->
-      <view class="marker" style="top: 45%; left: 52%;" @click="showPoiDetail('海上世界')">
-        <image class="marker-icon" src="/static/images/marker_placeholder.png" mode="aspectFit"></image>
-      </view>
-    </view>
+    <!-- 底图层：通过 movable-area 实现标准化的缩放和边界限制 -->
+    <movable-area class="map-area">
+      <movable-view 
+        class="map-view" 
+        direction="all" 
+        :scale="true" 
+        :scale-min="minScale" 
+        :scale-max="4" 
+        :scale-value="scaleValue"
+        :x="mapX" 
+        :y="mapY"
+        :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }"
+        @scale="onScale"
+        @change="onChange"
+      >
+        <image 
+          class="big-map-img" 
+          src="/static/index/big_map.png" 
+          mode="aspectFill"
+          :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }"
+          @load="onMapLoad"
+        ></image>
+        
+        <!-- 景点标记点：相对于地图定位 -->
+        <view 
+          class="marker" 
+          v-for="(poi, index) in markers" 
+          :key="index"
+          :style="{ top: poi.top + '%', left: poi.left + '%' }" 
+          @click="showPoiDetail(poi.name)"
+        >
+          <image class="marker-icon" src="/static/images/marker_placeholder.png" mode="aspectFit"></image>
+        </view>
+      </movable-view>
+    </movable-area>
     
     <!-- 顶层：浮动控制按钮 -->
     <view class="floating-ui">
-      <!-- 顶部搜索栏 -->
+      <!-- 搜索栏 -->
       <view class="header-search animate-slide-down">
         <view class="search-box">
           <text class="search-icon">🔍</text>
@@ -20,17 +46,17 @@
         </view>
       </view>
       
-      <!-- 右侧功能键 - 修复拉伸并应用高保真 -->
+      <!-- 右侧功能键 -->
       <view class="side-controls">
-        <view class="control-item animate-fade-in" style="animation-delay: 0.2s;" @click="getLocation">
+        <view class="control-item animate-fade-in" @click="resetMap">
           <view class="icon-wrapper">
             <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
             <image class="inner-icon" src="/static/index/location_btn.png" mode="aspectFit"></image>
           </view>
-          <text class="control-label">我的位置</text>
+          <text class="control-label">重置视角</text>
         </view>
         
-        <view class="control-item animate-fade-in" style="animation-delay: 0.4s;" @click="goToRouteSelect">
+        <view class="control-item animate-fade-in" @click="goToRouteSelect">
           <view class="icon-wrapper">
             <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
             <image class="inner-icon" src="/static/index/route_btn.png" mode="aspectFit"></image>
@@ -55,7 +81,6 @@
       </view>
     </view>
 
-    <!-- 自定义底部导航 -->
     <CustomTabBar activePath="pages/index/index" />
   </view>
 </template>
@@ -69,44 +94,72 @@ export default {
   },
   data() {
     return {
-      selectedPoi: null
+      selectedPoi: null,
+      scaleValue: 1.5,
+      minScale: 1,
+      mapX: 0,
+      mapY: 0,
+      mapWidth: 0,
+      mapHeight: 0,
+      windowWidth: 0,
+      windowHeight: 0,
+      markers: [
+        { name: '海上世界', top: 45, left: 52 },
+        { name: '老街入口', top: 30, left: 40 }
+      ]
     }
   },
   onLoad() {
-    console.log('首页加载完成');
+    const sys = uni.getSystemInfoSync();
+    this.windowWidth = sys.windowWidth;
+    this.windowHeight = sys.windowHeight;
   },
   onShow() {
     uni.hideTabBar();
   },
   methods: {
-    getLocation() {
-      uni.showLoading({ title: '定位中...' });
-      uni.getLocation({
-        type: 'gcj02',
-        success: (res) => {
-          uni.hideLoading();
-          uni.showToast({ title: '已定位到当前位置', icon: 'none' });
-        },
-        fail: () => {
-          uni.hideLoading();
-          uni.showToast({ title: '定位失败', icon: 'none' });
-        }
-      });
+    onMapLoad(e) {
+      const { width, height } = e.detail;
+      // 1. 基础布局逻辑：让 movable-view 的基础尺寸远大于屏幕
+      // 这样即便在最小缩放时，只要 scaled_width > windowWidth，拖拽边界就会自动生效
+      this.mapWidth = this.windowWidth * 3; 
+      this.mapHeight = (this.mapWidth * height) / width;
+      
+      // 2. 核心：计算最小缩放比例（关键防白边逻辑）
+      // 最小缩放比必须保证：缩放后的宽高依然能覆盖屏幕
+      const minScaleW = this.windowWidth / this.mapWidth;
+      const minScaleH = this.windowHeight / this.mapHeight;
+      this.minScale = Math.max(minScaleW, minScaleH);
+      
+      // 3. 设置初始状态
+      this.scaleValue = this.minScale * 1.5; // 初始放大一点点
+      this.resetMap();
+    },
+    resetMap() {
+      // 居中逻辑：(屏幕宽 - (视图宽 * 缩放)) / 2
+      this.mapX = (this.windowWidth - this.mapWidth * this.scaleValue) / 2;
+      this.mapY = (this.windowHeight - this.mapHeight * this.scaleValue) / 2;
+    },
+    onScale(e) {
+      this.scaleValue = e.detail.scale;
+    },
+    onChange(e) {
+      // 记录实时位置，用于防止数据抖动
+      this.mapX = e.detail.x;
+      this.mapY = e.detail.y;
     },
     goToRouteSelect() {
-      uni.navigateTo({
-        url: '/pages/route/select'
-      });
+      uni.navigateTo({ url: '/pages/route/select' });
     },
     showPoiDetail(name) {
       this.selectedPoi = {
         name: name,
-        desc: '这里是蛇口的标志性建筑，融合了文化、艺术与商业...',
+        desc: '探索蛇口艺术地图，点击查看详情...',
         img: '/static/images/avatar_placeholder.png'
       }
     },
     goToDetail() {
-      uni.showToast({ title: '跳转到详情...', icon: 'none' });
+      uni.showToast({ title: '跳转详情页', icon: 'none' });
     }
   }
 }
@@ -116,110 +169,69 @@ export default {
 .container {
   height: 100vh;
   width: 100vw;
-  position: relative;
   background-color: #FFF9E6;
   overflow: hidden;
 }
 
-.map-layer {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 1;
-  
-  .main-map {
-    width: 100%;
-    height: 100%;
+.map-area {
+  width: 100%;
+  height: 100%;
+  background-color: #FFF9E6; 
+}
+
+.map-view {
+  .big-map-img {
     display: block;
   }
   
   .marker {
     position: absolute;
-    width: 80rpx;
-    height: 80rpx;
+    width: 60rpx;
+    height: 60rpx;
     z-index: 5;
     transform: translate(-50%, -50%);
-    
-    .marker-icon {
-      width: 100%;
-      height: 100%;
-      filter: drop-shadow(0 4rpx 10rpx rgba(0,0,0,0.2));
+    .marker-icon { 
+      width: 100%; height: 100%; 
+      filter: drop-shadow(0 4rpx 8rpx rgba(0,0,0,0.3));
     }
   }
 }
 
 .floating-ui {
-  position: relative;
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
   z-index: 10;
-  padding-top: calc(var(--status-bar-height) + 20rpx);
   pointer-events: none;
+  padding-top: calc(var(--status-bar-height) + 20rpx);
   
   .header-search {
     padding: 20rpx 40rpx;
     pointer-events: auto;
-    
     .search-box {
-      background: #fff;
-      height: 90rpx;
-      border-radius: 45rpx;
-      display: flex;
-      align-items: center;
-      padding: 0 40rpx;
+      background: #fff; height: 90rpx; border-radius: 45rpx;
+      display: flex; align-items: center; padding: 0 40rpx;
       box-shadow: 0 10rpx 30rpx rgba(0,0,0,0.08);
-      
       .search-icon { margin-right: 20rpx; font-size: 32rpx; }
       .search-input { flex: 1; font-size: 28rpx; }
     }
   }
   
   .side-controls {
-    position: absolute;
-    top: 240rpx;
-    right: 30rpx;
-    display: flex;
-    flex-direction: column;
-    gap: 40rpx;
+    position: absolute; top: 240rpx; right: 30rpx;
+    display: flex; flex-direction: column; gap: 40rpx;
     pointer-events: auto;
-    
     .control-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8rpx;
-      
+      display: flex; flex-direction: column; align-items: center; gap: 8rpx;
       .icon-wrapper {
-        position: relative;
-        width: 110rpx;
-        height: 110rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        
-        .ellipse-bg {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0; left: 0;
-          filter: drop-shadow(0 8rpx 20rpx rgba(0,0,0,0.15));
-        }
-        
-        .inner-icon {
-          position: relative;
-          z-index: 1;
-          width: 42rpx;  // Match Figma size (42x42)
-          height: 42rpx;
-        }
-        
+        position: relative; width: 110rpx; height: 110rpx;
+        display: flex; align-items: center; justify-content: center;
+        .ellipse-bg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; filter: drop-shadow(0 8rpx 20rpx rgba(0,0,0,0.15)); }
+        .inner-icon { position: relative; z-index: 1; width: 42rpx; height: 42rpx; }
         &:active { transform: scale(0.9); transition: transform 0.2s; }
       }
-      
       .control-label {
-        font-size: 20rpx;
-        color: #333;
-        font-weight: 900;
-        background: rgba(255,255,255,0.85);
-        padding: 4rpx 16rpx;
-        border-radius: 20rpx;
-        backdrop-filter: blur(4px);
+        font-size: 20rpx; color: #333; font-weight: 900;
+        background: rgba(255,255,255,0.85); padding: 4rpx 16rpx; border-radius: 20rpx; backdrop-filter: blur(4px);
       }
     }
   }
@@ -228,77 +240,20 @@ export default {
 .poi-preview-card {
   position: absolute;
   bottom: calc(160rpx + env(safe-area-inset-bottom));
-  left: 30rpx;
-  right: 30rpx;
-  z-index: 100;
+  left: 30rpx; right: 30rpx; z-index: 100;
   animation: slideUp 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  
   .card-content {
-    background: #fff;
-    border-radius: 40rpx;
-    padding: 24rpx;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 20rpx 60rpx rgba(0,0,0,0.12);
-    
-    .poi-avatar {
-      width: 120rpx;
-      height: 120rpx;
-      border-radius: 24rpx;
-      flex-shrink: 0;
+    background: #fff; border-radius: 40rpx; padding: 24rpx;
+    display: flex; align-items: center; box-shadow: 0 20rpx 60rpx rgba(0,0,0,0.12);
+    .poi-avatar { width: 120rpx; height: 120rpx; border-radius: 24rpx; flex-shrink: 0; }
+    .poi-text { flex: 1; margin: 0 24rpx; overflow: hidden;
+      .poi-name { font-size: 34rpx; font-weight: 800; color: #333; display: block; margin-bottom: 6rpx; }
+      .poi-desc { font-size: 24rpx; color: #999; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     }
-    
-    .poi-text {
-      flex: 1;
-      margin: 0 24rpx;
-      overflow: hidden;
-      
-      .poi-name {
-        font-size: 34rpx;
-        font-weight: 800;
-        color: #333;
-        display: block;
-        margin-bottom: 6rpx;
-      }
-      
-      .poi-desc {
-        font-size: 24rpx;
-        color: #999;
-        display: block;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-    
-    .detail-btn {
-      display: flex;
-      align-items: center;
-      gap: 6rpx;
-      font-size: 24rpx;
-      color: #0088CC;
-      font-weight: bold;
-      
-      .arrow { font-size: 28rpx; }
-    }
+    .detail-btn { display: flex; align-items: center; gap: 6rpx; font-size: 24rpx; color: #0088CC; font-weight: bold; .arrow { font-size: 28rpx; } }
   }
 }
 
-@keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes slideDown {
-  from { transform: translateY(-100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.animate-slide-down { animation: slideDown 0.6s ease-out both; }
-.animate-fade-in { animation: fadeIn 0.6s ease-out both; }
+@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 </style>
