@@ -1,0 +1,99 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "蛇口导览",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/atlas/index",
+      "style": {
+        "navigationBarTitleText": "图鉴",
+        "navigationBarBackgroundColor": "#FFF9E6"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "个人中心",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/route/select",
+      "style": {
+        "navigationBarTitleText": "路线选择",
+        "navigationBarBackgroundColor": "#FFF9E6"
+      }
+    },
+    {
+      "path": "pages/profile/details",
+      "style": {
+        "navigationBarTitleText": "个人资料",
+        "navigationBarBackgroundColor": "#FFF9E6"
+      }
+    },
+    {
+      "path": "pages/profile/settings",
+      "style": {
+        "navigationBarTitleText": "个人设置",
+        "navigationBarBackgroundColor": "#FFF9E6"
+      }
+    },
+    {
+      "path": "pages/profile/favorites",
+      "style": {
+        "navigationBarTitleText": "个人收藏",
+        "navigationBarBackgroundColor": "#FFF9E6"
+      }
+    },
+    {
+      "path": "pages/route/detail",
+      "style": {
+        "navigationBarTitleText": "路线详情",
+        "navigationStyle": "custom"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "蛇口导览",
+    "navigationBarBackgroundColor": "#FFF9E6",
+    "backgroundColor": "#FFF9E6"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#333333",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/atlas/index",
+        "text": "图鉴",
+        "iconPath": "static/images/marker_placeholder.png",
+        "selectedIconPath": "static/images/marker_placeholder.png"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "蛇口地图",
+        "iconPath": "static/images/location_icon.png",
+        "selectedIconPath": "static/images/location_icon.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "个人中心",
+        "iconPath": "static/tabbar/profile.png",
+        "selectedIconPath": "static/tabbar/profile-active.png"
+      }
+    ]
+  }
+}

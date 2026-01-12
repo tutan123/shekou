@@ -1,0 +1,111 @@
+.container.data-v-eeefe5cd {
+  min-height: 100vh;
+  background-color: #FFF9E6;
+}
+.nav-header.data-v-eeefe5cd {
+  height: 88rpx;
+  padding: 80rpx 30rpx 20rpx;
+  display: flex;
+  align-items: center;
+}
+.nav-header .back-btn.data-v-eeefe5cd {
+  font-size: 40rpx;
+  margin-right: 20rpx;
+}
+.nav-header .title.data-v-eeefe5cd {
+  font-size: 34rpx;
+  font-weight: bold;
+}
+.content.data-v-eeefe5cd {
+  padding: 40rpx;
+}
+.content .settings-card.data-v-eeefe5cd {
+  background: #fff;
+  border-radius: 40rpx;
+  padding: 60rpx 40rpx;
+  box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.05);
+}
+.content .settings-card .form-item.data-v-eeefe5cd {
+  margin-bottom: 50rpx;
+}
+.content .settings-card .form-item.data-v-eeefe5cd:last-child {
+  margin-bottom: 0;
+}
+.content .settings-card .form-item .label-row.data-v-eeefe5cd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.content .settings-card .form-item .label-row .forgot.data-v-eeefe5cd {
+  font-size: 24rpx;
+  color: #ccc;
+}
+.content .settings-card .form-item .label.data-v-eeefe5cd {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+  display: block;
+}
+.content .settings-card .form-item .input.data-v-eeefe5cd {
+  height: 80rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+  font-size: 28rpx;
+}
+.other-login.data-v-eeefe5cd {
+  margin-top: 80rpx;
+  text-align: center;
+}
+.other-login .divider-text.data-v-eeefe5cd {
+  font-size: 24rpx;
+  color: #999;
+  position: relative;
+  display: inline-block;
+  padding: 0 30rpx;
+}
+.other-login .divider-text.data-v-eeefe5cd::before, .other-login .divider-text.data-v-eeefe5cd::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 100rpx;
+  height: 2rpx;
+  background: #eee;
+}
+.other-login .divider-text.data-v-eeefe5cd::before {
+  right: 100%;
+}
+.other-login .divider-text.data-v-eeefe5cd::after {
+  left: 100%;
+}
+.other-login .social-icons.data-v-eeefe5cd {
+  display: flex;
+  justify-content: center;
+  gap: 60rpx;
+  margin-top: 40rpx;
+}
+.other-login .social-icons .social-icon.data-v-eeefe5cd {
+  width: 80rpx;
+  height: 80rpx;
+  background: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #999;
+}
+.finish-btn-box.data-v-eeefe5cd {
+  margin-top: 80rpx;
+}
+.finish-btn-box .finish-btn.data-v-eeefe5cd {
+  background: #00A99D;
+  color: #fff;
+  height: 100rpx;
+  border-radius: 50rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: bold;
+  box-shadow: 0 10rpx 20rpx rgba(0, 169, 157, 0.2);
+}
