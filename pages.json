@@ -62,6 +62,13 @@
         "navigationBarTitleText": "路线详情",
         "navigationStyle": "custom"
       }
+    },
+    {
+      "path": "pages/oldstreet/index",
+      "style": {
+        "navigationBarTitleText": "老街线路",
+        "navigationBarBackgroundColor": "#FFF9E6"
+      }
     }
   ],
   "globalStyle": {

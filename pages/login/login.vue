@@ -2,58 +2,61 @@
   <view class="container">
     <!-- 底图层：全屏地图背景 -->
     <view class="bg-layer">
-      <image class="bg-map" src="/static/images/login_bg.png" mode="aspectFill"></image>
-      <view class="bg-overlay"></view>
+      <image class="bg-map" src="/static/login/bg.png" mode="aspectFill"></image>
     </view>
     
-    <!-- 上层图：登录卡片 -->
-    <view class="login-card animate-fade-in">
-      <view class="welcome-section">
-        <image class="welcome-img" src="/static/images/welcome.png" mode="aspectFit"></image>
-        <view class="welcome-cn">登录地图</view>
-      </view>
-      
-      <view class="login-form">
-        <view class="form-item">
-          <view class="label">账号</view>
-          <input class="input" type="text" placeholder="请输入账号" placeholder-style="color: #ccc" />
-          <view class="line"></view>
+    <!-- 登录卡片 -->
+    <view class="login-container animate-fade-in">
+      <view class="login-card">
+        <!-- 装饰点 -->
+        <view class="location-pin">
+          <view class="pin-circle"></view>
+        </view>
+
+        <view class="welcome-section">
+          <image class="welcome-img" src="/static/login/welcome.png" mode="aspectFit"></image>
+          <image class="title-img" src="/static/login/title.png" mode="aspectFit"></image>
         </view>
         
-        <view class="form-item">
-          <view class="label">密码</view>
-          <view class="input-row">
-            <input class="input" type="password" placeholder="请输入密码" placeholder-style="color: #ccc" />
-            <view class="eye-box">
-              <text class="eye-char">👁</text>
+        <view class="login-form">
+          <view class="form-item">
+            <view class="label">账号</view>
+            <input class="input" type="text" placeholder="" />
+            <view class="line"></view>
+          </view>
+          
+          <view class="form-item">
+            <view class="label">密码</view>
+            <view class="input-row">
+              <input class="input" :password="!showPassword" type="text" placeholder="" />
+              <image 
+                class="eye-icon" 
+                src="/static/login/eye.png" 
+                mode="aspectFit"
+                @click="showPassword = !showPassword"
+              ></image>
             </view>
+            <view class="line"></view>
           </view>
-          <view class="line"></view>
+          
+          <view class="form-links">
+            <image class="link-img" src="/static/login/forgot_pwd.png" mode="aspectFit" @click="handleForgot"></image>
+            <image class="link-img" src="/static/login/phone_login.png" mode="aspectFit" @click="handlePhoneLogin"></image>
+          </view>
         </view>
         
-        <view class="form-links">
-          <view class="link-item">
-            <image class="link-icon" src="/static/images/forgot_pwd.png" mode="aspectFit"></image>
-            <text>忘记密码？</text>
+        <view class="action-row">
+          <view class="login-btn-wrapper" @click="handleLogin">
+            <image class="login-btn-img" src="/static/login/btn_login.png" mode="aspectFit"></image>
           </view>
-          <view class="link-item">
-            <image class="link-icon" src="/static/images/phone_login.png" mode="aspectFit"></image>
-            <text>手机验证码登录</text>
+          <view class="arrow-btn" @click="handleLogin">
+            <image class="arrow-img" src="/static/login/arrow.png" mode="aspectFit"></image>
           </view>
         </view>
-      </view>
-      
-      <view class="action-section">
-        <view class="login-btn" @click="handleLogin">
-          <text>立即登录</text>
-          <view class="btn-arrow">
-            <image class="arrow-img" src="/static/images/arrow_right_white.png" mode="aspectFit"></image>
-          </view>
+
+        <view class="footer">
+          <image class="register-img" src="/static/login/register.png" mode="aspectFit" @click="goToRegister"></image>
         </view>
-      </view>
-      
-      <view class="footer-links">
-        <text class="register-text" @click="goToRegister">注册账户</text>
       </view>
     </view>
   </view>
@@ -61,14 +64,29 @@
 
 <script>
 export default {
+  data() {
+    return {
+      showPassword: false
+    }
+  },
   methods: {
     handleLogin() {
-      uni.switchTab({
-        url: '/pages/index/index'
-      });
+      uni.showLoading({ title: '登录中...' });
+      setTimeout(() => {
+        uni.hideLoading();
+        uni.switchTab({
+          url: '/pages/index/index'
+        });
+      }, 1000);
+    },
+    handleForgot() {
+      uni.showToast({ title: '功能开发中', icon: 'none' });
+    },
+    handlePhoneLogin() {
+      uni.showToast({ title: '功能开发中', icon: 'none' });
     },
     goToRegister() {
-      uni.showToast({ title: '注册功能暂未开放', icon: 'none' });
+      uni.showToast({ title: '注册暂未开放', icon: 'none' });
     }
   }
 }
@@ -77,12 +95,10 @@ export default {
 <style lang="scss" scoped>
 .container {
   height: 100vh;
+  width: 100vw;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f5f5f5;
   overflow: hidden;
+  background-color: #fff;
 }
 
 .bg-layer {
@@ -97,76 +113,105 @@ export default {
     width: 100%;
     height: 100%;
   }
-  
-  .bg-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(2px);
-  }
+}
+
+.login-container {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40rpx;
+  box-sizing: border-box;
 }
 
 .login-card {
-  width: 620rpx;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 60rpx;
-  padding: 80rpx 60rpx;
-  box-shadow: 0 30rpx 80rpx rgba(0,0,0,0.15);
+  width: 100%;
+  max-width: 650rpx;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(15rpx);
+  border-radius: 40rpx;
+  padding: 80rpx 60rpx 40rpx;
   position: relative;
-  z-index: 10;
-  border: 1rpx solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20rpx 60rpx rgba(0,0,0,0.1);
+  border: 1rpx solid rgba(255,255,255,0.3);
+}
+
+.location-pin {
+  position: absolute;
+  top: -60rpx;
+  left: 40rpx;
+  width: 120rpx;
+  height: 120rpx;
+  background: rgba(255, 182, 193, 0.6);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .pin-circle {
+    width: 40rpx;
+    height: 40rpx;
+    background: #fff;
+    border-radius: 50%;
+    transform: rotate(45deg);
+  }
 }
 
 .welcome-section {
-  margin-bottom: 70rpx;
+  margin-bottom: 60rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  
   .welcome-img {
-    width: 280rpx;
-    height: 60rpx;
+    width: 180rpx;
+    height: 40rpx;
     display: block;
   }
-  .welcome-cn {
-    font-size: 56rpx;
-    font-weight: 800;
-    color: #333;
-    margin-top: 20rpx;
-    letter-spacing: 2rpx;
+  
+  .title-img {
+    width: 320rpx;
+    height: 100rpx;
+    display: block;
   }
 }
 
 .login-form {
   .form-item {
-    margin-bottom: 44rpx;
+    margin-bottom: 40rpx;
+    
     .label {
-      font-size: 26rpx;
-      color: #999;
-      margin-bottom: 12rpx;
-      font-weight: 500;
+      font-size: 28rpx;
+      color: #666;
+      margin-bottom: 10rpx;
+      font-weight: bold;
     }
+    
     .input {
-      height: 80rpx;
+      height: 60rpx;
       font-size: 32rpx;
       color: #333;
     }
+    
     .input-row {
       display: flex;
       align-items: center;
       .input { flex: 1; }
-      .eye-box {
+      .eye-icon {
         width: 44rpx;
         height: 44rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        .eye-char { font-size: 32rpx; opacity: 0.3; }
+        padding: 10rpx;
       }
     }
+    
     .line {
       height: 2rpx;
-      background: #f0f0f0;
-      margin-top: 8rpx;
+      background: #333;
+      margin-top: 5rpx;
     }
   }
 }
@@ -174,76 +219,61 @@ export default {
 .form-links {
   display: flex;
   justify-content: space-between;
-  margin-top: 10rpx;
-  .link-item {
-    display: flex;
-    align-items: center;
-    gap: 8rpx;
-    font-size: 24rpx;
-    color: #999;
-    .link-icon {
-      width: 24rpx;
-      height: 24rpx;
-    }
+  margin-top: 20rpx;
+  
+  .link-img {
+    height: 36rpx;
+    width: 200rpx;
   }
 }
 
-.action-section {
+.action-row {
   margin-top: 80rpx;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 30rpx;
   
-  .login-btn {
-    background: #0088CC;
-    color: #fff;
-    width: 360rpx;
+  .login-btn-wrapper {
+    flex: 1;
     height: 100rpx;
-    border-radius: 50rpx;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 34rpx;
-    font-weight: bold;
-    box-shadow: 0 10rpx 30rpx rgba(0, 136, 204, 0.3);
-    position: relative;
-    transition: all 0.2s;
     
-    &:active {
-      transform: scale(0.96);
-      opacity: 0.9;
+    .login-btn-img {
+      width: 100%;
+      height: 100%;
     }
+  }
+  
+  .arrow-btn {
+    width: 100rpx;
+    height: 100rpx;
+    flex-shrink: 0;
     
-    .btn-arrow {
-      position: absolute;
-      right: 36rpx;
-      width: 44rpx;
-      height: 44rpx;
-      background: rgba(255,255,255,0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      .arrow-img { width: 24rpx; height: 24rpx; }
+    .arrow-img {
+      width: 100%;
+      height: 100%;
     }
   }
 }
 
-.footer-links {
-  text-align: right;
-  margin-top: 80rpx;
-  .register-text {
-    font-size: 26rpx;
-    color: #999;
-    font-weight: 500;
+.footer {
+  margin-top: 60rpx;
+  display: flex;
+  justify-content: flex-end;
+  
+  .register-img {
+    width: 160rpx;
+    height: 40rpx;
   }
 }
 
 .animate-fade-in {
-  animation: fadeIn 1s cubic-bezier(0.23, 1, 0.32, 1) both;
+  animation: fadeIn 0.8s ease-out both;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(60rpx); }
+  from { opacity: 0; transform: translateY(30rpx); }
   to { opacity: 1; transform: translateY(0); }
 }
 </style>
