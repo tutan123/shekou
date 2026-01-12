@@ -1,5 +1,6 @@
 <template>
   <view class="container">
+    <!-- 顶部导航栏 -->
     <view class="header animate-slide-down">
       <view class="back-btn" @click="goBack">←</view>
       <text class="title">路线选择</text>
@@ -9,28 +10,28 @@
       <view 
         v-for="(route, index) in routes" 
         :key="index" 
-        class="route-card-wrapper animate-fade-in" 
-        :style="{animationDelay: index * 0.1 + 's'}"
-        @click="goRouteDetail(route)"
+        class="route-card-hf animate-fade-in" 
+        :style="{animationDelay: index * 0.15 + 's'}"
       >
-        <view class="route-card">
-          <view class="card-left">
-            <image class="route-img" :src="route.img" mode="aspectFill"></image>
-            <view class="img-overlay"></view>
+        <!-- 背景素材 -->
+        <image class="card-bg" :src="route.bg" mode="scaleToFill"></image>
+        
+        <view class="card-content">
+          <!-- 装饰艺术图 -->
+          <view class="art-img-box">
+            <image class="art-img" :src="route.artImg" mode="aspectFit"></image>
           </view>
-          <view class="card-content">
-            <view class="route-title">
-              <text class="cn">{{ route.name }}</text>
+          
+          <view class="text-area">
+            <view class="route-header">
+              <text class="name">{{ route.name }}</text>
               <text class="arrow">≫</text>
             </view>
             <view class="route-desc">{{ route.desc }}</view>
-            
-            <!-- 艺术化点状装饰 -->
-            <view class="path-decoration">
-              <view v-for="i in 6" :key="i" class="dot" :style="{opacity: 1 - i*0.15}"></view>
-            </view>
           </view>
-          <view class="card-right">
+          
+          <!-- 去探索按钮 -->
+          <view class="explore-btn-box" @click="goExplore(route)">
             <view class="explore-btn">去探索</view>
           </view>
         </view>
@@ -49,31 +50,25 @@ export default {
           id: 'laojie',
           name: '老街路线',
           desc: '蛇口老街漫步路线，从时代标签启程，经工业旧址、文创地标与人文景点，尽览开拓过往与诗意山海。',
-          img: '/static/images/laojie_map.png' // 暂时使用地图底图作为封面
+          bg: '/static/route/card_bg_1.png',
+          artImg: '/static/route/route_oldstreet.png',
+          path: '/pages/oldstreet/index'
         },
         {
           id: 'xican',
           name: '西餐路线',
           desc: '蛇口西餐线条国际风味：宝可多、汉堡、意式披萨、格鲁吉亚菜，多种选择，家家有惊喜。',
-          img: '/static/images/xican_map.png'
+          bg: '/static/route/card_bg_2.png',
+          artImg: '/static/route/route_western.png',
+          path: '/pages/route/detail?id=xican'
         },
         {
           id: 'kafei',
           name: '咖啡路线',
           desc: '蛇口咖啡漫游路线，是一场与香气的温柔邂逅。串联十家特色咖啡馆，慢品间，便读懂了蛇口独有的惬意与浪漫。',
-          img: '/static/images/kafei_map.png'
-        },
-        {
-          id: 'binhai',
-          name: '滨海路线',
-          desc: '沿着蜿蜒海岸线，感受海风轻抚，打卡艺术中心与滨海广场，领略蛇口国际化的滨海魅力。',
-          img: '/static/images/binhai_map.png'
-        },
-        {
-          id: 'dengshan',
-          name: '登山路线',
-          desc: '登上大南山，俯瞰蛇口全景与深圳湾大桥，在绿意盎然中寻找城市的宁静角落。',
-          img: '/static/images/dengshan_map.png'
+          bg: '/static/route/card_bg_3.png',
+          artImg: '/static/route/route_coffee.png',
+          path: '/pages/route/detail?id=kafei'
         }
       ]
     }
@@ -82,9 +77,9 @@ export default {
     goBack() {
       uni.navigateBack();
     },
-    goRouteDetail(route) {
+    goExplore(route) {
       uni.navigateTo({
-        url: `/pages/route/detail?id=${route.id}&name=${route.name}`
+        url: route.path
       });
     }
   }
@@ -108,7 +103,7 @@ export default {
   position: relative;
   z-index: 100;
   
-  .back-btn { font-size: 40rpx; margin-right: 24rpx; color: #333; }
+  .back-btn { font-size: 40rpx; margin-right: 24rpx; color: #333; font-weight: bold; }
   .title { font-size: 36rpx; font-weight: 800; color: #333; }
 }
 
@@ -118,90 +113,87 @@ export default {
   box-sizing: border-box;
 }
 
-.route-card-wrapper {
-  margin-bottom: 40rpx;
-}
-
-.route-card {
-  background: #FFCC00;
-  border-radius: 40rpx;
-  display: flex;
-  padding: 24rpx;
-  box-shadow: 0 16rpx 40rpx rgba(255, 204, 0, 0.25);
+.route-card-hf {
   position: relative;
-  overflow: hidden;
-  border: 4rpx solid #fff;
+  width: 100%;
+  height: 320rpx; // Match background aspect ratio
+  margin-bottom: 40rpx;
   
-  .card-left {
-    width: 220rpx;
-    height: 200rpx;
-    background: #fff;
-    border-radius: 30rpx;
-    flex-shrink: 0;
-    margin-right: 24rpx;
-    overflow: hidden;
-    position: relative;
-    
-    .route-img { width: 100%; height: 100%; }
-    .img-overlay {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.05);
-    }
+  .card-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1;
   }
   
   .card-content {
-    flex: 1;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-right: 110rpx;
+    align-items: center;
+    padding: 0 40rpx 0 20rpx;
+    box-sizing: border-box;
     
-    .route-title {
+    .art-img-box {
+      width: 240rpx;
+      height: 240rpx;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
-      gap: 10rpx;
-      margin-bottom: 8rpx;
-      .cn { font-size: 36rpx; font-weight: 900; color: #333; }
-      .arrow { font-size: 24rpx; color: #333; opacity: 0.6; }
-    }
-    
-    .route-desc {
-      font-size: 22rpx;
-      color: #555;
-      line-height: 1.5;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-      overflow: hidden;
-      font-weight: 500;
-    }
-    
-    .path-decoration {
-      display: flex;
-      gap: 10rpx;
-      margin-top: 16rpx;
-      .dot {
-        width: 8rpx; height: 8rpx;
-        background: #fff;
-        border-radius: 50%;
+      justify-content: center;
+      
+      .art-img {
+        width: 100%;
+        height: 100%;
       }
     }
-  }
-  
-  .card-right {
-    position: absolute;
-    right: 24rpx;
-    bottom: 24rpx;
     
-    .explore-btn {
-      background: #0088CC;
-      color: #fff;
-      font-size: 22rpx;
-      font-weight: 800;
-      padding: 14rpx 28rpx;
-      border-radius: 30rpx;
-      box-shadow: 0 6rpx 12rpx rgba(0, 136, 204, 0.2);
+    .text-area {
+      flex: 1;
+      margin-left: 10rpx;
+      margin-right: 20rpx;
+      
+      .route-header {
+        display: flex;
+        align-items: center;
+        gap: 10rpx;
+        margin-bottom: 8rpx;
+        .name { font-size: 32rpx; font-weight: 900; color: #333; }
+        .arrow { font-size: 20rpx; color: #333; opacity: 0.8; }
+      }
+      
+      .route-desc {
+        font-size: 20rpx;
+        color: #555;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        overflow: hidden;
+        font-weight: 500;
+      }
+    }
+    
+    .explore-btn-box {
+      position: absolute;
+      right: 32rpx;
+      bottom: 60rpx; // Position over the circular cutout in the bg
+      
+      .explore-btn {
+        background: transparent;
+        color: #E64340; // High contrast for the yellow background
+        font-size: 20rpx;
+        font-weight: 900;
+        text-align: center;
+        width: 80rpx;
+        height: 80rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        // The button itself might be part of the image, but we need a hit area.
+        // Looking at the design, the "去探索" is inside a circle.
+      }
     }
   }
 }
@@ -214,10 +206,10 @@ export default {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20rpx); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .animate-slide-down { animation: slideDown 0.6s ease-out both; }
-.animate-fade-in { animation: fadeIn 0.6s ease-out both; }
+.animate-fade-in { animation: fadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) both; }
 </style>

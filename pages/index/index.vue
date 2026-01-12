@@ -4,7 +4,7 @@
     <view class="map-layer">
       <image class="main-map" src="/static/index/main_map.png" mode="aspectFill"></image>
       
-      <!-- 模拟标记点 (后续可通过数据循环生成) -->
+      <!-- 模拟标记点 -->
       <view class="marker" style="top: 45%; left: 52%;" @click="showPoiDetail('海上世界')">
         <image class="marker-icon" src="/static/images/marker_placeholder.png" mode="aspectFit"></image>
       </view>
@@ -12,7 +12,7 @@
     
     <!-- 顶层：浮动控制按钮 -->
     <view class="floating-ui">
-      <!-- 顶部搜索栏 - 高保真样式 -->
+      <!-- 顶部搜索栏 -->
       <view class="header-search animate-slide-down">
         <view class="search-box">
           <text class="search-icon">🔍</text>
@@ -20,21 +20,27 @@
         </view>
       </view>
       
-      <!-- 右侧功能键 - 高保真样式 -->
+      <!-- 右侧功能键 - 修复拉伸并应用高保真 -->
       <view class="side-controls">
         <view class="control-item animate-fade-in" style="animation-delay: 0.2s;" @click="getLocation">
-          <image class="control-img" src="/static/index/location_btn.png" mode="aspectFit"></image>
+          <view class="icon-wrapper">
+            <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
+            <image class="inner-icon" src="/static/index/location_btn.png" mode="aspectFit"></image>
+          </view>
           <text class="control-label">我的位置</text>
         </view>
         
         <view class="control-item animate-fade-in" style="animation-delay: 0.4s;" @click="goToRouteSelect">
-          <image class="control-img" src="/static/index/route_btn.png" mode="aspectFit"></image>
+          <view class="icon-wrapper">
+            <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
+            <image class="inner-icon" src="/static/index/route_btn.png" mode="aspectFit"></image>
+          </view>
           <text class="control-label">路线选择</text>
         </view>
       </view>
     </view>
     
-    <!-- 底部预览卡片 - 修复位置问题并匹配高保真 -->
+    <!-- 底部预览卡片 -->
     <view class="poi-preview-card" v-if="selectedPoi" @click="goToDetail">
       <view class="card-content">
         <image class="poi-avatar" :src="selectedPoi.img" mode="aspectFill"></image>
@@ -145,7 +151,7 @@ export default {
   position: relative;
   z-index: 10;
   padding-top: calc(var(--status-bar-height) + 20rpx);
-  pointer-events: none; // 允许点击到底图
+  pointer-events: none;
   
   .header-search {
     padding: 20rpx 40rpx;
@@ -180,13 +186,30 @@ export default {
       align-items: center;
       gap: 8rpx;
       
-      .control-img {
+      .icon-wrapper {
+        position: relative;
         width: 110rpx;
         height: 110rpx;
-        filter: drop-shadow(0 8rpx 20rpx rgba(0,0,0,0.15));
-        transition: transform 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         
-        &:active { transform: scale(0.9); }
+        .ellipse-bg {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0; left: 0;
+          filter: drop-shadow(0 8rpx 20rpx rgba(0,0,0,0.15));
+        }
+        
+        .inner-icon {
+          position: relative;
+          z-index: 1;
+          width: 42rpx;  // Match Figma size (42x42)
+          height: 42rpx;
+        }
+        
+        &:active { transform: scale(0.9); transition: transform 0.2s; }
       }
       
       .control-label {
@@ -204,7 +227,7 @@ export default {
 
 .poi-preview-card {
   position: absolute;
-  bottom: calc(160rpx + env(safe-area-inset-bottom)); // 避开自定义Tabbar
+  bottom: calc(160rpx + env(safe-area-inset-bottom));
   left: 30rpx;
   right: 30rpx;
   z-index: 100;
