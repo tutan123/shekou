@@ -79,14 +79,14 @@
       {
         "pagePath": "pages/atlas/index",
         "text": "图鉴",
-        "iconPath": "static/images/marker_placeholder.png",
-        "selectedIconPath": "static/images/marker_placeholder.png"
+        "iconPath": "static/tabbar/atlas-inactive.png",
+        "selectedIconPath": "static/tabbar/atlas.png"
       },
       {
         "pagePath": "pages/index/index",
         "text": "蛇口地图",
-        "iconPath": "static/images/location_icon.png",
-        "selectedIconPath": "static/images/location_icon.png"
+        "iconPath": "static/tabbar/map.png",
+        "selectedIconPath": "static/tabbar/map-active.png"
       },
       {
         "pagePath": "pages/profile/index",

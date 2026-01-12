@@ -45,11 +45,19 @@
       </view>
       <text class="arrow">></text>
     </view>
+
+    <!-- 自定义底部导航 -->
+    <CustomTabBar activePath="pages/index/index" />
   </view>
 </template>
 
 <script>
+import CustomTabBar from '@/components/CustomTabBar.vue'
+
 export default {
+  components: {
+    CustomTabBar
+  },
   data() {
     return {
       selectedPoi: null
@@ -57,6 +65,9 @@ export default {
   },
   onLoad() {
     console.log('首页加载完成');
+  },
+  onShow() {
+    uni.hideTabBar();
   },
   methods: {
     getLocation() {

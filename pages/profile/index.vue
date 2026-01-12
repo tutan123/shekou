@@ -73,12 +73,24 @@
       <view class="btn-area">
         <view class="logout-btn" @click="handleLogout">退出登录</view>
       </view>
+      <view class="bottom-spacer"></view>
     </view>
+
+    <!-- 自定义底部导航 -->
+    <CustomTabBar activePath="pages/profile/index" />
   </view>
 </template>
 
 <script>
+import CustomTabBar from '@/components/CustomTabBar.vue'
+
 export default {
+  components: {
+    CustomTabBar
+  },
+  onShow() {
+    uni.hideTabBar();
+  },
   methods: {
     goTo(url) {
       uni.navigateTo({ url });
@@ -224,6 +236,10 @@ export default {
     
     &:active { opacity: 0.9; transform: scale(0.98); }
   }
+}
+
+.bottom-spacer {
+  height: 160rpx;
 }
 
 .animate-scale-in {
