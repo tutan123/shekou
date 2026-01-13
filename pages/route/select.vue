@@ -59,7 +59,23 @@ export default {
           desc: '蛇口老街漫步路线，从时代标签启程，经工业旧址、文创地标与人文景点，尽览开拓过往与诗意山海。',
           bg: '/static/route/card_bg_1.png',
           artImg: '/static/route/oldstreet_ship.png',
-          path: '/pages/oldstreet/index'
+          path: '/pages/route/detail?id=laojie'
+        },
+        {
+          id: 'dengshan',
+          name: '登山路线',
+          desc: '从 “时间就是金钱，效率就是生命” 标语牌起步，沿微波山步道缓步登高，山海相伴，终点抵达招商局历史博物馆，一路见证蛇口的改革精神与百年变迁。',
+          bg: '/static/route/card_bg_2.png',
+          artImg: '/static/route/mountain_art.png',
+          path: '/pages/route/detail?id=dengshan'
+        },
+        {
+          id: 'binhai',
+          name: '滨海路线',
+          desc: '从海上世界明华轮启航，经女娲补天雕像与文化艺术中心的袁庚展，再到南海酒店与碧涛苑别墅群，一路海风相伴，尽览蛇口的开放气质与滨海风情。',
+          bg: '/static/route/card_bg_3.png',
+          artImg: '/static/route/sea_art.png',
+          path: '/pages/route/detail?id=binhai'
         },
         {
           id: 'xican',
@@ -72,7 +88,7 @@ export default {
         {
           id: 'kafei',
           name: '咖啡路线',
-          desc: '蛇口咖啡漫游路线，是一场与香气的温柔邂逅。串联十家特色咖啡馆，慢品间，便读懂了蛇口独有的惬意与浪漫。',
+          desc: '蛇口咖啡漫游路线，是一场与香气的温柔邂逅。串联十家特色咖啡馆，慢品间，便读懂了蛇口。',
           bg: '/static/route/card_bg_3.png',
           artImg: '/static/route/coffee_tools.png',
           path: '/pages/route/detail?id=kafei'
@@ -180,6 +196,13 @@ export default {
   }
   
   &.xican {
+    width: 320rpx;
+    height: 320rpx;
+    left: -20rpx;
+    top: -30rpx;
+  }
+  
+  &.dengshan, &.binhai {
     width: 320rpx;
     height: 320rpx;
     left: -20rpx;
