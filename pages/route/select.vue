@@ -2,37 +2,44 @@
   <view class="container">
     <!-- 顶部导航栏 -->
     <view class="header animate-slide-down">
+      <image class="header-bg-img" src="/static/route/header_bg_map.png" mode="aspectFill"></image>
       <view class="back-btn" @click="goBack">←</view>
-      <text class="title">路线选择</text>
+      <view class="title-container">
+        <text class="title">路线选择</text>
+      </view>
     </view>
     
     <scroll-view scroll-y class="route-list">
       <view 
         v-for="(route, index) in routes" 
         :key="index" 
-        class="route-card-hf animate-fade-in" 
+        class="route-card-container animate-fade-in" 
         :style="{animationDelay: index * 0.15 + 's'}"
+        @click="goExplore(route)"
       >
-        <!-- 背景素材 -->
-        <image class="card-bg" :src="route.bg" mode="scaleToFill"></image>
-        
-        <view class="card-content">
-          <!-- 装饰艺术图 -->
-          <view class="art-img-box">
-            <image class="art-img" :src="route.artImg" mode="aspectFit"></image>
-          </view>
+        <!-- 装饰艺术图 (溢出卡片外部) -->
+        <image class="art-img" :src="route.artImg" mode="aspectFit" :class="route.id"></image>
+
+        <view class="route-card-body">
+          <!-- 背景图 (带切口和阴影的黄色底) -->
+          <image class="card-bg" :src="route.bg" mode="scaleToFill"></image>
           
-          <view class="text-area">
-            <view class="route-header">
-              <text class="name">{{ route.name }}</text>
-              <text class="arrow">≫</text>
+          <view class="card-content">
+            <view class="text-area">
+              <view class="route-header">
+                <text class="name">{{ route.name }}</text>
+                <text class="arrow-double">≫</text>
+              </view>
+              <view class="route-desc">{{ route.desc }}</view>
             </view>
-            <view class="route-desc">{{ route.desc }}</view>
-          </view>
-          
-          <!-- 去探索按钮 -->
-          <view class="explore-btn-box" @click="goExplore(route)">
-            <view class="explore-btn">去探索</view>
+            
+            <!-- 右侧探索按钮区域 -->
+            <view class="explore-side">
+              <image class="dots-img" src="/static/route/path_dots_1.png" mode="aspectFit"></image>
+              <view class="circle-btn">
+                <text class="btn-text">去探索</text>
+              </view>
+            </view>
           </view>
         </view>
       </view>
@@ -51,7 +58,7 @@ export default {
           name: '老街路线',
           desc: '蛇口老街漫步路线，从时代标签启程，经工业旧址、文创地标与人文景点，尽览开拓过往与诗意山海。',
           bg: '/static/route/card_bg_1.png',
-          artImg: '/static/route/route_oldstreet.png',
+          artImg: '/static/route/oldstreet_ship.png',
           path: '/pages/oldstreet/index'
         },
         {
@@ -59,7 +66,7 @@ export default {
           name: '西餐路线',
           desc: '蛇口西餐线条国际风味：宝可多、汉堡、意式披萨、格鲁吉亚菜，多种选择，家家有惊喜。',
           bg: '/static/route/card_bg_2.png',
-          artImg: '/static/route/route_western.png',
+          artImg: '/static/route/western_pizza.png',
           path: '/pages/route/detail?id=xican'
         },
         {
@@ -67,7 +74,7 @@ export default {
           name: '咖啡路线',
           desc: '蛇口咖啡漫游路线，是一场与香气的温柔邂逅。串联十家特色咖啡馆，慢品间，便读懂了蛇口独有的惬意与浪漫。',
           bg: '/static/route/card_bg_3.png',
-          artImg: '/static/route/route_coffee.png',
+          artImg: '/static/route/coffee_tools.png',
           path: '/pages/route/detail?id=kafei'
         }
       ]
@@ -79,7 +86,7 @@ export default {
     },
     goExplore(route) {
       uni.navigateTo({
-        url: route.path
+        url: route.path + (route.path.includes('?') ? '&' : '?') + 'name=' + encodeURIComponent(route.name)
       });
     }
   }
@@ -95,110 +102,214 @@ export default {
 }
 
 .header {
-  height: 88rpx;
-  padding: 80rpx 30rpx 20rpx;
+  height: 320rpx; 
+  padding: 0rpx 30rpx;
   display: flex;
   align-items: center;
   background-color: #FFF9E6;
   position: relative;
   z-index: 100;
+  overflow: hidden;
   
-  .back-btn { font-size: 40rpx; margin-right: 24rpx; color: #333; font-weight: bold; }
-  .title { font-size: 36rpx; font-weight: 800; color: #333; }
+  .header-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+  
+  .back-btn { 
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44rpx; 
+    color: #333; 
+    font-weight: bold; 
+    position: absolute;
+    left: 30rpx;
+    top: 140rpx; 
+    z-index: 10;
+  }
+  
+  .title-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 110rpx; 
+  }
+  
+  .title { 
+    font-size: 40rpx; 
+    font-weight: 900; 
+    color: #333; 
+    letter-spacing: 4rpx;
+  }
 }
 
 .route-list {
   flex: 1;
-  padding: 20rpx 30rpx;
+  padding: 20rpx 30rpx; 
   box-sizing: border-box;
 }
 
-.route-card-hf {
+.route-card-container {
   position: relative;
   width: 100%;
-  height: 320rpx; // Match background aspect ratio
-  margin-bottom: 40rpx;
+  height: 320rpx;
+  margin-bottom: 50rpx;
+  display: flex;
+  align-items: flex-end;
+}
+
+.art-img {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  filter: drop-shadow(0 10rpx 15rpx rgba(0,0,0,0.15));
+  
+  &.laojie {
+    width: 340rpx;
+    height: 340rpx;
+    left: -30rpx;
+    top: -50rpx;
+  }
+  
+  &.xican {
+    width: 320rpx;
+    height: 320rpx;
+    left: -20rpx;
+    top: -30rpx;
+  }
+  
+  &.kafei {
+    width: 300rpx;
+    height: 300rpx;
+    left: -10rpx;
+    top: 0rpx;
+  }
+}
+
+.route-card-body {
+  position: relative;
+  width: 100%;
+  height: 260rpx;
+  border-radius: 40rpx;
+  box-shadow: 0 15rpx 30rpx rgba(0,0,0,0.08);
   
   .card-bg {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: 1;
   }
+}
+
+.card-content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  padding-left: 260rpx; 
+  padding-right: 0rpx;
+  box-sizing: border-box;
+  align-items: center;
   
-  .card-content {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    height: 100%;
+  .text-area {
+    flex: 1;
     display: flex;
-    align-items: center;
-    padding: 0 40rpx 0 20rpx;
-    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 10rpx;
     
-    .art-img-box {
-      width: 240rpx;
-      height: 240rpx;
-      flex-shrink: 0;
+    .route-header {
       display: flex;
       align-items: center;
-      justify-content: center;
+      margin-bottom: 12rpx;
       
-      .art-img {
-        width: 100%;
-        height: 100%;
+      .name { 
+        font-size: 34rpx; 
+        font-weight: 900; 
+        color: #333; 
+        letter-spacing: 2rpx;
+      }
+      .arrow-double { 
+        font-size: 28rpx; 
+        color: #333; 
+        margin-left: 10rpx;
+        font-weight: bold;
       }
     }
     
-    .text-area {
-      flex: 1;
-      margin-left: 10rpx;
-      margin-right: 20rpx;
-      
-      .route-header {
-        display: flex;
-        align-items: center;
-        gap: 10rpx;
-        margin-bottom: 8rpx;
-        .name { font-size: 32rpx; font-weight: 900; color: #333; }
-        .arrow { font-size: 20rpx; color: #333; opacity: 0.8; }
-      }
-      
-      .route-desc {
-        font-size: 20rpx;
-        color: #555;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 4;
-        overflow: hidden;
-        font-weight: 500;
-      }
-    }
-    
-    .explore-btn-box {
-      position: absolute;
-      right: 32rpx;
-      bottom: 60rpx; // Position over the circular cutout in the bg
-      
-      .explore-btn {
-        background: transparent;
-        color: #E64340; // High contrast for the yellow background
-        font-size: 20rpx;
-        font-weight: 900;
-        text-align: center;
-        width: 80rpx;
-        height: 80rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        // The button itself might be part of the image, but we need a hit area.
-        // Looking at the design, the "去探索" is inside a circle.
-      }
+    .route-desc {
+      font-size: 22rpx;
+      color: #555;
+      line-height: 1.5;
+      font-weight: 500;
+      padding-right: 80rpx; 
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
     }
   }
 }
 
-.bottom-padding { height: 60rpx; }
+.explore-side {
+  position: absolute;
+  right: -40rpx; // 稍微增加向右偏移，圆心更靠外
+  top: 0;
+  bottom: 0;
+  width: 200rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; // 改为顶部对齐，通过 padding-top 精确控制
+  padding-top: 125rpx; // 调大内边距以适配更小的圆圈
+  box-sizing: border-box;
+  
+  .dots-img {
+    width: 120rpx;
+    height: 40rpx;
+    margin-bottom: 5rpx;
+    margin-right: 40rpx;
+    opacity: 0.8;
+  }
+  
+  .circle-btn {
+    width: 110rpx;
+    height: 110rpx;
+    background: linear-gradient(135deg, #FFB800 0%, #FF8A00 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10rpx 25rpx rgba(255, 138, 0, 0.5);
+    margin-right: 40rpx;
+    transition: all 0.2s ease;
+    
+    .btn-text {
+      font-size: 22rpx;
+      font-weight: 900;
+      color: #fff;
+      white-space: nowrap;
+      text-align: center;
+      line-height: 1.2;
+      letter-spacing: 2rpx;
+    }
+    
+    &:active {
+      transform: scale(0.9);
+      opacity: 0.9;
+    }
+  }
+}
+
+.bottom-padding { height: 100rpx; }
 
 @keyframes slideDown {
   from { transform: translateY(-40rpx); opacity: 0; }
