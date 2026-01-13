@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <!-- 底图层：通过 movable-area 实现标准化的缩放和边界限制 -->
-    <movable-area class="map-area">
+    <movable-area class="map-area" @mousewheel.stop.prevent="onMouseWheel">
       <movable-view 
         class="map-view" 
         direction="all" 
@@ -63,6 +63,20 @@
           </view>
           <text class="control-label">路线选择</text>
         </view>
+
+        <!-- 新增：缩放控制按钮 -->
+        <view class="control-item animate-fade-in" @click="zoomIn">
+          <view class="icon-wrapper small">
+            <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
+            <text class="zoom-text">+</text>
+          </view>
+        </view>
+        <view class="control-item animate-fade-in" @click="zoomOut">
+          <view class="icon-wrapper small">
+            <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
+            <text class="zoom-text">-</text>
+          </view>
+        </view>
       </view>
     </view>
     
@@ -95,7 +109,8 @@ export default {
   data() {
     return {
       selectedPoi: null,
-      scaleValue: 1.5,
+      scaleValue: 1.5, // 仅用于控制组件缩放指令
+      curScale: 1.5,   // 记录当前实际缩放比例
       minScale: 1,
       mapX: 0,
       mapY: 0,
@@ -120,33 +135,55 @@ export default {
   methods: {
     onMapLoad(e) {
       const { width, height } = e.detail;
-      // 1. 基础布局逻辑：让 movable-view 的基础尺寸远大于屏幕
-      // 这样即便在最小缩放时，只要 scaled_width > windowWidth，拖拽边界就会自动生效
       this.mapWidth = this.windowWidth * 3; 
       this.mapHeight = (this.mapWidth * height) / width;
       
-      // 2. 核心：计算最小缩放比例（关键防白边逻辑）
-      // 最小缩放比必须保证：缩放后的宽高依然能覆盖屏幕
       const minScaleW = this.windowWidth / this.mapWidth;
       const minScaleH = this.windowHeight / this.mapHeight;
       this.minScale = Math.max(minScaleW, minScaleH);
       
-      // 3. 设置初始状态
-      this.scaleValue = this.minScale * 1.5; // 初始放大一点点
+      this.curScale = this.minScale * 1.5;
+      this.scaleValue = this.curScale;
       this.resetMap();
     },
     resetMap() {
-      // 居中逻辑：(屏幕宽 - (视图宽 * 缩放)) / 2
-      this.mapX = (this.windowWidth - this.mapWidth * this.scaleValue) / 2;
-      this.mapY = (this.windowHeight - this.mapHeight * this.scaleValue) / 2;
+      this.curScale = this.minScale * 1.5;
+      this.scaleValue = this.curScale;
+      // 延迟计算位置，确保缩放已应用
+      this.$nextTick(() => {
+        this.mapX = (this.windowWidth - this.mapWidth * this.curScale) / 2;
+        this.mapY = (this.windowHeight - this.mapHeight * this.curScale) / 2;
+      });
     },
     onScale(e) {
-      this.scaleValue = e.detail.scale;
+      // 只记录当前比例，绝不在此处修改 scaleValue
+      this.curScale = e.detail.scale;
     },
     onChange(e) {
-      // 记录实时位置，用于防止数据抖动
-      this.mapX = e.detail.x;
-      this.mapY = e.detail.y;
+      // 仅记录位置，不回流修改 mapX/mapY
+      if (e.detail.source === '') {
+        this.mapX = e.detail.x;
+        this.mapY = e.detail.y;
+      }
+    },
+    onMouseWheel(e) {
+      const delta = e.deltaY < 0 ? 0.2 : -0.2;
+      this.updateScale(this.curScale + delta);
+    },
+    zoomIn() {
+      this.updateScale(this.curScale + 0.4);
+    },
+    zoomOut() {
+      this.updateScale(this.curScale - 0.4);
+    },
+    updateScale(newScale) {
+      let targetScale = Math.min(Math.max(newScale, this.minScale), 4);
+      // 强制触发更新：先变再变回
+      this.scaleValue = targetScale + 0.0001;
+      this.$nextTick(() => {
+        this.scaleValue = targetScale;
+        this.curScale = targetScale;
+      });
     },
     goToRouteSelect() {
       uni.navigateTo({ url: '/pages/route/select' });
@@ -225,8 +262,10 @@ export default {
       .icon-wrapper {
         position: relative; width: 110rpx; height: 110rpx;
         display: flex; align-items: center; justify-content: center;
+        &.small { width: 80rpx; height: 80rpx; }
         .ellipse-bg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; filter: drop-shadow(0 8rpx 20rpx rgba(0,0,0,0.15)); }
         .inner-icon { position: relative; z-index: 1; width: 42rpx; height: 42rpx; }
+        .zoom-text { position: relative; z-index: 1; font-size: 40rpx; font-weight: bold; color: #333; }
         &:active { transform: scale(0.9); transition: transform 0.2s; }
       }
       .control-label {
