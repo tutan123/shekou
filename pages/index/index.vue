@@ -16,7 +16,7 @@
         @change="onChange"
       >
         <!-- 渐进式地图层 -->
-        <view class="map-wrapper" :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }">
+        <view class="map-wrapper" :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }" @click="onMapClick">
           <!-- 1. 本地模糊占位图 (改为从云端加载以减小程序包体积) -->
           <image 
             class="map-layer low-res" 
@@ -364,6 +364,27 @@ export default {
       console.log(`📍 标记点点击: ${poi.name} - 相对坐标: top=${poi.top}%, left=${poi.left}%`);
 
       this.selectedPoi = poi;
+    },
+    onMapClick(e) {
+      // 在小程序环境中使用uni.createSelectorQuery获取元素信息
+      const query = uni.createSelectorQuery().in(this);
+      query.select('.map-wrapper').boundingClientRect(data => {
+        if (data) {
+          // 获取点击位置 - 优先使用detail，如果没有则使用touches
+          const touch = e.detail || e.touches[0] || e.changedTouches[0];
+          if (touch && touch.x !== undefined && touch.y !== undefined) {
+            // touch.x和touch.y是相对于元素左上角的坐标
+            const relativeLeft = Math.round((touch.x / data.width) * 100);
+            const relativeTop = Math.round((touch.y / data.height) * 100);
+
+            console.log(`🗺️ 地图点击坐标: left=${relativeLeft}%, top=${relativeTop}%`);
+          } else {
+            console.log('🗺️ 点击事件参数:', e);
+          }
+        } else {
+          console.log('🗺️ 未找到地图容器元素');
+        }
+      }).exec();
     },
     goToDetail() {
       if (!this.selectedPoi) return;

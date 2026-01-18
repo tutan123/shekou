@@ -22,10 +22,10 @@ export const POI_DATA = [
     desc: '蛇口历史悠久的公园，标志性的“盖世金牛”所在地。', 
     img: ASSETS_CONFIG.atlas.history.items['04'] 
   },
-  { 
-    name: '荔枝公园', top: 18, left: 24, // 新增：荔枝公园
-    desc: '充满自然气息的公园，蛇口居民休闲健身的好去处。', 
-    img: ASSETS_CONFIG.atlas.history.items['08'] 
+  {
+    name: '荔枝公园', top: 42, left: 22, // 移动到海上世界左上角
+    desc: '充满自然气息的公园，蛇口居民休闲健身的好去处。',
+    img: ASSETS_CONFIG.atlas.history.items['08']
   },
   { 
     name: 'G&G', top: 25, left: 32, 
