@@ -140,18 +140,20 @@ export default {
       
       this.categories = {
         history: {
-          name: '历史',
+          name: '老街',
           map: H_BASE + 'map.png',
           map_bw: H_BASE + 'map_bw.png',
           items: {
-            '空谈误国': { top: 180, left: 40, width: 220, frame: H_BASE+'01_biaoyupai_frame.png', icon: H_BASE+'01_biaoyupai_pic.png' },
-            '育才一小': { top: 170, left: 460, width: 230, frame: H_BASE+'03_yucai_frame.png', icon: H_BASE+'03_yucai_pic.png' },
-            '南玻集团': { top: 310, left: 80, width: 240, frame: H_BASE+'02_nanbo_frame.png', icon: H_BASE+'02_nanbo_pic.png' },
-            'G&G': { top: 340, left: 470, width: 230, frame: H_BASE+'04_gg_frame.png', icon: H_BASE+'04_gg_pic.png' },
-            '水湾源华': { top: 580, left: 40, width: 220, frame: H_BASE+'05_shuiwanyuanhua_frame.png', icon: H_BASE+'05_shuiwanyuanhua_pic.png' },
-            '水湾村史馆': { top: 560, left: 480, width: 220, frame: H_BASE+'06_shuiwancunshiguan_frame.png', icon: H_BASE+'06_shuiwancunshiguan_pic.png' },
-            '水湾炮楼': { top: 780, left: 100, width: 230, frame: H_BASE+'07_shuiwanpaolou_frame.png', icon: H_BASE+'07_shuiwanpaolou_pic.png' },
-            '荔枝公园': { top: 820, left: 450, width: 240, frame: H_BASE+'08_lizhigongyuan_frame.png', icon: H_BASE+'08_lizhigongyuan_pic.png' }
+            '荔枝公园': { top: 180, left: 60, width: 230, frame: H_BASE+'08_lizhigongyuan_frame.png', icon: H_BASE+'08_lizhigongyuan_pic.png' },
+            '育才一小': { top: 160, left: 450, width: 220, frame: H_BASE+'03_yucai_frame.png', icon: H_BASE+'03_yucai_pic.png' },
+            '南玻集团': { top: 400, left: 100, width: 240, frame: H_BASE+'02_nanbo_frame.png', icon: H_BASE+'02_nanbo_pic.png' },
+            'G&G': { top: 380, left: 460, width: 230, frame: H_BASE+'04_gg_frame.png', icon: H_BASE+'04_gg_pic.png' },
+            '水湾村史馆': { top: 620, left: 70, width: 220, frame: H_BASE+'06_shuiwancunshiguan_frame.png', icon: H_BASE+'06_shuiwancunshiguan_pic.png' },
+            '海滨花园': { top: 600, left: 480, width: 220, frame: H_BASE+'10_haibinhuayuan_frame.png', icon: H_BASE+'10_haibinhuayuan_pic.png' },
+            '水湾源华': { top: 850, left: 90, width: 230, frame: H_BASE+'05_shuiwanyuanhua_frame.png', icon: H_BASE+'05_shuiwanyuanhua_pic.png' },
+            '南海意库': { top: 830, left: 470, width: 230, frame: H_BASE+'11_yiku_frame.png', icon: H_BASE+'11_yiku_pic.png' },
+            '水湾炮楼': { top: 1080, left: 60, width: 220, frame: H_BASE+'07_shuiwanpaolou_frame.png', icon: H_BASE+'07_shuiwanpaolou_pic.png' },
+            '空谈误国': { top: 1060, left: 450, width: 230, frame: H_BASE+'01_biaoyupai_frame.png', icon: H_BASE+'01_biaoyupai_pic.png' }
           }
         },
         binhai: {
@@ -159,11 +161,11 @@ export default {
           map: B_BASE + 'map.png',
           map_bw: B_BASE + 'map_bw.png',
           items: {
-            '明华轮': { top: 220, left: 250, width: 260, frame: B_BASE+'11_minghualun_frame.png', icon: B_BASE+'11_minghualun_pic.png' },
-            '碧涛苑': { top: 450, left: 40, width: 230, frame: B_BASE+'16_bitaoyuan_frame.png', icon: B_BASE+'16_bitaoyuan_pic.png' },
-            '女娲像': { top: 480, left: 460, width: 230, frame: B_BASE+'12_nvwaxiang_frame.png', icon: B_BASE+'12_nvwaxiang_pic.png' },
-            '海上世界': { top: 750, left: 50, width: 230, frame: B_BASE+'13_haishangshijie_frame.png', icon: B_BASE+'13_haishangshijie_pic.png' },
-            '南海酒店': { top: 780, left: 440, width: 250, frame: B_BASE+'15_nanhaijiudian_frame.png', icon: B_BASE+'15_nanhaijiudian_pic.png' }
+            '明华轮': { top: 120, left: 245, width: 260, frame: B_BASE+'11_minghualun_frame.png', icon: B_BASE+'11_minghualun_pic.png' },
+            '碧涛苑': { top: 380, left: 50, width: 240, frame: B_BASE+'16_bitaoyuan_frame.png', icon: B_BASE+'16_bitaoyuan_pic.png' },
+            '女娲像': { top: 410, left: 460, width: 230, frame: B_BASE+'12_nvwaxiang_frame.png', icon: B_BASE+'12_nvwaxiang_pic.png' },
+            '海上世界': { top: 680, left: 60, width: 240, frame: B_BASE+'13_haishangshijie_frame.png', icon: B_BASE+'13_haishangshijie_pic.png' },
+            '南海酒店': { top: 710, left: 450, width: 250, frame: B_BASE+'15_nanhaijiudian_frame.png', icon: B_BASE+'15_nanhaijiudian_pic.png' }
           }
         },
         dengshan: {

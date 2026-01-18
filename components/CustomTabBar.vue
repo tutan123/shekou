@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { ASSETS_CONFIG } from '@/utils/assets-config.js'
+
 export default {
   props: {
     activePath: {
@@ -38,20 +40,20 @@ export default {
         {
           pagePath: 'pages/atlas/index',
           text: '图鉴',
-          iconPath: '/static/tabbar/atlas-inactive.png',
-          selectedIconPath: '/static/tabbar/atlas.png'
+          iconPath: ASSETS_CONFIG.tabbar.atlasInactive,
+          selectedIconPath: ASSETS_CONFIG.tabbar.atlasActive
         },
         {
           pagePath: 'pages/index/index',
           text: '蛇口地图',
-          iconPath: '/static/tabbar/map.png',
-          selectedIconPath: '/static/tabbar/map-active.png'
+          iconPath: ASSETS_CONFIG.tabbar.mapInactive,
+          selectedIconPath: ASSETS_CONFIG.tabbar.mapActive
         },
         {
           pagePath: 'pages/profile/index',
           text: '个人中心',
-          iconPath: '/static/tabbar/profile.png',
-          selectedIconPath: '/static/tabbar/profile-active.png'
+          iconPath: ASSETS_CONFIG.tabbar.profileInactive,
+          selectedIconPath: ASSETS_CONFIG.tabbar.profileActive
         }
       ]
     }

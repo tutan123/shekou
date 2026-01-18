@@ -39,14 +39,14 @@ const ASSETS_CONFIG = {
   CLOUD_BASE_URL,
   LOCAL_BASE_URL,
   
-  // TabBar 图标 (使用本地路径，tabBar不支持云存储)
+  // TabBar 图标
   tabbar: {
-    atlasInactive: '/static/tabbar/atlas-inactive.png',
-    atlasActive: '/static/tabbar/atlas.png',
-    mapInactive: '/static/tabbar/map.png',
-    mapActive: '/static/tabbar/map-active.png',
-    profileInactive: '/static/tabbar/profile.png',
-    profileActive: '/static/tabbar/profile-active.png'
+    atlasInactive: CLOUD_BASE_URL + 'tabbar/atlas.png',
+    atlasActive: CLOUD_BASE_URL + 'tabbar/atlas-active.png',
+    mapInactive: CLOUD_BASE_URL + 'tabbar/map.png',
+    mapActive: CLOUD_BASE_URL + 'tabbar/map-active.png',
+    profileInactive: CLOUD_BASE_URL + 'tabbar/profile.png',
+    profileActive: CLOUD_BASE_URL + 'tabbar/profile-active.png'
   },
 
   // 通用图片
