@@ -1,54 +1,15 @@
-<template>
-  <view class="container">
-    <view class="nav-header">
-      <view class="back-btn" @click="goBack">←</view>
-      <text class="title">个人资料</text>
-    </view>
-
-    <view class="content">
-      <view class="info-card">
-        <view class="info-item avatar-item">
-          <text class="label">头像</text>
-          <view class="value">
-            <image class="avatar" src="/static/images/avatar_placeholder.png" mode="aspectFill"></image>
-            <text class="arrow">></text>
-          </view>
-        </view>
-        
-        <view class="info-item">
-          <text class="label">名字</text>
-          <view class="value">
-            <text class="text">DWQ</text>
-            <text class="arrow">></text>
-          </view>
-        </view>
-        
-        <view class="info-item">
-          <text class="label">电话</text>
-          <view class="value">
-            <text class="text">19106572834</text>
-            <text class="arrow">></text>
-          </view>
-        </view>
-        
-        <view class="info-item">
-          <text class="label">地址</text>
-          <view class="value">
-            <text class="text">广东省深圳市深圳大学</text>
-            <text class="arrow">></text>
-          </view>
-        </view>
-      </view>
-      
-      <view class="logout-btn-box">
-        <view class="logout-btn" @click="handleLogout">退出登录</view>
-      </view>
-    </view>
-  </view>
-</template>
-
 <script>
+import { ASSETS_CONFIG } from '@/utils/assets-config.js'
+
 export default {
+  data() {
+    return {
+      avatarSrc: ASSETS_CONFIG.images.avatarPlaceholder
+    }
+  },
+  onShow() {
+    uni.hideTabBar();
+  },
   methods: {
     goBack() {
       uni.navigateBack();
@@ -61,6 +22,55 @@ export default {
   }
 }
 </script>
+
+<template>
+  <view class="container">
+    <view class="nav-header">
+      <view class="back-btn" @click="goBack">←</view>
+      <text class="title">个人资料</text>
+    </view>
+
+    <view class="content">
+      <view class="info-card">
+        <view class="info-item avatar-item">
+          <text class="label">头像</text>
+          <view class="value">
+            <image class="avatar" :src="avatarSrc" mode="aspectFill"></image>
+            <text class="arrow">〉</text>
+          </view>
+        </view>
+
+        <view class="info-item">
+          <text class="label">名字</text>
+          <view class="value">
+            <text class="text">DWQ</text>
+            <text class="arrow">〉</text>
+          </view>
+        </view>
+
+        <view class="info-item">
+          <text class="label">电话</text>
+          <view class="value">
+            <text class="text">19106572834</text>
+            <text class="arrow">〉</text>
+          </view>
+        </view>
+
+        <view class="info-item">
+          <text class="label">地址</text>
+          <view class="value">
+            <text class="text">广东省深圳市深圳大学</text>
+            <text class="arrow">〉</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="logout-btn-box">
+        <view class="logout-btn" @click="handleLogout">退出登录</view>
+      </view>
+    </view>
+  </view>
+</template>
 
 <style lang="scss" scoped>
 .container {

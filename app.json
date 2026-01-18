@@ -1,0 +1,46 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/atlas/index",
+    "pages/profile/index",
+    "pages/login/login",
+    "pages/route/select",
+    "pages/profile/details",
+    "pages/profile/settings",
+    "pages/profile/favorites",
+    "pages/route/detail",
+    "pages/oldstreet/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "蛇口导览",
+    "navigationBarBackgroundColor": "#FFF9E6",
+    "backgroundColor": "#FFF9E6"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#333333",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/atlas/index",
+        "text": "图鉴",
+        "iconPath": "/static/tabbar/atlas-inactive.png",
+        "selectedIconPath": "/static/tabbar/atlas.png"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "蛇口地图",
+        "iconPath": "/static/tabbar/map.png",
+        "selectedIconPath": "/static/tabbar/map-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "个人中心",
+        "iconPath": "/static/tabbar/profile.png",
+        "selectedIconPath": "/static/tabbar/profile-active.png"
+      }
+    ]
+  }
+}

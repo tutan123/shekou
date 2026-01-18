@@ -20,11 +20,19 @@
     >
       <view class="map-content">
         <!-- 底图：根据打卡情况决定分类地图颜色 -->
-        <image 
-          class="bg-map" 
-          :src="isCategoryCompleted ? currentCatData.map : currentCatData.map_bw" 
+        <SafeImage
+          class="bg-map"
+          :src="isCategoryCompleted ? currentCatData.map : currentCatData.map_bw"
+          fallback-src="/static/images/blank_map.png"
           mode="widthFix"
-        ></image>
+        >
+          <template #error>
+            <view class="error-placeholder">
+              <text>🗺️ {{ currentCatData.name }}地图加载失败</text>
+              <text>{{ isCategoryCompleted ? currentCatData.map : currentCatData.map_bw }}</text>
+            </view>
+          </template>
+        </SafeImage>
         
         <!-- 景点画框：绝对定位在地图上 -->
         <view 
@@ -39,17 +47,17 @@
           @click="showCheckIn(name)"
         >
           <!-- 画框背景 -->
-          <image 
-            class="frame-img" 
-            :src="'/static/atlas/frames/frame_' + (item.frame || 1) + '.png'" 
+          <image
+            class="frame-img"
+            :src="getFrameImage(item.frame || 1)"
             mode="widthFix"
           ></image>
           
           <!-- 景点图片内容 -->
           <view class="poi-content">
-            <image 
-              :class="['poi-img', isCheckedIn(name) ? '' : 'grayscale']" 
-              :src="'/static/atlas/' + activeCat + '/' + (item.file || name + '.png')" 
+            <image
+              :class="['poi-img', isCheckedIn(name) ? '' : 'grayscale']"
+              :src="getItemImage(activeCat, item.file || name + '.png')"
               mode="aspectFit"
             ></image>
           </view>
@@ -65,7 +73,7 @@
 
     <!-- 顶部进度悬浮条 -->
     <view class="progress-bar-floating">
-      <image class="atlas-icon" src="/static/atlas/atlas_icon.png" mode="aspectFit"></image>
+      <image class="atlas-icon" :src="assets.atlas.atlasIcon" mode="aspectFit"></image>
       <view class="progress-text">
         <text class="title">{{ currentCatData.name }}图鉴收集</text>
         <text class="count">{{ completedCount }}/{{ totalCount }}</text>
@@ -87,73 +95,81 @@
 
 <script>
 import CustomTabBar from '@/components/CustomTabBar.vue'
+import SafeImage from '@/components/SafeImage.vue'
+import { ASSETS_CONFIG } from '@/utils/assets-config.js'
 
 export default {
   components: {
-    CustomTabBar
+    CustomTabBar,
+    SafeImage
   },
   data() {
     return {
+      assets: ASSETS_CONFIG,
       activeCat: 'history',
       showingModal: false,
       selectedItem: '',
-      checkInData: {}, 
-      categories: {
-        history: {
-          name: '历史',
-          map: '/static/route/laojie/老街地图.png',
-          map_bw: '/static/route/laojie/老街地图.png',
-          items: {
-            '空谈误国': { top: 10, left: 68, frame: 2, width: 190, file: '01_biaoyupai_pic.png' },
-            '南玻集团': { top: 7, left: 60, frame: 6, width: 170, file: '02_nanbo_pic.png' },
-            'K11': { top: 20, left: 65, frame: 4, width: 180, file: '03_k11_pic.png' },
-            '创意社区': { top: 12, left: 35, frame: 1, width: 180, file: '04_gg_pic.png' },
-            '源华公司': { top: 30, left: 68, frame: 7, width: 160, file: '05_shuiwanyuanhua_pic.png' },
-            '明华轮': { top: 55, left: 38, frame: 15, width: 210, file: '11_minghualun_pic.png' },
-            '女娲像': { top: 45, left: 52, frame: 18, width: 150, file: '12_nvwaxiang_pic.png' },
-            '艺术中心': { top: 68, left: 60, frame: 9, width: 230, file: '13_haishangshijie_pic.png' },
-            '南海酒店': { top: 65, left: 35, frame: 3, width: 190, file: '15_nanhaijiudian_pic.png' },
-            '碧涛苑': { top: 48, left: 65, frame: 12, width: 180, file: '16_bitaoyuan_pic.png' },
-            '时间金钱': { top: 60, left: 15, frame: 11, width: 180, file: '17_shijianbiaoyu_pic.png' },
-            '微波山': { top: 32, left: 55, frame: 8, width: 180, file: '18_weiboshan_pic.png' },
-            '博物馆': { top: 80, left: 30, frame: 13, width: 220, file: '19_zhaoshangjulishi_pic.png' }
-          }
-        },
-        coffee: {
-          name: '咖啡',
-          map: '/static/route/coffee/咖啡地图.png',
-          map_bw: '/static/route/coffee/咖啡地图.png',
-          items: {
-            '正在生活': { top: 62, left: 45, frame: 19, width: 180, file: '01_zhengzaishenghuo_pic.png' },
-            '绿木': { top: 25, left: 15, frame: 1, width: 170, file: '02_greenwood_pic.png' },
-            'JOJO': { top: 60, left: 15, frame: 8, width: 190, file: '03_jojo_pic.png' },
-            '查理': { top: 68, left: 15, frame: 3, width: 180, file: '04_chali_pic.png' },
-            'NewPark': { top: 35, left: 65, frame: 14, width: 180, file: '06_newpark_pic.png' },
-            'wavve': { top: 45, left: 45, frame: 6, width: 180, file: '07_wavve_pic.png' },
-            '山池': { top: 72, left: 68, frame: 13, width: 210, file: '08_shanchi_pic.png' },
-            'KUDDO': { top: 22, left: 25, frame: 10, width: 180, file: '09_kuddo_pic.png' },
-            '艾米丽': { top: 45, left: 15, frame: 16, width: 180, file: '10_emily_pic.png' }
-          }
-        },
-        western: {
-          name: '西餐',
-          map: '/static/atlas/western/西餐地图.png',
-          map_bw: '/static/atlas/western/西餐地图黑白.png',
-          items: {
-            'alla': { top: 70, left: 15, frame: 15, width: 220, file: 'alla.png' },
-            'baker': { top: 48, left: 80, frame: 11, width: 170 },
-            'commune': { top: 48, left: 52, frame: 7, width: 180 },
-            'doors': { top: 12, left: 65, frame: 10, width: 180 },
-            'madloba': { top: 28, left: 80, frame: 6, width: 180 },
-            'minimal': { top: 28, left: 10, frame: 1, width: 190 },
-            'the_flames': { top: 35, left: 65, frame: 9, width: 180 },
-            '壁虎餐厅': { top: 52, left: 65, frame: 18, width: 160 },
-            '宝可多': { top: 58, left: 12, frame: 12, width: 180 },
-            'Gecko Pub': { top: 70, left: 75, frame: 15, width: 220, file: '壁虎餐厅.png' }
-          }
+      checkInData: {},
+      categories: {}
+    }
+  },
+  created() {
+    // 在组件创建时初始化 categories
+    this.categories = {
+      history: {
+        name: '历史',
+        map: this.assets.route.laojie.map,
+        map_bw: this.assets.route.laojie.map,
+        items: {
+          '空谈误国': { top: 10, left: 68, frame: 2, width: 190, file: '01_biaoyupai_pic.png' },
+          '南玻集团': { top: 7, left: 60, frame: 6, width: 170, file: '02_nanbo_pic.png' },
+          'K11': { top: 20, left: 65, frame: 4, width: 180, file: '03_k11_pic.png' },
+          '创意社区': { top: 12, left: 35, frame: 1, width: 180, file: '04_gg_pic.png' },
+          '源华公司': { top: 30, left: 68, frame: 7, width: 160, file: '05_shuiwanyuanhua_pic.png' },
+          '明华轮': { top: 55, left: 38, frame: 15, width: 210, file: '11_minghualun_pic.png' },
+          '女娲像': { top: 45, left: 52, frame: 18, width: 150, file: '12_nvwaxiang_pic.png' },
+          '艺术中心': { top: 68, left: 60, frame: 9, width: 230, file: '13_haishangshijie_pic.png' },
+          '南海酒店': { top: 65, left: 35, frame: 3, width: 190, file: '15_nanhaijiudian_pic.png' },
+          '碧涛苑': { top: 48, left: 65, frame: 12, width: 180, file: '16_bitaoyuan_pic.png' },
+          '时间金钱': { top: 60, left: 15, frame: 11, width: 180, file: '17_shijianbiaoyu_pic.png' },
+          '微波山': { top: 32, left: 55, frame: 8, width: 180, file: '18_weiboshan_pic.png' },
+          '博物馆': { top: 80, left: 30, frame: 13, width: 220, file: '19_zhaoshangjulishi_pic.png' }
+        }
+      },
+      coffee: {
+        name: '咖啡',
+        map: this.assets.route.coffee.map,
+        map_bw: this.assets.route.coffee.map,
+        items: {
+          '正在生活': { top: 62, left: 45, frame: 19, width: 180, file: '01_zhengzaishenghuo_pic.png' },
+          '绿木': { top: 25, left: 15, frame: 1, width: 170, file: '02_greenwood_pic.png' },
+          'JOJO': { top: 60, left: 15, frame: 8, width: 190, file: '03_jojo_pic.png' },
+          '查理': { top: 68, left: 15, frame: 3, width: 180, file: '04_chali_pic.png' },
+          'NewPark': { top: 35, left: 65, frame: 14, width: 180, file: '06_newpark_pic.png' },
+          'wavve': { top: 45, left: 45, frame: 6, width: 180, file: '07_wavve_pic.png' },
+          '山池': { top: 72, left: 68, frame: 13, width: 210, file: '08_shanchi_pic.png' },
+          'KUDDO': { top: 22, left: 25, frame: 10, width: 180, file: '09_kuddo_pic.png' },
+          '艾米丽': { top: 45, left: 15, frame: 16, width: 180, file: '10_emily_pic.png' }
+        }
+      },
+      western: {
+        name: '西餐',
+        map: this.assets.atlas.western.map,
+        map_bw: this.assets.atlas.western.mapBw,
+        items: {
+          'alla': { top: 70, left: 15, frame: 15, width: 220, file: 'alla.png' },
+          'baker': { top: 48, left: 80, frame: 11, width: 170 },
+          'commune': { top: 48, left: 52, frame: 7, width: 180 },
+          'doors': { top: 12, left: 65, frame: 10, width: 180 },
+          'madloba': { top: 28, left: 80, frame: 6, width: 180 },
+          'minimal': { top: 28, left: 10, frame: 1, width: 190 },
+          'the_flames': { top: 35, left: 65, frame: 9, width: 180 },
+          '壁虎餐厅': { top: 52, left: 65, frame: 18, width: 160 },
+          '宝可多': { top: 58, left: 12, frame: 12, width: 180 },
+          'Gecko Pub': { top: 70, left: 75, frame: 15, width: 220, file: '壁虎餐厅.png' }
         }
       }
-    }
+    };
   },
   computed: {
     currentCatData() {
@@ -179,6 +195,12 @@ export default {
     loadCheckInData() {
       const data = uni.getStorageSync('shekou_checkin');
       this.checkInData = data || { history: [], coffee: [], western: [] };
+    },
+    getFrameImage(frameNum) {
+      return this.assets.CLOUD_BASE_URL + 'atlas/frames/frame_' + frameNum + '.png';
+    },
+    getItemImage(category, filename) {
+      return this.assets.CLOUD_BASE_URL + 'atlas/' + category + '/' + filename;
     },
     isCheckedIn(name) {
       return (this.checkInData[this.activeCat] || []).includes(name);

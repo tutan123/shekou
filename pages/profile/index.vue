@@ -4,19 +4,19 @@
     <view class="header-section">
       <!-- 底层：地图背景图 -->
       <view class="map-bg-layer">
-        <image class="map-img" src="/static/images/login_bg.png" mode="aspectFill"></image>
+        <image class="map-img" :src="assets.images.loginBg" mode="aspectFill"></image>
         <view class="overlay"></view>
       </view>
       
       <!-- 中层：波浪装饰（上层图概念） -->
       <view class="wave-layer">
-        <image class="wave-img" src="/static/images/wave.png" mode="aspectFill"></image>
+        <image class="wave-img" :src="assets.images.wave" mode="aspectFill"></image>
       </view>
       
       <!-- 顶层：用户信息 -->
       <view class="user-content">
         <view class="avatar-box animate-scale-in">
-          <image class="avatar" src="/static/images/avatar_placeholder.png" mode="aspectFill"></image>
+          <image class="avatar" :src="assets.images.avatarPlaceholder" mode="aspectFill"></image>
         </view>
         <text class="nickname">Hello, DWQ</text>
       </view>
@@ -42,29 +42,29 @@
         <view class="info-item" @click="goTo('/pages/profile/details')">
           <text class="label">头像</text>
           <view class="val">
-            <image class="sm-avatar" src="/static/images/avatar_placeholder.png" mode="aspectFill"></image>
-            <text class="arrow">></text>
+            <image class="sm-avatar" :src="assets.images.avatarPlaceholder" mode="aspectFill"></image>
+            <text class="arrow">〉</text>
           </view>
         </view>
         <view class="info-item">
           <text class="label">名字</text>
           <view class="val">
             <text class="txt">DWQ</text>
-            <text class="arrow">></text>
+            <text class="arrow">〉</text>
           </view>
         </view>
         <view class="info-item">
           <text class="label">电话</text>
           <view class="val">
             <text class="txt">19106572834</text>
-            <text class="arrow">></text>
+            <text class="arrow">〉</text>
           </view>
         </view>
         <view class="info-item">
           <text class="label">地址</text>
           <view class="val">
             <text class="txt">广东省深圳市深圳大学</text>
-            <text class="arrow">></text>
+            <text class="arrow">〉</text>
           </view>
         </view>
       </view>
@@ -83,10 +83,16 @@
 
 <script>
 import CustomTabBar from '@/components/CustomTabBar.vue'
+import { ASSETS_CONFIG } from '@/utils/assets-config.js'
 
 export default {
   components: {
     CustomTabBar
+  },
+  data() {
+    return {
+      assets: ASSETS_CONFIG
+    }
   },
   onShow() {
     uni.hideTabBar();

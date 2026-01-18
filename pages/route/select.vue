@@ -2,7 +2,14 @@
   <view class="container">
     <!-- 顶部导航栏 -->
     <view class="header animate-slide-down">
-      <image class="header-bg-img" src="/static/route/header_bg_map.png" mode="aspectFill"></image>
+      <SafeImage class="header-bg-img" :src="assets.route.headerBgMap" mode="aspectFill">
+        <template #error>
+          <view class="error-placeholder">
+            <text>🎯 路线选择背景加载失败</text>
+            <text>{{ assets.route.headerBgMap }}</text>
+          </view>
+        </template>
+      </SafeImage>
       <view class="back-btn" @click="goBack">←</view>
       <view class="title-container">
         <text class="title">路线选择</text>
@@ -35,7 +42,7 @@
             
             <!-- 右侧探索按钮区域 -->
             <view class="explore-side">
-              <image class="dots-img" src="/static/route/path_dots_1.png" mode="aspectFit"></image>
+              <image class="dots-img" :src="assets.route.pathDots1" mode="aspectFit"></image>
               <view class="circle-btn">
                 <text class="btn-text">去探索</text>
               </view>
@@ -49,48 +56,55 @@
 </template>
 
 <script>
+import SafeImage from '@/components/SafeImage.vue'
+import { ASSETS_CONFIG } from '@/utils/assets-config.js'
+
 export default {
+  components: {
+    SafeImage
+  },
   data() {
     return {
+      assets: ASSETS_CONFIG,
       routes: [
         {
           id: 'laojie',
           name: '老街路线',
           desc: '蛇口老街漫步路线，从时代标签启程，经工业旧址、文创地标与人文景点，尽览开拓过往与诗意山海。',
-          bg: '/static/route/card_bg_1.png',
-          artImg: '/static/route/oldstreet_ship.png',
+          bg: assets.route.cardBg1,
+          artImg: assets.route.oldstreetShip,
           path: '/pages/route/detail?id=laojie'
         },
         {
           id: 'dengshan',
           name: '登山路线',
-          desc: '从 “时间就是金钱，效率就是生命” 标语牌起步，沿微波山步道缓步登高，山海相伴，终点抵达招商局历史博物馆，一路见证蛇口的改革精神与百年变迁。',
-          bg: '/static/route/card_bg_2.png',
-          artImg: '/static/route/mountain_art.png',
+          desc: '从 "时间就是金钱，效率就是生命" 标语牌起步，沿微波山步道缓步登高，山海相伴，终点抵达招商局历史博物馆，一路见证蛇口的改革精神与百年变迁。',
+          bg: assets.route.cardBg2,
+          artImg: assets.route.mountainArt,
           path: '/pages/route/detail?id=dengshan'
         },
         {
           id: 'binhai',
           name: '滨海路线',
           desc: '从海上世界明华轮启航，经女娲补天雕像与文化艺术中心的袁庚展，再到南海酒店与碧涛苑别墅群，一路海风相伴，尽览蛇口的开放气质与滨海风情。',
-          bg: '/static/route/card_bg_3.png',
-          artImg: '/static/route/sea_art.png',
+          bg: assets.route.cardBg3,
+          artImg: assets.route.seaArt,
           path: '/pages/route/detail?id=binhai'
         },
         {
           id: 'xican',
           name: '西餐路线',
           desc: '蛇口西餐线条国际风味：宝可多、汉堡、意式披萨、格鲁吉亚菜，多种选择，家家有惊喜。',
-          bg: '/static/route/card_bg_2.png',
-          artImg: '/static/route/western_pizza.png',
+          bg: assets.route.cardBg2,
+          artImg: assets.route.westernPizza,
           path: '/pages/route/detail?id=xican'
         },
         {
           id: 'kafei',
           name: '咖啡路线',
           desc: '蛇口咖啡漫游路线，是一场与香气的温柔邂逅。串联十家特色咖啡馆，慢品间，便读懂了蛇口。',
-          bg: '/static/route/card_bg_3.png',
-          artImg: '/static/route/coffee_tools.png',
+          bg: assets.route.cardBg3,
+          artImg: assets.route.coffeeTools,
           path: '/pages/route/detail?id=kafei'
         }
       ]

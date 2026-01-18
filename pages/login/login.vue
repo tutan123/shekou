@@ -2,7 +2,7 @@
   <view class="container">
     <!-- 底图层：全屏地图背景 -->
     <view class="bg-layer">
-      <image class="bg-map" src="/static/login/bg.png" mode="aspectFill"></image>
+      <image class="bg-map" :src="assets.login.bg" mode="aspectFill"></image>
     </view>
     
     <!-- 登录卡片 -->
@@ -14,8 +14,8 @@
         </view>
 
         <view class="welcome-section">
-          <image class="welcome-img" src="/static/login/welcome.png" mode="aspectFit"></image>
-          <image class="title-img" src="/static/login/title.png" mode="aspectFit"></image>
+          <image class="welcome-img" :src="assets.login.welcome" mode="aspectFit"></image>
+          <image class="title-img" :src="assets.login.title" mode="aspectFit"></image>
         </view>
         
         <view class="login-form">
@@ -31,7 +31,7 @@
               <input class="input" :password="!showPassword" type="text" placeholder="" />
               <image 
                 class="eye-icon" 
-                src="/static/login/eye.png" 
+                :src="assets.login.eye" 
                 mode="aspectFit"
                 @click="showPassword = !showPassword"
               ></image>
@@ -40,22 +40,22 @@
           </view>
           
           <view class="form-links">
-            <image class="link-img" src="/static/login/forgot_pwd.png" mode="aspectFit" @click="handleForgot"></image>
-            <image class="link-img" src="/static/login/phone_login.png" mode="aspectFit" @click="handlePhoneLogin"></image>
+            <image class="link-img" :src="assets.login.forgotPwd" mode="aspectFit" @click="handleForgot"></image>
+            <image class="link-img" :src="assets.login.phoneLogin" mode="aspectFit" @click="handlePhoneLogin"></image>
           </view>
         </view>
         
         <view class="action-row">
           <view class="login-btn-wrapper" @click="handleLogin">
-            <image class="login-btn-img" src="/static/login/btn_login.png" mode="aspectFit"></image>
+            <image class="login-btn-img" :src="assets.login.btnLogin" mode="aspectFit"></image>
           </view>
           <view class="arrow-btn" @click="handleLogin">
-            <image class="arrow-img" src="/static/login/arrow.png" mode="aspectFit"></image>
+            <image class="arrow-img" :src="assets.login.arrow" mode="aspectFit"></image>
           </view>
         </view>
 
         <view class="footer">
-          <image class="register-img" src="/static/login/register.png" mode="aspectFit" @click="goToRegister"></image>
+          <image class="register-img" :src="assets.login.register" mode="aspectFit" @click="goToRegister"></image>
         </view>
       </view>
     </view>
@@ -63,10 +63,13 @@
 </template>
 
 <script>
+import { ASSETS_CONFIG } from '@/utils/assets-config.js'
+
 export default {
   data() {
     return {
-      showPassword: false
+      showPassword: false,
+      assets: ASSETS_CONFIG
     }
   },
   methods: {

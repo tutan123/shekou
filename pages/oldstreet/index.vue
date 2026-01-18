@@ -10,7 +10,7 @@
     <view class="map-container">
       <image 
         class="base-map" 
-        src="/static/oldstreet/老街地图.png" 
+        :src="assets.oldstreet.map" 
         mode="widthFix"
       ></image>
       
@@ -67,84 +67,91 @@
 </template>
 
 <script>
+import { ASSETS_CONFIG } from '@/utils/assets-config.js'
+
 export default {
   data() {
     return {
+      assets: ASSETS_CONFIG,
       selectedPoi: null,
       // 景点列表 - 位置需要根据实际地图调整
-      poiList: [
-        {
-          name: '景点1',
-          iconSrc: '/static/oldstreet/五条路线修改版本_画板 1.png',
-          top: 20,
-          left: 30,
-          desc: '这是第一个景点的描述信息'
-        },
-        {
-          name: '景点2',
-          iconSrc: '/static/oldstreet/五条路线修改版本-02.png',
-          top: 35,
-          left: 50,
-          desc: '这是第二个景点的描述信息'
-        },
-        {
-          name: '景点3',
-          iconSrc: '/static/oldstreet/五条路线修改版本-03.png',
-          top: 50,
-          left: 25,
-          desc: '这是第三个景点的描述信息'
-        },
-        {
-          name: '景点4',
-          iconSrc: '/static/oldstreet/五条路线修改版本-04.png',
-          top: 60,
-          left: 45,
-          desc: '这是第四个景点的描述信息'
-        },
-        {
-          name: '景点5',
-          iconSrc: '/static/oldstreet/五条路线修改版本-05.png',
-          top: 40,
-          left: 70,
-          desc: '这是第五个景点的描述信息'
-        },
-        {
-          name: '景点6',
-          iconSrc: '/static/oldstreet/五条路线修改版本-06.png',
-          top: 55,
-          left: 15,
-          desc: '这是第六个景点的描述信息'
-        },
-        {
-          name: '景点7',
-          iconSrc: '/static/oldstreet/五条路线修改版本-07.png',
-          top: 70,
-          left: 35,
-          desc: '这是第七个景点的描述信息'
-        },
-        {
-          name: '景点8',
-          iconSrc: '/static/oldstreet/五条路线修改版本-08.png',
-          top: 25,
-          left: 65,
-          desc: '这是第八个景点的描述信息'
-        },
-        {
-          name: '景点9',
-          iconSrc: '/static/oldstreet/五条路线修改版本-10.png',
-          top: 45,
-          left: 80,
-          desc: '这是第九个景点的描述信息'
-        },
-        {
-          name: '景点10',
-          iconSrc: '/static/oldstreet/五条路线修改版本-11.png',
-          top: 65,
-          left: 60,
-          desc: '这是第十个景点的描述信息'
-        }
-      ]
+      poiList: []
     }
+  },
+  created() {
+    // 在组件创建时初始化 poiList
+    this.poiList = [
+      {
+        name: '景点1',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本_画板 1.png',
+        top: 20,
+        left: 30,
+        desc: '这是第一个景点的描述信息'
+      },
+      {
+        name: '景点2',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-02.png',
+        top: 35,
+        left: 50,
+        desc: '这是第二个景点的描述信息'
+      },
+      {
+        name: '景点3',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-03.png',
+        top: 50,
+        left: 25,
+        desc: '这是第三个景点的描述信息'
+      },
+      {
+        name: '景点4',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-04.png',
+        top: 60,
+        left: 45,
+        desc: '这是第四个景点的描述信息'
+      },
+      {
+        name: '景点5',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-05.png',
+        top: 40,
+        left: 70,
+        desc: '这是第五个景点的描述信息'
+      },
+      {
+        name: '景点6',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-06.png',
+        top: 55,
+        left: 15,
+        desc: '这是第六个景点的描述信息'
+      },
+      {
+        name: '景点7',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-07.png',
+        top: 70,
+        left: 35,
+        desc: '这是第七个景点的描述信息'
+      },
+      {
+        name: '景点8',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-08.png',
+        top: 25,
+        left: 65,
+        desc: '这是第八个景点的描述信息'
+      },
+      {
+        name: '景点9',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-10.png',
+        top: 45,
+        left: 80,
+        desc: '这是第九个景点的描述信息'
+      },
+      {
+        name: '景点10',
+        iconSrc: this.assets.CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-11.png',
+        top: 65,
+        left: 60,
+        desc: '这是第十个景点的描述信息'
+      }
+    ];
   },
   onLoad() {
     console.log('老街线路页面加载完成');

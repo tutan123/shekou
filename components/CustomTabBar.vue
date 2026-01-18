@@ -19,6 +19,7 @@
 </template>
 
 <script>
+
 export default {
   props: {
     activePath: {
@@ -64,57 +65,72 @@ export default {
 <style lang="scss" scoped>
 .tab-bar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 120rpx;
-  background: #FFFFFF;
+  bottom: 30rpx; // 距离底部一点距离，产生悬浮感
+  left: 30rpx;
+  right: 30rpx;
+  height: 110rpx; // 稍微加高一点点，适配文字
+  background: rgba(255, 255, 255, 0.95);
   display: flex;
   justify-content: space-around;
-  align-items: center;
-  padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+  align-items: flex-end; // 改为底部对齐
+  border-radius: 60rpx;
+  box-shadow: 0 15rpx 40rpx rgba(0, 0, 0, 0.1);
   z-index: 9999;
+  padding-bottom: 10rpx;
+  backdrop-filter: blur(10px);
 }
 
 .tab-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   flex: 1;
-  height: 100%;
+  height: 140rpx; // 增加点击区域高度
+  position: relative;
 }
 
 .icon-wrapper {
-  width: 50rpx;
-  height: 50rpx;
+  width: 80rpx;
+  height: 80rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 8rpx 20rpx rgba(0,0,0,0.08);
+  position: absolute;
+  top: -30rpx; // 让它凸出来
   
   &.active {
-    width: 70rpx; // 选中时变大
-    height: 70rpx;
-    transform: translateY(-10rpx); // 稍微往上提一点，增加动态感
+    width: 100rpx;
+    height: 100rpx;
+    top: -50rpx; // 激活时凸得更多
+    background: #FFCC00; // 激活时背景变色
+    box-shadow: 0 12rpx 30rpx rgba(255, 204, 0, 0.3);
+    
+    .tab-icon {
+      filter: none; // 确保彩色图标不被滤镜影响
+    }
   }
   
   .tab-icon {
-    width: 100%;
-    height: 100%;
+    width: 50rpx; // 固定图标大小
+    height: 50rpx;
   }
 }
 
 .tab-text {
   font-size: 20rpx;
   color: #999999;
-  margin-top: 6rpx;
+  margin-bottom: 15rpx;
   transition: all 0.3s;
+  font-weight: 600;
   
   &.active {
     color: #333333;
-    font-weight: bold;
+    font-weight: 800;
     transform: scale(1.1);
   }
 }

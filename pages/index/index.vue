@@ -15,13 +15,24 @@
         @scale="onScale"
         @change="onChange"
       >
-        <image 
-          class="big-map-img" 
-          src="/static/index/big_map.png" 
-          mode="aspectFill"
-          :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }"
-          @load="onMapLoad"
-        ></image>
+        <!-- 渐进式地图层 -->
+        <view class="map-wrapper" :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }">
+          <!-- 1. 本地模糊占位图 (始终存在，直到高清图完全覆盖) -->
+          <image 
+            class="map-layer low-res" 
+            src="/static/images/blank_map.png" 
+            mode="aspectFill"
+          ></image>
+          
+          <!-- 2. 云端高清图 -->
+          <image 
+            class="map-layer high-res" 
+            :class="{ loaded: mapLoaded }"
+            :src="assets.index.bigMap" 
+            mode="aspectFill"
+            @load="onMapLoad"
+          ></image>
+        </view>
         
         <!-- 景点标记点：相对于地图定位 -->
         <view 
@@ -31,7 +42,7 @@
           :style="{ top: poi.top + '%', left: poi.left + '%' }" 
           @click="showPoiDetail(poi.name)"
         >
-          <image class="marker-icon" src="/static/images/marker_placeholder.png" mode="aspectFit"></image>
+          <image class="marker-icon" :src="assets.images.markerPlaceholder" mode="aspectFit"></image>
         </view>
       </movable-view>
     </movable-area>
@@ -50,16 +61,16 @@
       <view class="side-controls">
         <view class="control-item animate-fade-in" @click="resetMap">
           <view class="icon-wrapper">
-            <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
-            <image class="inner-icon" src="/static/index/location_btn.png" mode="aspectFit"></image>
+            <image class="ellipse-bg" :src="assets.index.ellipse" mode="aspectFit"></image>
+            <image class="inner-icon" :src="assets.index.locationBtn" mode="aspectFit"></image>
           </view>
           <text class="control-label">重置视角</text>
         </view>
         
         <view class="control-item animate-fade-in" @click="goToRouteSelect">
           <view class="icon-wrapper">
-            <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
-            <image class="inner-icon" src="/static/index/route_btn.png" mode="aspectFit"></image>
+            <image class="ellipse-bg" :src="assets.index.ellipse" mode="aspectFit"></image>
+            <image class="inner-icon" :src="assets.index.routeBtn" mode="aspectFit"></image>
           </view>
           <text class="control-label">路线选择</text>
         </view>
@@ -67,13 +78,13 @@
         <!-- 新增：缩放控制按钮 -->
         <view class="control-item animate-fade-in" @click="zoomIn">
           <view class="icon-wrapper small">
-            <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
+            <image class="ellipse-bg" :src="assets.index.ellipse" mode="aspectFit"></image>
             <text class="zoom-text">+</text>
           </view>
         </view>
         <view class="control-item animate-fade-in" @click="zoomOut">
           <view class="icon-wrapper small">
-            <image class="ellipse-bg" src="/static/index/ellipse.png" mode="aspectFit"></image>
+            <image class="ellipse-bg" :src="assets.index.ellipse" mode="aspectFit"></image>
             <text class="zoom-text">-</text>
           </view>
         </view>
@@ -101,13 +112,17 @@
 
 <script>
 import CustomTabBar from '@/components/CustomTabBar.vue'
+import SafeImage from '@/components/SafeImage.vue'
+import { ASSETS_CONFIG, checkCloudFile } from '@/utils/assets-config.js'
 
 export default {
   components: {
-    CustomTabBar
+    CustomTabBar,
+    SafeImage
   },
   data() {
     return {
+      assets: ASSETS_CONFIG,
       selectedPoi: null,
       scaleValue: 1.5, // 仅用于控制组件缩放指令
       curScale: 1.5,   // 记录当前实际缩放比例
@@ -118,6 +133,7 @@ export default {
       mapHeight: 0,
       windowWidth: 0,
       windowHeight: 0,
+      mapLoaded: false, // 地图是否已加载完成
       markers: [
         { name: '海上世界', top: 45, left: 52 },
         { name: '老街入口', top: 30, left: 40 }
@@ -125,6 +141,14 @@ export default {
     }
   },
   onLoad() {
+    console.log('🏠 首页加载 - ASSETS_CONFIG:', this.assets);
+    console.log('🏠 首页加载 - 大地图路径:', this.assets?.index?.bigMap);
+
+    // 验证关键文件路径
+    checkCloudFile('index/big_map.png', '首页大地图');
+    checkCloudFile('images/marker_placeholder.png', '标记点图标');
+    checkCloudFile('images/avatar_placeholder.png', '头像占位图');
+
     const sys = uni.getSystemInfoSync();
     this.windowWidth = sys.windowWidth;
     this.windowHeight = sys.windowHeight;
@@ -134,6 +158,8 @@ export default {
   },
   methods: {
     onMapLoad(e) {
+      console.log('✅ 高清大地图加载完成');
+      this.mapLoaded = true;
       const { width, height } = e.detail;
       this.mapWidth = this.windowWidth * 3; 
       this.mapHeight = (this.mapWidth * height) / width;
@@ -192,7 +218,7 @@ export default {
       this.selectedPoi = {
         name: name,
         desc: '探索蛇口艺术地图，点击查看详情...',
-        img: '/static/images/avatar_placeholder.png'
+        img: this.assets.images.avatarPlaceholder
       }
     },
     goToDetail() {
@@ -217,8 +243,33 @@ export default {
 }
 
 .map-view {
-  .big-map-img {
-    display: block;
+  .map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    
+    .map-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transition: opacity 0.8s ease-in-out;
+      
+      &.low-res {
+        z-index: 1;
+        filter: blur(10px); // 增加模糊感，掩盖低清细节
+      }
+      
+      &.high-res {
+        z-index: 2;
+        opacity: 0;
+        
+        &.loaded {
+          opacity: 1;
+        }
+      }
+    }
   }
   
   .marker {
