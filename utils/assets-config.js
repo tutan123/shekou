@@ -127,95 +127,95 @@ const ASSETS_CONFIG = {
 
   // 图鉴相关
   atlas: {
-    atlasIcon: CLOUD_BASE_URL + 'atlas/atlas_icon.png',
+    atlasIcon: CLOUD_BASE_URL + 'tabbar/atlas.png',
 
-    // 历史图鉴
+    // 历史图鉴 (使用老街线路的文件)
     history: {
-      map: CLOUD_BASE_URL + 'atlas/history/历史地图.png',
-      mapBw: CLOUD_BASE_URL + 'atlas/history/历史地图黑白.png',
+      map: CLOUD_BASE_URL + 'route/laojie/full_map.png',
+      mapBw: CLOUD_BASE_URL + 'route/laojie/blank_map.png',
       items: {
-        '01': CLOUD_BASE_URL + 'atlas/history/01_biaoyupai_pic.png',
-        '02': CLOUD_BASE_URL + 'atlas/history/02_nanbo_pic.png',
-        '03': CLOUD_BASE_URL + 'atlas/history/03_yucai_pic.png',
-        '04': CLOUD_BASE_URL + 'atlas/history/04_gg_pic.png',
-        '05': CLOUD_BASE_URL + 'atlas/history/05_shuiwanyuanhua_pic.png',
-        '06': CLOUD_BASE_URL + 'atlas/history/06_shuiwancunshiguan_pic.png',
-        '07': CLOUD_BASE_URL + 'atlas/history/07_shuiwanpaolou_pic.png',
-        '08': CLOUD_BASE_URL + 'atlas/history/08_lizhigongyuan_pic.png',
-        '09': CLOUD_BASE_URL + 'atlas/history/09_nanhaiyiku_detail.png',
-        '10': CLOUD_BASE_URL + 'atlas/history/10_haibinhuayuan_pic.png',
-        '11': CLOUD_BASE_URL + 'atlas/history/11_minghualun_pic.png',
-        '12': CLOUD_BASE_URL + 'atlas/history/12_nvwaxiang_pic.png',
-        '13': CLOUD_BASE_URL + 'atlas/history/13_haishangshijie_pic.png',
-        '15': CLOUD_BASE_URL + 'atlas/history/15_nanhaijiudian_pic.png',
-        '16': CLOUD_BASE_URL + 'atlas/history/16_bitaoyuan_pic.png',
-        '17': CLOUD_BASE_URL + 'atlas/history/17_shijianbiaoyu_pic.png',
-        '18': CLOUD_BASE_URL + 'atlas/history/18_weiboshan_pic.png',
-        '19': CLOUD_BASE_URL + 'atlas/history/19_zhaoshangjulishi_pic.png'
+        '01': CLOUD_BASE_URL + 'route/laojie/01_biaoyupai_pic.png',
+        '02': CLOUD_BASE_URL + 'route/laojie/02_nanbo_pic.png',
+        '03': CLOUD_BASE_URL + 'route/laojie/03_yucai_pic.png',
+        '04': CLOUD_BASE_URL + 'route/laojie/04_gg_pic.png',
+        '05': CLOUD_BASE_URL + 'route/laojie/05_shuiwanyuanhua_pic.png',
+        '06': CLOUD_BASE_URL + 'route/laojie/06_shuiwancunshiguan_pic.png',
+        '07': CLOUD_BASE_URL + 'route/laojie/07_shuiwanpaolou_pic.png',
+        '08': CLOUD_BASE_URL + 'route/laojie/08_lizhigongyuan_pic.png',
+        '09': CLOUD_BASE_URL + 'route/laojie/09_nanhaiyiku_piv.png', // 注意文件名有变化
+        '10': CLOUD_BASE_URL + 'route/laojie/10_haibinhuayuan_pic.png',
+        '11': CLOUD_BASE_URL + 'route/binhai/11_minghualun_pic.png',
+        '12': CLOUD_BASE_URL + 'route/binhai/12_nvwaxiang_pic.png',
+        '13': CLOUD_BASE_URL + 'route/binhai/13_haishangshijie_pic.png',
+        '15': CLOUD_BASE_URL + 'route/binhai/15_nanhaijiudian_pic.png',
+        '16': CLOUD_BASE_URL + 'route/binhai/16_bitaoyuan_pic.png',
+        '17': CLOUD_BASE_URL + 'route/dengshan/17_shijianbiaoyu_pic.png',
+        '18': CLOUD_BASE_URL + 'route/dengshan/18_weiboshan_pic.png',
+        '19': CLOUD_BASE_URL + 'route/dengshan/19_zhaoshangjulishi_pic.png'
       }
     },
 
     // 咖啡图鉴
     coffee: {
-      map: CLOUD_BASE_URL + 'atlas/coffee/咖啡地图.png',
-      mapBw: CLOUD_BASE_URL + 'atlas/coffee/咖啡地图黑白.png',
+      map: CLOUD_BASE_URL + 'route/coffee/full_map.png',
+      mapBw: CLOUD_BASE_URL + 'route/coffee/blank_map.png',
       items: {
-        '01': CLOUD_BASE_URL + 'atlas/coffee/01_zhengzaishenghuo_pic.png',
-        '02': CLOUD_BASE_URL + 'atlas/coffee/02_greenwood_pic.png',
-        '03': CLOUD_BASE_URL + 'atlas/coffee/03_jojo_pic.png',
-        '04': CLOUD_BASE_URL + 'atlas/coffee/04_emily_pic.png',
-        '05': CLOUD_BASE_URL + 'atlas/coffee/05_kuddo_pic.png',
-        '06': CLOUD_BASE_URL + 'atlas/coffee/06_newpark_pic.png',
-        '07': CLOUD_BASE_URL + 'atlas/coffee/07_wavve_pic.png',
-        '08': CLOUD_BASE_URL + 'atlas/coffee/08_365_detail.png',
-        '09': CLOUD_BASE_URL + 'atlas/coffee/09_shanchi_pic.png'
+        '01': CLOUD_BASE_URL + 'route/coffee/01_zhengzaishenghuo_pic.png',
+        '02': CLOUD_BASE_URL + 'route/coffee/02_greenwood_pic.png',
+        '03': CLOUD_BASE_URL + 'route/coffee/03_jojo_pic.png',
+        '04': CLOUD_BASE_URL + 'route/coffee/04_chali_pic.png', // 注意文件名变化
+        '05': CLOUD_BASE_URL + 'route/coffee/05_newparkcoffee_pic.png', // 注意文件名变化
+        '06': CLOUD_BASE_URL + 'route/coffee/06_newpark_pic.png',
+        '07': CLOUD_BASE_URL + 'route/coffee/07_wavve_pic.png',
+        '08': CLOUD_BASE_URL + 'route/coffee/08_shanchi_pic.png', // 注意文件名变化
+        '09': CLOUD_BASE_URL + 'route/coffee/09_kuddo_pic.png' // 注意文件名变化
       }
     },
 
     // 西餐图鉴
     western: {
-      map: CLOUD_BASE_URL + 'atlas/western/map.png',
-      mapBw: CLOUD_BASE_URL + 'atlas/western/map_bw.png',
+      map: CLOUD_BASE_URL + 'route/western/full_map.png',
+      mapBw: CLOUD_BASE_URL + 'route/western/blank_map.png',
       items: {
-        'alla': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/alla.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/alla_frame.png'
+        'alla': {
+          icon: CLOUD_BASE_URL + 'route/western/03_alla_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/03_alla_title.png'
         },
-        'baker': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/baker.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/baker_frame.png'
+        'baker': {
+          icon: CLOUD_BASE_URL + 'route/western/08_baker_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/08_baker_title.png'
         },
-        'commune': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/commune.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/commune_frame.png'
+        'commune': {
+          icon: CLOUD_BASE_URL + 'route/western/06_commune_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/06_commune_title.png'
         },
-        'doors': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/doors.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/doors_frame.png'
+        'doors': {
+          icon: CLOUD_BASE_URL + 'route/western/04_doors_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/04_doors_title.png'
         },
-        'madloba': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/madloba.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/madloba_frame.png'
+        'madloba': {
+          icon: CLOUD_BASE_URL + 'route/western/05_madloba_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/05_madloba_title.png'
         },
-        'minimal': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/minimal.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/minimal_frame.png'
+        'minimal': {
+          icon: CLOUD_BASE_URL + 'route/western/02_minimal_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/02_minimal_title.png'
         },
-        'the_flames': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/the_flames.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/the_flames_frame.png'
+        'the_flames': {
+          icon: CLOUD_BASE_URL + 'route/western/09_flames_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/09_flames_title.png'
         },
-        '壁虎餐厅': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/壁虎餐厅.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/壁虎餐厅_frame.png'
+        '壁虎餐厅': {
+          icon: CLOUD_BASE_URL + 'route/western/07_gecko_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/07_gecko_title.png'
         },
-        '宝可多': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/宝可多.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/宝可多_frame.png'
+        '宝可多': {
+          icon: CLOUD_BASE_URL + 'route/western/01_birol_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/01_birol_title.png'
         },
-        'Gecko Pub': { 
-          icon: CLOUD_BASE_URL + 'atlas/western/Gecko Pub.png',
-          frame: CLOUD_BASE_URL + 'atlas/western/壁虎餐厅_frame.png' // 图3中 Gecko Pub 似乎也用壁虎餐厅的框
+        'Gecko Pub': {
+          icon: CLOUD_BASE_URL + 'route/western/07_gecko_pic.png',
+          frame: CLOUD_BASE_URL + 'route/western/07_gecko_title.png' // 使用壁虎餐厅的资源
         }
       }
     }
