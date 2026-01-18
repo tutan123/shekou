@@ -276,12 +276,17 @@ export default {
       height: auto;
       display: block;
       margin-bottom: 4rpx;
+      // 添加发光边，帮助从底图中脱离出来
+      filter: drop-shadow(0 0 12rpx rgba(255, 255, 255, 0.8)) 
+              drop-shadow(0 0 4rpx rgba(255, 255, 255, 0.5));
     }
     
     .poi-title-img {
       width: 80%; // 标题通常比图标窄一点
       height: auto;
       display: block;
+      // 标题也添加轻微发光
+      filter: drop-shadow(0 0 8rpx rgba(255, 255, 255, 0.8));
     }
 
     &:active {
