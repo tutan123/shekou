@@ -97,7 +97,7 @@ export default {
   data() {
     return {
       assets: ASSETS_CONFIG,
-      activeCat: 'western', 
+      activeCat: 'history', 
       showingModal: false,
       selectedItem: '',
       scrollTop: 0,
@@ -130,18 +130,66 @@ export default {
   },
   methods: {
     initCategories() {
-      const W_BASE = this.assets.CLOUD_BASE_URL + 'atlas/western/';
-      const C_BASE = this.assets.CLOUD_BASE_URL + 'atlas/coffee/';
-      const H_BASE = this.assets.CLOUD_BASE_URL + 'atlas/history/';
+      // 切换回云存储路径，确保从云端获取资源
+      const CLOUD_BASE = this.assets.CLOUD_BASE_URL;
+      const H_BASE = CLOUD_BASE + 'atlas/history/';
+      const B_BASE = CLOUD_BASE + 'atlas/binhai/';
+      const D_BASE = CLOUD_BASE + 'atlas/dengshan/';
+      const W_BASE = CLOUD_BASE + 'atlas/western/';
+      const C_BASE = CLOUD_BASE + 'atlas/coffee/';
       
       this.categories = {
         history: {
           name: '历史',
-          map: this.assets.route.laojie.map,
-          map_bw: this.assets.route.laojie.map,
+          map: H_BASE + 'map.png',
+          map_bw: H_BASE + 'map_bw.png',
           items: {
-            '空谈误国': { top: 200, left: 500, width: 200, frame: H_BASE+'01_biaoyupai_pic_frame.png', icon: H_BASE+'01_biaoyupai_pic.png' },
-            '南玻集团': { top: 150, left: 450, width: 180, frame: H_BASE+'02_nanbo_pic_frame.png', icon: H_BASE+'02_nanbo_pic.png' }
+            '空谈误国': { top: 180, left: 40, width: 220, frame: H_BASE+'01_biaoyupai_frame.png', icon: H_BASE+'01_biaoyupai_pic.png' },
+            '育才一小': { top: 170, left: 460, width: 230, frame: H_BASE+'03_yucai_frame.png', icon: H_BASE+'03_yucai_pic.png' },
+            '南玻集团': { top: 310, left: 80, width: 240, frame: H_BASE+'02_nanbo_frame.png', icon: H_BASE+'02_nanbo_pic.png' },
+            'G&G': { top: 340, left: 470, width: 230, frame: H_BASE+'04_gg_frame.png', icon: H_BASE+'04_gg_pic.png' },
+            '水湾源华': { top: 580, left: 40, width: 220, frame: H_BASE+'05_shuiwanyuanhua_frame.png', icon: H_BASE+'05_shuiwanyuanhua_pic.png' },
+            '水湾村史馆': { top: 560, left: 480, width: 220, frame: H_BASE+'06_shuiwancunshiguan_frame.png', icon: H_BASE+'06_shuiwancunshiguan_pic.png' },
+            '水湾炮楼': { top: 780, left: 100, width: 230, frame: H_BASE+'07_shuiwanpaolou_frame.png', icon: H_BASE+'07_shuiwanpaolou_pic.png' },
+            '荔枝公园': { top: 820, left: 450, width: 240, frame: H_BASE+'08_lizhigongyuan_frame.png', icon: H_BASE+'08_lizhigongyuan_pic.png' }
+          }
+        },
+        binhai: {
+          name: '滨海',
+          map: B_BASE + 'map.png',
+          map_bw: B_BASE + 'map_bw.png',
+          items: {
+            '明华轮': { top: 220, left: 250, width: 260, frame: B_BASE+'11_minghualun_frame.png', icon: B_BASE+'11_minghualun_pic.png' },
+            '碧涛苑': { top: 450, left: 40, width: 230, frame: B_BASE+'16_bitaoyuan_frame.png', icon: B_BASE+'16_bitaoyuan_pic.png' },
+            '女娲像': { top: 480, left: 460, width: 230, frame: B_BASE+'12_nvwaxiang_frame.png', icon: B_BASE+'12_nvwaxiang_pic.png' },
+            '海上世界': { top: 750, left: 50, width: 230, frame: B_BASE+'13_haishangshijie_frame.png', icon: B_BASE+'13_haishangshijie_pic.png' },
+            '南海酒店': { top: 780, left: 440, width: 250, frame: B_BASE+'15_nanhaijiudian_frame.png', icon: B_BASE+'15_nanhaijiudian_pic.png' }
+          }
+        },
+        dengshan: {
+          name: '登山',
+          map: D_BASE + 'map.png',
+          map_bw: D_BASE + 'map_bw.png',
+          items: {
+            '时间标语': { top: 250, left: 235, width: 280, frame: D_BASE+'17_shijianbiaoyu_frame.png', icon: D_BASE+'17_shijianbiaoyu_pic.png' },
+            '微波山': { top: 580, left: 225, width: 300, frame: D_BASE+'18_weiboshan_frame.png', icon: D_BASE+'18_weiboshan_pic.png' },
+            '招商局历史博物馆': { top: 910, left: 240, width: 320, frame: D_BASE+'19_zhaoshangjulishi_frame.png', icon: D_BASE+'19_zhaoshangjulishi_pic.png' }
+          }
+        },
+        western: {
+          name: '西餐',
+          map: this.assets.atlas.western.map,
+          map_bw: this.assets.atlas.western.mapBw,
+          items: {
+            'doors': { top: 250, left: 420, width: 210, frame: W_BASE+'doors_frame.png', icon: W_BASE+'doors.png' },
+            'minimal': { top: 420, left: 120, width: 230, frame: W_BASE+'minimal_frame.png', icon: W_BASE+'minimal.png' },
+            'madloba': { top: 400, left: 580, width: 220, frame: W_BASE+'madloba_frame.png', icon: W_BASE+'madloba.png' },
+            'the_flames': { top: 580, left: 380, width: 230, frame: W_BASE+'the_flames_frame.png', icon: W_BASE+'the_flames.png' },
+            '宝可多': { top: 720, left: 350, width: 220, frame: W_BASE+'宝可多_frame.png', icon: W_BASE+'宝可多.png' },
+            'commune': { top: 850, left: 100, width: 230, frame: W_BASE+'commune_frame.png', icon: W_BASE+'commune.png' },
+            'baker': { top: 820, left: 600, width: 220, frame: W_BASE+'baker_frame.png', icon: W_BASE+'baker.png' },
+            'Gecko Pub': { top: 1050, left: 520, width: 250, frame: W_BASE+'壁虎餐厅_frame.png', icon: W_BASE+'Gecko Pub.png' },
+            'alla': { top: 1080, left: 120, width: 250, frame: W_BASE+'alla_frame.png', icon: W_BASE+'alla.png' }
           }
         },
         coffee: {
@@ -160,28 +208,6 @@ export default {
             'Wavve': { top: 1080, left: 250, width: 190, frame: C_BASE+'07_wavve_frame.png', icon: C_BASE+'07_wavve_pic.png' },
             'NewPark C': { top: 1120, left: 550, width: 210, frame: C_BASE+'05_newparkcoffee_frame.png', icon: C_BASE+'05_newparkcoffee_pic.png' }
           }
-        },
-        western: {
-          name: '西餐',
-          map: this.assets.atlas.western.map,
-          map_bw: this.assets.atlas.western.mapBw,
-          items: {
-            // Row 1
-            'doors': { top: 250, left: 420, width: 210, frame: W_BASE+'doors_frame.png', icon: W_BASE+'doors.png' },
-            // Row 2
-            'minimal': { top: 420, left: 120, width: 230, frame: W_BASE+'minimal_frame.png', icon: W_BASE+'minimal.png' },
-            'madloba': { top: 400, left: 580, width: 220, frame: W_BASE+'madloba_frame.png', icon: W_BASE+'madloba.png' },
-            // Row 3 (Center)
-            'the_flames': { top: 580, left: 380, width: 230, frame: W_BASE+'the_flames_frame.png', icon: W_BASE+'the_flames.png' },
-            // Row 4 (The Red Box Position)
-            '宝可多': { top: 720, left: 350, width: 220, frame: W_BASE+'宝可多_frame.png', icon: W_BASE+'宝可多.png' },
-            // Row 5
-            'commune': { top: 850, left: 100, width: 230, frame: W_BASE+'commune_frame.png', icon: W_BASE+'commune.png' },
-            'baker': { top: 820, left: 600, width: 220, frame: W_BASE+'baker_frame.png', icon: W_BASE+'baker.png' },
-            // Row 6 (Bottom)
-            'Gecko Pub': { top: 1050, left: 520, width: 250, frame: W_BASE+'壁虎餐厅_frame.png', icon: W_BASE+'Gecko Pub.png' },
-            'alla': { top: 1080, left: 120, width: 250, frame: W_BASE+'alla_frame.png', icon: W_BASE+'alla.png' }
-          }
         }
       };
     },
@@ -191,7 +217,7 @@ export default {
     },
     loadCheckInData() {
       const data = uni.getStorageSync('shekou_checkin');
-      this.checkInData = data || { history: [], coffee: [], western: [] };
+      this.checkInData = data || { history: [], binhai: [], dengshan: [], coffee: [], western: [] };
     },
     isCheckedIn(name) {
       return (this.checkInData[this.activeCat] || []).includes(name);
