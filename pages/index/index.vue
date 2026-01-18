@@ -44,13 +44,29 @@
         >
           <image class="marker-icon" :src="assets.images.markerPlaceholder" mode="aspectFit"></image>
         </view>
+
+        <!-- 用户当前位置标记点 -->
+        <view 
+          class="user-marker" 
+          v-if="userLocation"
+          :style="{ top: userLocation.top + '%', left: userLocation.left + '%' }"
+        >
+          <view class="user-dot-pulse"></view>
+          <view class="user-dot"></view>
+        </view>
       </movable-view>
     </movable-area>
     
     <!-- 顶层：浮动控制按钮 -->
     <view class="floating-ui">
+      <!-- 区域外提示横栏 -->
+      <view class="out-of-bounds-banner" v-if="outOfBounds">
+        <text class="warning-icon">📍</text>
+        <text class="warning-text">当前不在蛇口手绘地图区域内</text>
+      </view>
+
       <!-- 搜索栏 -->
-      <view class="header-search animate-slide-down">
+      <view class="header-search animate-slide-down" :class="{ 'with-banner': outOfBounds }">
         <view class="search-box">
           <text class="search-icon">🔍</text>
           <input 
@@ -150,6 +166,7 @@ import SafeImage from '@/components/SafeImage.vue'
 import { ASSETS_CONFIG, checkCloudFile } from '@/utils/assets-config.js'
 import { POI_DATA } from '@/utils/poi-data.js'
 import { CATEGORIES } from '@/utils/poi-config.js'
+import { projectCoordinates } from '@/utils/map-projection.js'
 
 export default {
   components: {
@@ -176,7 +193,10 @@ export default {
       searchResults: [],
       markers: POI_DATA,
       detailVisible: false,
-      currentDetailImg: ''
+      currentDetailImg: '',
+      userLocation: null, // { top, left } 百分比坐标
+      outOfBounds: false,
+      locationWatcher: null
     }
   },
   onLoad() {
@@ -191,6 +211,13 @@ export default {
     const sys = uni.getSystemInfoSync();
     this.windowWidth = sys.windowWidth;
     this.windowHeight = sys.windowHeight;
+
+    this.startLocationTracking();
+  },
+  onUnload() {
+    if (this.locationWatcher) {
+      uni.stopLocationUpdate();
+    }
   },
   onShow() {
     uni.hideTabBar();
@@ -244,6 +271,16 @@ export default {
     resetMap() {
       if (!this.mapLoaded || !this.initialState) return;
       
+      // 如果用户在区域内，重置时优先居中用户
+      if (this.userLocation && !this.outOfBounds) {
+        this.focusPoi({ 
+          left: this.userLocation.left, 
+          top: this.userLocation.top, 
+          name: '当前位置' 
+        });
+        return;
+      }
+
       const { scale, x, y } = this.initialState;
       console.log('🔄 重置视角到初始状态:', { scale, x, y });
       
@@ -433,7 +470,58 @@ export default {
     },
     hideDetail() {
       this.detailVisible = false;
-    }
+    },
+    startLocationTracking() {
+      console.log('📍 开启位置追踪...');
+      // 1. 先尝试获取一次位置
+      uni.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          this.updateUserPosition(res.longitude, res.latitude);
+        },
+        fail: (err) => {
+          console.error('❌ 获取位置失败:', err);
+          // 提示用户开启权限
+          if (err.errMsg.includes('auth deny')) {
+            uni.showModal({
+              title: '提示',
+              content: '请开启位置权限，以便在手绘地图上定位你的位置',
+              success: (res) => {
+                if (res.confirm) uni.openSetting();
+              }
+            });
+          }
+        }
+      });
+
+      // 2. 开启持续监听 (仅在小程序环境有效)
+      // #ifdef MP-WEIXIN
+      uni.startLocationUpdate({
+        success: () => {
+          uni.onLocationChange((res) => {
+            this.updateUserPosition(res.longitude, res.latitude);
+          });
+        },
+        fail: (err) => {
+          console.warn('⚠️ 持续定位开启失败:', err);
+        }
+      });
+      // #endif
+    },
+    updateUserPosition(lng, lat) {
+      const result = projectCoordinates(lng, lat);
+      this.userLocation = {
+        top: result.top,
+        left: result.left
+      };
+      this.outOfBounds = !result.inBounds;
+      
+      if (this.outOfBounds) {
+        console.log('🚫 用户当前在蛇口区域外');
+      } else {
+        console.log('📍 用户位置更新:', this.userLocation);
+      }
+    },
   }
 }
 </script>
@@ -509,6 +597,12 @@ export default {
   .header-search {
     padding: 20rpx 40rpx;
     pointer-events: auto;
+    transition: transform 0.3s ease;
+    
+    &.with-banner {
+      transform: translateY(60rpx);
+    }
+
     .search-box {
       background: #fff; 
       height: 96rpx; 
@@ -627,6 +721,74 @@ export default {
       }
     }
   }
+}
+
+.out-of-bounds-banner {
+  position: absolute;
+  top: calc(var(--status-bar-height) + 10rpx);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 75, 75, 0.95);
+  padding: 12rpx 30rpx;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  z-index: 100;
+  box-shadow: 0 8rpx 20rpx rgba(0,0,0,0.15);
+  border: 4rpx solid #fff;
+  pointer-events: auto;
+  animation: slideInDown 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  
+  .warning-icon { font-size: 28rpx; }
+  .warning-text { 
+    font-size: 24rpx; 
+    color: #fff; 
+    font-weight: 900;
+    white-space: nowrap;
+  }
+}
+
+@keyframes slideInDown {
+  from { transform: translate(-50%, -100%); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.user-marker {
+  position: absolute;
+  width: 40rpx;
+  height: 40rpx;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  
+  .user-dot {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24rpx;
+    height: 24rpx;
+    background: #007AFF;
+    border: 4rpx solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 4rpx 10rpx rgba(0,122,255,0.4);
+  }
+  
+  .user-dot-pulse {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60rpx;
+    height: 60rpx;
+    background: rgba(0,122,255,0.3);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
 }
 
 .poi-preview-card {

@@ -37,10 +37,17 @@
     },
     "libVersion": "latest",
     "usingComponents": true,
-    "permission": {},
+    "permission": {
+      "scope.userLocation": {
+        "desc": "你的位置信息将用于在手绘地图上定位你的当前位置"
+      }
+    },
     "requiredPrivateInfos": [
       "chooseLocation",
-      "getLocation"
+      "getLocation",
+      "onLocationChange",
+      "startLocationUpdate",
+      "stopLocationUpdate"
     ]
   },
   "mp-alipay": {
