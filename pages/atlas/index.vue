@@ -129,6 +129,7 @@ export default {
   },
   onShow() {
     uni.hideTabBar();
+    this.loadCheckInData(); // 每次显示页面时重新加载打卡数据
   },
   methods: {
     initCategories() {
@@ -189,7 +190,7 @@ export default {
             'minimal': { top: 420, left: 120, width: 230, frame: W_BASE+'minimal_frame.png', icon: W_BASE+'minimal.png' },
             'madloba': { top: 400, left: 580, width: 220, frame: W_BASE+'madloba_frame.png', icon: W_BASE+'madloba.png' },
             'the_flames': { top: 580, left: 380, width: 230, frame: W_BASE+'the_flames_frame.png', icon: W_BASE+'the_flames.png' },
-            '宝可多': { top: 800, left: 350, width: 220, frame: W_BASE+'宝可多_frame.png', icon: W_BASE+'宝可多.png' },
+            '宝可多': { top: 900, left: 350, width: 220, frame: W_BASE+'宝可多_frame.png', icon: W_BASE+'宝可多.png' },
             'commune': { top: 850, left: 100, width: 230, frame: W_BASE+'commune_frame.png', icon: W_BASE+'commune.png' },
             'baker': { top: 820, left: 600, width: 220, frame: W_BASE+'baker_frame.png', icon: W_BASE+'baker.png' },
             'Gecko Pub': { top: 1050, left: 520, width: 250, frame: W_BASE+'壁虎餐厅_frame.png', icon: W_BASE+'Gecko Pub.png' },

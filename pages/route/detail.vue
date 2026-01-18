@@ -67,9 +67,9 @@
     <view v-if="detailVisible" class="detail-popup-mask" @click="hideDetail">
       <view class="detail-popup-content" @click.stop>
         <image class="detail-image" :src="currentPoi.detailImg" mode="widthFix"></image>
-        <view class="check-in-btn-container" @click="handleCheckIn">
+        <view class="check-in-btn-container" @click="handleCheckIn" :class="{ 'checked-in': isCheckedIn(currentPoi.name) }">
           <image class="btn-bg" :src="assets.route.checkinBtn" mode="scaleToFill"></image>
-          <text class="btn-text">去打卡</text>
+          <text class="btn-text">{{ isCheckedIn(currentPoi.name) ? '已打卡' : '去打卡' }}</text>
         </view>
       </view>
     </view>
@@ -88,7 +88,7 @@ export default {
       mapSrc: '',
       detailVisible: false,
       currentPoi: {},
-      debugMode: false, // 设置为 true 可视化点击热区
+      debugMode: true, // 设置为 true 可视化点击热区
       // 交互地图相关状态
       scaleValue: 1.0,
       curScale: 1.0,
@@ -100,6 +100,7 @@ export default {
       windowWidth: 0,
       windowHeight: 0,
       mapLoaded: false,
+      checkInData: { history: [], binhai: [], dengshan: [], coffee: [], western: [] },
       // 老街路线
       laojiePois: [],
       // 登山路线
@@ -136,10 +137,10 @@ export default {
     this.laojiePois = [
       { id: '01', name: '空谈误国', top: 30, left: 70, hotWidth: 180, hotHeight: 120, ...getPaths('laojie', '01_biaoyupai') },
       { id: '02', name: '南玻集团', top: 34, left: 58, hotWidth: 150, hotHeight: 120, ...getPaths('laojie', '02_nanbo') },
-      { id: '03', name: '育才中学', top: 38, left: 72, hotWidth: 150, hotHeight: 120, ...getPaths('laojie', '03_yucai') },
-      { id: '04', name: '创意社区', top: 44, left: 40, hotWidth: 200, hotHeight: 150, ...getPaths('laojie', '04_gg') },
-      { id: '05', name: '源华公司', top: 47, left: 65, hotWidth: 180, hotHeight: 100, ...getPaths('laojie', '05_shuiwanyuanhua') },
-      { id: '06', name: '村史馆', top: 52, left: 63, hotWidth: 150, hotHeight: 100, ...getPaths('laojie', '06_shuiwancunshiguan') },
+      { id: '03', name: '育才一小', top: 38, left: 72, hotWidth: 150, hotHeight: 120, ...getPaths('laojie', '03_yucai') },
+      { id: '04', name: 'G&G', top: 44, left: 40, hotWidth: 200, hotHeight: 150, ...getPaths('laojie', '04_gg') },
+      { id: '05', name: '水湾源华', top: 47, left: 65, hotWidth: 180, hotHeight: 100, ...getPaths('laojie', '05_shuiwanyuanhua') },
+      { id: '06', name: '水湾村史馆', top: 52, left: 63, hotWidth: 150, hotHeight: 100, ...getPaths('laojie', '06_shuiwancunshiguan') },
       { id: '07', name: '水湾炮楼', top: 59, left: 46, hotWidth: 120, hotHeight: 150, ...getPaths('laojie', '07_shuiwanpaolou') },
       { id: '08', name: '荔枝公园', top: 60, left: 22, hotWidth: 200, hotHeight: 180, ...getPaths('laojie', '08_lizhigongyuan') },
       { id: '09', name: '南海意库', top: 70, left: 45, hotWidth: 200, hotHeight: 150, ...getPaths('laojie', '09_nanhaiyiku') },
@@ -149,13 +150,13 @@ export default {
     this.dengshanPois = [
       { id: '17', name: '时间标语', top: 28, left: 40, hotWidth: 220, hotHeight: 180, ...getPaths('dengshan', '17_shijianbiaoyu') },
       { id: '18', name: '微波山', top: 43, left: 52, hotWidth: 180, hotHeight: 150, ...getPaths('dengshan', '18_weiboshan') },
-      { id: '19', name: '博物馆', top: 58, left: 55, hotWidth: 220, hotHeight: 180, ...getPaths('dengshan', '19_zhaoshangjulishi') }
+      { id: '19', name: '招商局历史博物馆', top: 58, left: 55, hotWidth: 220, hotHeight: 180, ...getPaths('dengshan', '19_zhaoshangjulishi') }
     ];
 
     this.binhaiPois = [
       { id: '11', name: '明华轮', top: 48, left: 40, hotWidth: 220, hotHeight: 150, ...getPaths('binhai', '11_minghualun') },
       { id: '12', name: '女娲像', top: 48, left: 65, hotWidth: 150, hotHeight: 180, ...getPaths('binhai', '12_nvwaxiang') },
-      { id: '13', name: '艺术中心', top: 60, left: 60, hotWidth: 250, hotHeight: 150, ...getPaths('binhai', '13_haishangshijie') },
+      { id: '13', name: '海上世界', top: 60, left: 60, hotWidth: 250, hotHeight: 150, ...getPaths('binhai', '13_haishangshijie') },
       { id: '14', name: '原耕', top: 62, left: 75, hotWidth: 120, hotHeight: 100, ...getPaths('binhai', '14_yuangeng', { hasPic: false, hasTitle: true, hasDetail: false }) },
       { id: '15', name: '南海酒店', top: 65, left: 38, hotWidth: 200, hotHeight: 150, ...getPaths('binhai', '15_nanhaijiudian') },
       { id: '16', name: '碧涛苑', top: 55, left: 25, hotWidth: 180, hotHeight: 120, ...getPaths('binhai', '16_bitaoyuan') }
@@ -164,24 +165,24 @@ export default {
     this.westernPois = [
       { id: '00', name: 'Benji Bakery', top: 42, left: 15, hotWidth: 150, hotHeight: 120, ...getPaths('western', '00_benji') },
       { id: '01', name: 'Birol Bistronomy', top: 80, left: 55, hotWidth: 180, hotHeight: 120, ...getPaths('western', '01_birol') },
-      { id: '02', name: 'Minimal', top: 72, left: 35, hotWidth: 150, hotHeight: 100, ...getPaths('western', '02_minimal') },
-      { id: '03', name: 'Alla Torre', top: 55, left: 25, hotWidth: 150, hotHeight: 120, ...getPaths('western', '03_alla') },
-      { id: '04', name: 'Doors', top: 52, left: 75, hotWidth: 150, hotHeight: 120, ...getPaths('western', '04_doors') },
-      { id: '05', name: 'Madloba', top: 65, left: 22, hotWidth: 150, hotHeight: 120, ...getPaths('western', '05_madloba') },
-      { id: '06', name: 'Commune', top: 72, left: 80, hotWidth: 150, hotHeight: 120, ...getPaths('western', '06_commune') },
+      { id: '02', name: 'minimal', top: 72, left: 35, hotWidth: 150, hotHeight: 100, ...getPaths('western', '02_minimal') },
+      { id: '03', name: 'alla', top: 55, left: 25, hotWidth: 150, hotHeight: 120, ...getPaths('western', '03_alla') },
+      { id: '04', name: 'doors', top: 52, left: 75, hotWidth: 150, hotHeight: 120, ...getPaths('western', '04_doors') },
+      { id: '05', name: 'madloba', top: 65, left: 22, hotWidth: 150, hotHeight: 120, ...getPaths('western', '05_madloba') },
+      { id: '06', name: 'commune', top: 72, left: 80, hotWidth: 150, hotHeight: 120, ...getPaths('western', '06_commune') },
       { id: '07', name: 'Gecko Pub', top: 52, left: 45, hotWidth: 150, hotHeight: 120, ...getPaths('western', '07_gecko') },
-      { id: '08', name: 'Baker & Spice', top: 60, left: 78, hotWidth: 150, hotHeight: 120, ...getPaths('western', '08_baker') },
-      { id: '09', name: 'The Flames', top: 68, left: 60, hotWidth: 150, hotHeight: 120, ...getPaths('western', '09_flames') }
+      { id: '08', name: 'baker', top: 60, left: 78, hotWidth: 150, hotHeight: 120, ...getPaths('western', '08_baker') },
+      { id: '09', name: 'the_flames', top: 68, left: 60, hotWidth: 150, hotHeight: 120, ...getPaths('western', '09_flames') }
     ];
 
     this.kafeiPois = [
       { id: '01', name: '正在生活', top: 25, left: 28, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '01_zhengzaishenghuo', hasNoTitle) },
-      { id: '02', name: '绿木咖啡', top: 38, left: 62, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '02_greenwood', hasNoTitle) },
-      { id: '03', name: 'JOJO咖啡', top: 48, left: 42, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '03_jojo', hasNoTitle) },
-      { id: '04', name: '茶力', top: 58, left: 28, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '04_chali', hasNoTitle) },
-      { id: '05', name: '新公园咖啡', top: 68, left: 52, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '05_newparkcoffee', hasNoTitle) },
-      { id: '06', name: '新公园', top: 78, left: 32, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '06_newpark', hasNoTitle) },
-      { id: '07', name: 'wavve', top: 85, left: 62, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '07_wavve', hasNoTitle) },
+      { id: '02', name: '绿木', top: 38, left: 62, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '02_greenwood', hasNoTitle) },
+      { id: '03', name: 'JOJO', top: 48, left: 42, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '03_jojo', hasNoTitle) },
+      { id: '04', name: '查理', top: 58, left: 28, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '04_chali', hasNoTitle) },
+      { id: '05', name: 'NewPark C', top: 68, left: 52, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '05_newparkcoffee', hasNoTitle) },
+      { id: '06', name: 'NewPark', top: 78, left: 32, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '06_newpark', hasNoTitle) },
+      { id: '07', name: 'Wavve', top: 85, left: 62, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '07_wavve', hasNoTitle) },
       { id: '08', name: '山池', top: 18, left: 48, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '08_shanchi', hasNoTitle) },
       { id: '09', name: 'KUDDO', top: 28, left: 72, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '09_kuddo', hasNoTitle) },
       { id: '10', name: '艾米丽', top: 35, left: 15, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '10_emily', hasNoTitle) }
@@ -197,10 +198,21 @@ export default {
         'kafei': this.kafeiPois
       };
       return poiMap[this.routeId] || [];
+    },
+    atlasCat() {
+      const routeToAtlasMap = {
+        'laojie': 'history',
+        'dengshan': 'dengshan',
+        'binhai': 'binhai',
+        'xican': 'western',
+        'kafei': 'coffee'
+      };
+      return routeToAtlasMap[this.routeId] || 'history';
     }
   },
   onLoad(options) {
     this.routeId = options.id || 'laojie';
+    this.loadCheckInData();
     
     // 获取屏幕尺寸
     const sys = uni.getSystemInfoSync();
@@ -219,7 +231,20 @@ export default {
     
     this.setMapSrc();
   },
+  onShow() {
+    this.loadCheckInData();
+  },
   methods: {
+    loadCheckInData() {
+      const data = uni.getStorageSync('shekou_checkin');
+      if (data) {
+        this.checkInData = data;
+      }
+    },
+    isCheckedIn(name) {
+      const cat = this.atlasCat;
+      return (this.checkInData[cat] || []).includes(name);
+    },
     onMapLoad(e) {
       console.log('✅ 路线地图加载完成');
       this.mapLoaded = true;
@@ -337,12 +362,33 @@ export default {
       this.detailVisible = false;
     },
     handleCheckIn() {
+      const poiName = this.currentPoi.name;
+      const cat = this.atlasCat;
+      
+      if (this.isCheckedIn(poiName)) {
+        uni.showToast({
+          title: '已经打过卡啦',
+          icon: 'none'
+        });
+        return;
+      }
+
+      if (!this.checkInData[cat]) {
+        this.checkInData[cat] = [];
+      }
+      
+      this.checkInData[cat].push(poiName);
+      uni.setStorageSync('shekou_checkin', this.checkInData);
+      
       uni.showToast({
         title: '打卡成功！',
         icon: 'success'
       });
-      // 这里可以添加实际的打卡逻辑，比如增加积分或改变状态
-      this.detailVisible = false;
+      
+      // 延迟关闭，让用户看到成功提示
+      setTimeout(() => {
+        this.detailVisible = false;
+      }, 1500);
     }
   }
 }
@@ -591,6 +637,11 @@ export default {
       font-size: 32rpx;
       font-weight: bold;
       letter-spacing: 4rpx;
+    }
+    
+    &.checked-in {
+      opacity: 0.8;
+      filter: grayscale(0.5);
     }
     
     &:active {
