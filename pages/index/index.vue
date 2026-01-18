@@ -11,6 +11,9 @@
         :scale-value="scaleValue"
         :x="mapX" 
         :y="mapY"
+        :inertia="true"
+        :damping="40"
+        :friction="1"
         :style="{ width: (mapWidth + mapPadding * 2) + 'px', height: (mapHeight + mapPadding * 2) + 'px' }"
         @scale="onScale"
         @change="onChange"
@@ -191,6 +194,8 @@ export default {
       minScale: 1,
       mapX: 0,
       mapY: 0,
+      lastX: 0, // 记录当前实际 X 坐标，不直接同步到 mapX
+      lastY: 0, // 记录当前实际 Y 坐标，不直接同步到 mapY
       mapWidth: 0,
       mapHeight: 0,
       windowWidth: 0,
@@ -306,6 +311,8 @@ export default {
         
         // 2. 强制触发位置更新
         // 在缩放指令下发后，延迟设置坐标，防止被组件内部的缩放焦点偏移覆盖
+        this.lastX = x;
+        this.lastY = y;
         this.mapX = x + 0.01;
         this.mapY = y + 0.01;
         
@@ -318,32 +325,53 @@ export default {
     onScale(e) {
       // 只记录当前比例，绝不在此处修改 scaleValue
       this.curScale = e.detail.scale;
+      // 缩放时位置也会变，记录下来
+      this.lastX = e.detail.x;
+      this.lastY = e.detail.y;
     },
     onChange(e) {
-      // 仅当用户手动操作（非程序设置）时记录坐标
-      // source 为 "" 表示程序设置，不应更新 mapX/mapY，否则会干扰重置逻辑
-      if (e.detail.source !== '') {
+      // 始终记录当前位置
+      this.lastX = e.detail.x;
+      this.lastY = e.detail.y;
+      
+      // 只有当 source 为空（程序触发）时，才同步 mapX/mapY
+      // 如果 source 不为空（touch, friction 等），则不要修改 mapX/mapY
+      // 这样可以彻底解决单指拖拽时的“闪烁/抖动”问题
+      if (e.detail.source === '') {
         this.mapX = e.detail.x;
         this.mapY = e.detail.y;
       }
     },
     onMouseWheel(e) {
+      // 增加防抖或简单的频率控制，防止滚轮过快
+      if (this._wheelTimer) return;
+      this._wheelTimer = true;
+      setTimeout(() => this._wheelTimer = false, 50);
+
       const delta = e.deltaY < 0 ? 0.2 : -0.2;
       this.updateScale(this.curScale + delta);
     },
     zoomIn() {
-      this.updateScale(this.curScale + 0.4);
+      this.updateScale(this.curScale + 0.5);
     },
     zoomOut() {
-      this.updateScale(this.curScale - 0.4);
+      this.updateScale(this.curScale - 0.5);
     },
     updateScale(newScale) {
       let targetScale = Math.min(Math.max(newScale, this.minScale), 4);
-      // 强制触发更新：先变再变回
-      this.scaleValue = targetScale + 0.0001;
+      
+      // 重要：在改变 scaleValue 前，先同步当前坐标到 mapX/mapY
+      // 否则 movable-view 会跳回到上一次绑定的坐标点
+      this.mapX = this.lastX;
+      this.mapY = this.lastY;
+      
       this.$nextTick(() => {
-        this.scaleValue = targetScale;
-        this.curScale = targetScale;
+        // 强制触发更新：先变再变回
+        this.scaleValue = targetScale + 0.0001;
+        this.$nextTick(() => {
+          this.scaleValue = targetScale;
+          this.curScale = targetScale;
+        });
       });
     },
     goToRouteSelect() {
@@ -400,6 +428,8 @@ export default {
       
       this.$nextTick(() => {
         // 使用微小偏移强制位置更新
+        this.lastX = targetX;
+        this.lastY = targetY;
         this.mapX = targetX + 0.01;
         this.mapY = targetY + 0.01;
         
@@ -452,6 +482,9 @@ export default {
 
           if (!isNaN(relativeLeft) && !isNaN(relativeTop)) {
             console.log(`🗺️ 修正后的地图点击坐标: left=${relativeLeft}%, top=${relativeTop}%`);
+            
+            // 计算点击位置对应的经纬度 (逆向投影)
+            this.printLngLatFromRelative(relativeLeft, relativeTop);
           } else {
             console.log('🗺️ 坐标计算失败:', { x, y, data });
           }
@@ -534,6 +567,29 @@ export default {
       } else {
         console.log('📍 用户位置更新:', this.userLocation);
       }
+    },
+    // 逆向投影：根据地图百分比坐标估算经纬度 (用于调试)
+    printLngLatFromRelative(left, top) {
+      // 获取参考点
+      const points = [
+        { lng: 113.918, lat: 22.505, left: 40, top: 6 },   // 花园城
+        { lng: 113.912, lat: 22.486, left: 27, top: 55 },  // 明华轮
+        { lng: 113.923, lat: 22.493, left: 44, top: 24 }   // 四海公园
+      ];
+      
+      // 简单的线性插值估算 (仅用于开发调试参考)
+      // 计算经度：基于花园城(40%)和明华轮(27%)的横向跨度
+      const dLeft = 40 - 27;
+      const dLng = 113.918 - 113.912;
+      const estimatedLng = 113.912 + (left - 27) * (dLng / dLeft);
+      
+      // 计算纬度：基于花园城(6%)和明华轮(55%)的纵向跨度
+      const dTop = 55 - 6;
+      const dLat = 22.486 - 22.505;
+      const estimatedLat = 22.505 + (top - 6) * (dLat / dTop);
+      
+      console.log(`🌐 估算经纬度 (GCJ-02): 经度=${estimatedLng.toFixed(6)}, 纬度=${estimatedLat.toFixed(6)}`);
+      console.log(`💡 你可以在传感器面板输入这两个值来模拟点击位置`);
     },
   }
 }

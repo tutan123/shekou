@@ -123,10 +123,10 @@ export const POI_DATA = [
     desc: '曾经的亚洲最大面粉厂，现已变身为文化创意空间。', 
     img: ASSETS_CONFIG.images.markerPlaceholder 
   },
-  { 
-    name: 'K11购物中心', top: 84, left: 19, 
-    desc: '融合艺术、人文、自然的高端购物艺术中心。', 
-    img: ASSETS_CONFIG.images.markerPlaceholder 
+  {
+    name: 'K11购物中心', top: 87, left: 25,
+    desc: '融合艺术、人文、自然的高端购物艺术中心。',
+    img: ASSETS_CONFIG.images.markerPlaceholder
   },
   {
     name: '招商局历史博物馆', top: 69, left: 23,

@@ -17,6 +17,9 @@
         :scale-value="scaleValue"
         :x="mapX" 
         :y="mapY"
+        :inertia="true"
+        :damping="40"
+        :friction="1"
         :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }"
         @scale="onScale"
         @change="onChange"
@@ -155,6 +158,8 @@ export default {
       minScale: 0.5,
       mapX: 0,
       mapY: 0,
+      lastX: 0, // 记录当前实际 X 坐标，不直接同步到 mapX
+      lastY: 0, // 记录当前实际 Y 坐标，不直接同步到 mapY
       mapWidth: 0,
       mapHeight: 0,
       windowWidth: 0,
@@ -296,6 +301,8 @@ export default {
         this.scaleValue = targetScale;
         this.curScale = targetScale;
         
+        this.lastX = targetX;
+        this.lastY = targetY;
         this.mapX = targetX + 0.01;
         this.mapY = targetY + 0.01;
         
@@ -306,29 +313,45 @@ export default {
       });
     },
     onMouseWheel(e) {
+      if (this._wheelTimer) return;
+      this._wheelTimer = true;
+      setTimeout(() => this._wheelTimer = false, 50);
+      
       const delta = e.deltaY < 0 ? 0.2 : -0.2;
       this.updateScale(this.curScale + delta);
     },
     zoomIn() {
-      this.updateScale(this.curScale + 0.4);
+      this.updateScale(this.curScale + 0.5);
     },
     zoomOut() {
-      this.updateScale(this.curScale - 0.4);
+      this.updateScale(this.curScale - 0.5);
     },
     updateScale(newScale) {
       let targetScale = Math.min(Math.max(newScale, this.minScale), 4);
-      // 强制触发更新
-      this.scaleValue = targetScale + 0.0001;
+      
+      // 同步当前位置到 mapX/mapY 避免跳动
+      this.mapX = this.lastX;
+      this.mapY = this.lastY;
+
       this.$nextTick(() => {
-        this.scaleValue = targetScale;
-        this.curScale = targetScale;
+        // 强制触发更新
+        this.scaleValue = targetScale + 0.0001;
+        this.$nextTick(() => {
+          this.scaleValue = targetScale;
+          this.curScale = targetScale;
+        });
       });
     },
     onScale(e) {
       this.curScale = e.detail.scale;
+      this.lastX = e.detail.x;
+      this.lastY = e.detail.y;
     },
     onChange(e) {
-      if (e.detail.source !== '') {
+      this.lastX = e.detail.x;
+      this.lastY = e.detail.y;
+      
+      if (e.detail.source === '') {
         this.mapX = e.detail.x;
         this.mapY = e.detail.y;
       }
