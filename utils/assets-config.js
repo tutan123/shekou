@@ -118,7 +118,7 @@ const ASSETS_CONFIG = {
       map: CLOUD_BASE_URL + 'route/binhai/滨海地图.png'
     },
     western: {
-      map: CLOUD_BASE_URL + 'route/western/西餐路线小地图.png'
+      map: CLOUD_BASE_URL + 'route/western/西餐地图.png'
     },
     coffee: {
       map: CLOUD_BASE_URL + 'route/coffee/咖啡地图.png'

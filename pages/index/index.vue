@@ -40,7 +40,7 @@
           v-for="(poi, index) in markers" 
           :key="index"
           :style="{ top: poi.top + '%', left: poi.left + '%' }" 
-          @click="showPoiDetail(poi.name)"
+          @click="showPoiDetail(poi)"
         >
           <image class="marker-icon" :src="assets.images.markerPlaceholder" mode="aspectFit"></image>
         </view>
@@ -127,8 +127,7 @@
           <text class="poi-desc">{{ selectedPoi.desc }}</text>
         </view>
         <view class="detail-btn">
-          <text>查看详情</text>
-          <text class="arrow">></text>
+          <text class="arrow"></text>
         </view>
       </view>
     </view>
@@ -141,6 +140,7 @@
 import CustomTabBar from '@/components/CustomTabBar.vue'
 import SafeImage from '@/components/SafeImage.vue'
 import { ASSETS_CONFIG, checkCloudFile } from '@/utils/assets-config.js'
+import { POI_DATA } from '@/utils/poi-data.js'
 
 export default {
   components: {
@@ -165,48 +165,7 @@ export default {
       searchKeyword: '',
       showResults: false,
       searchResults: [],
-      markers: [
-        { 
-          name: '海上世界', top: 45, left: 52, 
-          desc: '蛇口最著名的商业中心与地标，明华轮所在地。', 
-          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/13_haishangshijie_pic.png' 
-        },
-        { 
-          name: '老街入口', top: 30, left: 40, 
-          desc: '充满生活气息的蛇口旧街区，地道美食聚集地。', 
-          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'images/marker_placeholder.png' 
-        },
-        { 
-          name: '南海意库', top: 38, left: 55, 
-          desc: '由旧工厂改造的创意园区，充满艺术氛围。', 
-          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/09_nanhaiyiku_detail.png' 
-        },
-        { 
-          name: '女娲补天', top: 62, left: 48, 
-          desc: '滨海长廊上的标志性雕塑，蛇口的象征之一。', 
-          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/12_nvwaxiang_pic.png' 
-        },
-        { 
-          name: 'G&G创意社区', top: 25, left: 35, 
-          desc: '网红打卡地，集市、创意办公与艺术展览空间。', 
-          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/04_gg_pic.png' 
-        },
-        { 
-          name: '招商局历史博物馆', top: 55, left: 42, 
-          desc: '记录蛇口从荒滩到现代化城区的奋斗历程。', 
-          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/19_zhaoshangjulishi_pic.png' 
-        },
-        { 
-          name: '时间广场', top: 50, left: 45, 
-          desc: '矗立着“时间就是金钱，效率就是生命”标语牌。', 
-          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/01_biaoyupai_pic.png' 
-        },
-        { 
-          name: '明华轮', top: 43, left: 50, 
-          desc: '海上世界的灵魂，邓小平同志亲笔题名。', 
-          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/11_minghualun_pic.png' 
-        }
-      ]
+      markers: POI_DATA
     }
   },
   onLoad() {
@@ -224,6 +183,30 @@ export default {
   },
   onShow() {
     uni.hideTabBar();
+    
+    // 检查是否有搜索跳转过来的参数
+    const pages = getCurrentPages();
+    const curPage = pages[pages.length - 1];
+    if (curPage && curPage.options && curPage.options.poiName) {
+      const poiName = curPage.options.poiName;
+      console.log('🔍 页面显示 - 检测到搜索参数:', poiName);
+      
+      // 等待地图加载完成后聚焦
+      const timer = setInterval(() => {
+        if (this.mapLoaded) {
+          const poi = this.markers.find(m => m.name === poiName);
+          if (poi) {
+            this.focusPoi(poi);
+          }
+          clearInterval(timer);
+          // 清除参数避免重复触发
+          curPage.options.poiName = null;
+        }
+      }, 100);
+      
+      // 5秒后自动清理定时器防止死循环
+      setTimeout(() => clearInterval(timer), 5000);
+    }
   },
   methods: {
     onMapLoad(e) {
@@ -332,6 +315,7 @@ export default {
     selectSearchResult(poi) {
       this.searchKeyword = poi.name;
       this.showResults = false;
+      this.selectedPoi = poi;
       this.focusPoi(poi);
     },
     focusPoi(poi) {
@@ -364,17 +348,8 @@ export default {
         });
       });
     },
-    showPoiDetail(name) {
-      const poi = this.markers.find(m => m.name === name);
-      if (poi) {
-        this.selectedPoi = poi;
-      } else {
-        this.selectedPoi = {
-          name: name,
-          desc: '探索蛇口艺术地图，点击查看详情...',
-          img: this.assets.images.avatarPlaceholder
-        }
-      }
+    showPoiDetail(poi) {
+      this.selectedPoi = poi;
     },
     goToDetail() {
       uni.showToast({ title: '跳转详情页', icon: 'none' });
@@ -429,10 +404,14 @@ export default {
   
   .marker {
     position: absolute;
-    width: 60rpx;
-    height: 60rpx;
+    width: 46rpx;
+    height: 46rpx;
     z-index: 5;
     transform: translate(-50%, -50%);
+    transition: transform 0.2s ease;
+    &:active {
+      transform: translate(-50%, -50%) scale(1.2);
+    }
     .marker-icon { 
       width: 100%; height: 100%; 
       filter: drop-shadow(0 4rpx 8rpx rgba(0,0,0,0.3));
@@ -549,7 +528,22 @@ export default {
       .poi-name { font-size: 34rpx; font-weight: 800; color: #333; display: block; margin-bottom: 6rpx; }
       .poi-desc { font-size: 24rpx; color: #999; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     }
-    .detail-btn { display: flex; align-items: center; gap: 6rpx; font-size: 24rpx; color: #0088CC; font-weight: bold; .arrow { font-size: 28rpx; } }
+    .detail-btn { 
+      display: flex; 
+      align-items: center; 
+      gap: 6rpx; 
+      font-size: 24rpx; 
+      color: #0088CC; 
+      font-weight: bold; 
+      .arrow { 
+        width: 14rpx;
+        height: 14rpx;
+        border-top: 4rpx solid #0088CC;
+        border-right: 4rpx solid #0088CC;
+        transform: rotate(45deg);
+        margin-left: 10rpx;
+      } 
+    }
   }
 }
 

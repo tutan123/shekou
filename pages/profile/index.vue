@@ -23,7 +23,34 @@
       <view class="search-box">
         <view class="search-inner">
           <icon type="search" size="18" color="#999" class="search-icon" />
-          <input class="search-input" placeholder="查找地点" placeholder-class="search-placeholder" />
+          <input 
+            class="search-input" 
+            placeholder="查找地点" 
+            placeholder-class="search-placeholder" 
+            v-model="searchKeyword"
+            @input="onSearchInput"
+            @confirm="onSearchConfirm"
+          />
+          <text class="clear-icon" v-if="searchKeyword" @click="clearSearch">✕</text>
+        </view>
+        
+        <!-- 搜索结果列表 -->
+        <scroll-view class="search-results" v-if="showResults && searchResults.length > 0" scroll-y>
+          <view 
+            class="result-item" 
+            v-for="(item, index) in searchResults" 
+            :key="index"
+            @click="selectSearchResult(item)"
+          >
+            <image class="result-icon" :src="item.img || assets.images.markerPlaceholder" mode="aspectFill"></image>
+            <view class="result-info">
+              <text class="result-name">{{ item.name }}</text>
+              <text class="result-desc">{{ item.desc }}</text>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="search-results no-result" v-else-if="showResults && searchKeyword">
+          <text>未找到相关地点</text>
         </view>
       </view>
 
@@ -66,6 +93,7 @@
 <script>
 import CustomTabBar from '@/components/CustomTabBar.vue'
 import { ASSETS_CONFIG } from '@/utils/assets-config.js'
+import { POI_DATA } from '@/utils/poi-data.js'
 
 export default {
   components: {
@@ -73,15 +101,61 @@ export default {
   },
   data() {
     return {
-      assets: ASSETS_CONFIG
+      assets: ASSETS_CONFIG,
+      searchKeyword: '',
+      showResults: false,
+      searchResults: []
     }
   },
   onShow() {
     uni.hideTabBar();
+    this.clearSearch(); // 每次进入页面清除搜索状态
   },
   methods: {
     goTo(url) {
       uni.navigateTo({ url });
+    },
+    onSearchInput() {
+      if (!this.searchKeyword) {
+        this.searchResults = [];
+        this.showResults = false;
+        return;
+      }
+      this.searchResults = POI_DATA.filter(item => 
+        item.name.includes(this.searchKeyword) || 
+        (item.desc && item.desc.includes(this.searchKeyword))
+      );
+      this.showResults = true;
+    },
+    onSearchConfirm() {
+      if (this.searchResults.length > 0) {
+        this.selectSearchResult(this.searchResults[0]);
+      } else {
+        uni.showToast({ title: '未找到相关地点', icon: 'none' });
+      }
+    },
+    clearSearch() {
+      this.searchKeyword = '';
+      this.searchResults = [];
+      this.showResults = false;
+    },
+    selectSearchResult(poi) {
+      this.showResults = false;
+      this.searchKeyword = poi.name;
+      // 跳转回首页并携带地点名称参数
+      uni.switchTab({
+        url: '/pages/index/index',
+        success: () => {
+          // 由于 switchTab 不支持 query 参数，我们需要通过其它方式传递
+          // 这里通过 getCurrentPages 获取页面实例来设置参数
+          const pages = getCurrentPages();
+          const indexPage = pages.find(p => p.route === 'pages/index/index');
+          if (indexPage) {
+            indexPage.options = indexPage.options || {};
+            indexPage.options.poiName = poi.name;
+          }
+        }
+      });
     }
   }
 }
@@ -181,6 +255,69 @@ export default {
     
     .search-placeholder { 
       color: #999; 
+    }
+
+    .clear-icon {
+      padding: 10rpx;
+      font-size: 32rpx;
+      color: #ccc;
+    }
+  }
+
+  .search-results {
+    position: absolute;
+    top: 120rpx;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 30rpx;
+    max-height: 400rpx;
+    box-shadow: 0 15rpx 40rpx rgba(0,0,0,0.1);
+    z-index: 100;
+    overflow: hidden;
+    
+    &.no-result {
+      padding: 30rpx;
+      text-align: center;
+      font-size: 26rpx;
+      color: #999;
+    }
+
+    .result-item {
+      display: flex;
+      align-items: center;
+      padding: 24rpx 30rpx;
+      border-bottom: 1rpx solid #f5f5f5;
+      
+      &:last-child { border-bottom: none; }
+      &:active { background: #f9f9f9; }
+      
+      .result-icon {
+        width: 70rpx;
+        height: 70rpx;
+        border-radius: 12rpx;
+        margin-right: 24rpx;
+        background: #f0f0f0;
+      }
+      
+      .result-info {
+        flex: 1;
+        overflow: hidden;
+        .result-name {
+          font-size: 30rpx;
+          font-weight: bold;
+          color: #333;
+          display: block;
+        }
+        .result-desc {
+          font-size: 24rpx;
+          color: #999;
+          display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     }
   }
 }

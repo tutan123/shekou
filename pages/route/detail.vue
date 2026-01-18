@@ -7,19 +7,59 @@
     </view>
 
     <!-- 路线地图区域 -->
-    <view class="map-container" :class="{ 'full-map': true }">
-      <!-- 动态加载对应线路的地图 -->
-      <image class="route-map" :src="mapSrc" mode="widthFix"></image>
-      
-      <!-- 所有路线的交互区域和图标 -->
-      <view v-for="(item, index) in currentRoutePois" :key="index" 
-            class="poi-item-wrapper" 
-            :style="{ top: item.top + '%', left: item.left + '%', width: item.width + 'rpx' }"
-            @click="showDetail(item)">
-        <!-- POI图片 -->
-        <image v-if="item.pic" :src="item.pic" class="poi-pic" mode="widthFix"></image>
-        <!-- POI标题 -->
-        <image v-if="item.titleImg" :src="item.titleImg" class="poi-title-img" mode="widthFix"></image>
+    <movable-area class="map-container full-map" @mousewheel.stop.prevent="onMouseWheel">
+      <movable-view 
+        class="map-view" 
+        direction="all" 
+        :scale="true" 
+        :scale-min="minScale" 
+        :scale-max="4" 
+        :scale-value="scaleValue"
+        :x="mapX" 
+        :y="mapY"
+        :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }"
+        @scale="onScale"
+        @change="onChange"
+      >
+        <!-- 动态加载对应线路的地图 -->
+        <image class="route-map" :src="mapSrc" mode="aspectFill" @load="onMapLoad" :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }"></image>
+        
+        <!-- 所有路线的交互响应区域 (透明热区) -->
+        <view v-for="(item, index) in currentRoutePois" :key="index" 
+              class="poi-hotspot" 
+              :class="{ 'debug-visible': debugMode }"
+              :data-name="item.name"
+              :style="{ top: item.top + '%', left: item.left + '%', width: (item.hotWidth || 120) + 'rpx', height: (item.hotHeight || 120) + 'rpx' }"
+              @click="showDetail(item)">
+          <!-- 不再渲染图片和标题，直接作为点击热区 -->
+        </view>
+      </movable-view>
+    </movable-area>
+
+    <!-- 浮动控制按钮 -->
+    <view class="floating-ui">
+      <!-- 右侧功能键 -->
+      <view class="side-controls">
+        <view class="control-item" @click="focusRouteArea">
+          <view class="icon-wrapper">
+            <image class="ellipse-bg" :src="assets.index.ellipse" mode="aspectFit"></image>
+            <image class="inner-icon" :src="assets.index.locationBtn" mode="aspectFit"></image>
+          </view>
+          <text class="control-label">重置视角</text>
+        </view>
+        
+        <view class="control-item" @click="zoomIn">
+          <view class="icon-wrapper small">
+            <image class="ellipse-bg" :src="assets.index.ellipse" mode="aspectFit"></image>
+            <text class="zoom-text">+</text>
+          </view>
+        </view>
+        <view class="control-item" @click="zoomOut">
+          <view class="icon-wrapper small">
+            <image class="ellipse-bg" :src="assets.index.ellipse" mode="aspectFit"></image>
+            <text class="zoom-text">-</text>
+          </view>
+        </view>
       </view>
     </view>
 
@@ -48,6 +88,18 @@ export default {
       mapSrc: '',
       detailVisible: false,
       currentPoi: {},
+      debugMode: false, // 设置为 true 可视化点击热区
+      // 交互地图相关状态
+      scaleValue: 1.0,
+      curScale: 1.0,
+      minScale: 0.5,
+      mapX: 0,
+      mapY: 0,
+      mapWidth: 0,
+      mapHeight: 0,
+      windowWidth: 0,
+      windowHeight: 0,
+      mapLoaded: false,
       // 老街路线
       laojiePois: [],
       // 登山路线
@@ -82,57 +134,57 @@ export default {
     const hasNoTitle = { hasPic: true, hasTitle: false, hasDetail: true };
 
     this.laojiePois = [
-      { id: '01', name: '空谈误国', top: 22, left: 63, width: 220, ...getPaths('laojie', '01_biaoyupai') },
-      { id: '02', name: '南玻集团', top: 12, left: 58, width: 180, ...getPaths('laojie', '02_nanbo') },
-      { id: '03', name: '育才学校', top: 28, left: 62, width: 180, ...getPaths('laojie', '03_yucai') },
-      { id: '04', name: '创意社区', top: 26, left: 32, width: 180, ...getPaths('laojie', '04_gg') },
-      { id: '05', name: '源华公司', top: 41, left: 63, width: 160, ...getPaths('laojie', '05_shuiwanyuanhua') },
-      { id: '06', name: '村史馆', top: 32, left: 63, width: 160, ...getPaths('laojie', '06_shuiwancunshiguan') },
-      { id: '07', name: '水湾炮楼', top: 38, left: 53, width: 150, ...getPaths('laojie', '07_shuiwanpaolou') },
-      { id: '08', name: '荔枝公园', top: 40, left: 23, width: 190, ...getPaths('laojie', '08_lizhigongyuan') },
-      { id: '09', name: '南海意库', top: 52, left: 42, width: 200, ...getPaths('laojie', '09_nanhaiyiku') },
-      { id: '10', name: '海滨花园', top: 50, left: 61, width: 180, ...getPaths('laojie', '10_haibinhuayuan') }
+      { id: '01', name: '空谈误国', top: 30, left: 70, hotWidth: 180, hotHeight: 120, ...getPaths('laojie', '01_biaoyupai') },
+      { id: '02', name: '南玻集团', top: 34, left: 58, hotWidth: 150, hotHeight: 120, ...getPaths('laojie', '02_nanbo') },
+      { id: '03', name: '育才中学', top: 38, left: 72, hotWidth: 150, hotHeight: 120, ...getPaths('laojie', '03_yucai') },
+      { id: '04', name: '创意社区', top: 44, left: 40, hotWidth: 200, hotHeight: 150, ...getPaths('laojie', '04_gg') },
+      { id: '05', name: '源华公司', top: 47, left: 65, hotWidth: 180, hotHeight: 100, ...getPaths('laojie', '05_shuiwanyuanhua') },
+      { id: '06', name: '村史馆', top: 52, left: 63, hotWidth: 150, hotHeight: 100, ...getPaths('laojie', '06_shuiwancunshiguan') },
+      { id: '07', name: '水湾炮楼', top: 59, left: 46, hotWidth: 120, hotHeight: 150, ...getPaths('laojie', '07_shuiwanpaolou') },
+      { id: '08', name: '荔枝公园', top: 60, left: 22, hotWidth: 200, hotHeight: 180, ...getPaths('laojie', '08_lizhigongyuan') },
+      { id: '09', name: '南海意库', top: 70, left: 45, hotWidth: 200, hotHeight: 150, ...getPaths('laojie', '09_nanhaiyiku') },
+      { id: '10', name: '海滨花园', top: 78, left: 55, hotWidth: 180, hotHeight: 120, ...getPaths('laojie', '10_haibinhuayuan') }
     ];
 
     this.dengshanPois = [
-      { id: '17', name: '时间就是金钱', top: 62, left: 18, width: 200, ...getPaths('dengshan', '17_shijianbiaoyu') },
-      { id: '18', name: '微波山', top: 68, left: 32, width: 180, ...getPaths('dengshan', '18_weiboshan') },
-      { id: '19', name: '历史博物馆', top: 82, left: 35, width: 220, ...getPaths('dengshan', '19_zhaoshangjulishi') }
+      { id: '17', name: '时间标语', top: 28, left: 40, hotWidth: 220, hotHeight: 180, ...getPaths('dengshan', '17_shijianbiaoyu') },
+      { id: '18', name: '微波山', top: 43, left: 52, hotWidth: 180, hotHeight: 150, ...getPaths('dengshan', '18_weiboshan') },
+      { id: '19', name: '博物馆', top: 58, left: 55, hotWidth: 220, hotHeight: 180, ...getPaths('dengshan', '19_zhaoshangjulishi') }
     ];
 
     this.binhaiPois = [
-      { id: '11', name: '明华轮', top: 58, left: 36, width: 210, ...getPaths('binhai', '11_minghualun') },
-      { id: '12', name: '女娲像', top: 55, left: 62, width: 180, ...getPaths('binhai', '12_nvwaxiang') },
-      { id: '13', name: '艺术中心', top: 65, left: 45, width: 230, ...getPaths('binhai', '13_haishangshijie') },
-      { id: '14', name: '原耕', top: 72, left: 48, width: 120, ...getPaths('binhai', '14_yuangeng', { hasPic: false, hasTitle: true, hasDetail: false }) },
-      { id: '15', name: '南海酒店', top: 68, left: 32, width: 190, ...getPaths('binhai', '15_nanhaijiudian') },
-      { id: '16', name: '碧涛苑', top: 52, left: 68, width: 180, ...getPaths('binhai', '16_bitaoyuan') }
+      { id: '11', name: '明华轮', top: 48, left: 40, hotWidth: 220, hotHeight: 150, ...getPaths('binhai', '11_minghualun') },
+      { id: '12', name: '女娲像', top: 48, left: 65, hotWidth: 150, hotHeight: 180, ...getPaths('binhai', '12_nvwaxiang') },
+      { id: '13', name: '艺术中心', top: 60, left: 60, hotWidth: 250, hotHeight: 150, ...getPaths('binhai', '13_haishangshijie') },
+      { id: '14', name: '原耕', top: 62, left: 75, hotWidth: 120, hotHeight: 100, ...getPaths('binhai', '14_yuangeng', { hasPic: false, hasTitle: true, hasDetail: false }) },
+      { id: '15', name: '南海酒店', top: 65, left: 38, hotWidth: 200, hotHeight: 150, ...getPaths('binhai', '15_nanhaijiudian') },
+      { id: '16', name: '碧涛苑', top: 55, left: 25, hotWidth: 180, hotHeight: 120, ...getPaths('binhai', '16_bitaoyuan') }
     ];
 
     this.westernPois = [
-      { id: '00', name: 'Benji Bakery', top: 42, left: 12, width: 160, ...getPaths('western', '00_benji') },
-      { id: '01', name: 'Birol Bistronomy', top: 82, left: 55, width: 200, ...getPaths('western', '01_birol') },
-      { id: '02', name: 'Minimal', top: 80, left: 22, width: 160, ...getPaths('western', '02_minimal') },
-      { id: '03', name: 'Alla Torre', top: 55, left: 15, width: 160, ...getPaths('western', '03_alla') },
-      { id: '04', name: 'Doors', top: 48, left: 68, width: 160, ...getPaths('western', '04_doors') },
-      { id: '05', name: 'Madloba', top: 65, left: 12, width: 160, ...getPaths('western', '05_madloba') },
-      { id: '06', name: 'Commune', top: 75, left: 62, width: 180, ...getPaths('western', '06_commune') },
-      { id: '07', name: 'Gecko Pub', top: 55, left: 38, width: 180, ...getPaths('western', '07_gecko') },
-      { id: '08', name: 'Baker & Spice', top: 62, left: 65, width: 180, ...getPaths('western', '08_baker') },
-      { id: '09', name: 'The Flames', top: 72, left: 42, width: 180, ...getPaths('western', '09_flames') }
+      { id: '00', name: 'Benji Bakery', top: 42, left: 15, hotWidth: 150, hotHeight: 120, ...getPaths('western', '00_benji') },
+      { id: '01', name: 'Birol Bistronomy', top: 80, left: 55, hotWidth: 180, hotHeight: 120, ...getPaths('western', '01_birol') },
+      { id: '02', name: 'Minimal', top: 72, left: 35, hotWidth: 150, hotHeight: 100, ...getPaths('western', '02_minimal') },
+      { id: '03', name: 'Alla Torre', top: 55, left: 25, hotWidth: 150, hotHeight: 120, ...getPaths('western', '03_alla') },
+      { id: '04', name: 'Doors', top: 52, left: 75, hotWidth: 150, hotHeight: 120, ...getPaths('western', '04_doors') },
+      { id: '05', name: 'Madloba', top: 65, left: 22, hotWidth: 150, hotHeight: 120, ...getPaths('western', '05_madloba') },
+      { id: '06', name: 'Commune', top: 72, left: 80, hotWidth: 150, hotHeight: 120, ...getPaths('western', '06_commune') },
+      { id: '07', name: 'Gecko Pub', top: 52, left: 45, hotWidth: 150, hotHeight: 120, ...getPaths('western', '07_gecko') },
+      { id: '08', name: 'Baker & Spice', top: 60, left: 78, hotWidth: 150, hotHeight: 120, ...getPaths('western', '08_baker') },
+      { id: '09', name: 'The Flames', top: 68, left: 60, hotWidth: 150, hotHeight: 120, ...getPaths('western', '09_flames') }
     ];
 
     this.kafeiPois = [
-      { id: '01', name: '正在生活', top: 25, left: 28, width: 180, ...getPaths('coffee', '01_zhengzaishenghuo', hasNoTitle) },
-      { id: '02', name: '绿木咖啡', top: 38, left: 62, width: 180, ...getPaths('coffee', '02_greenwood', hasNoTitle) },
-      { id: '03', name: 'JOJO咖啡', top: 48, left: 42, width: 180, ...getPaths('coffee', '03_jojo', hasNoTitle) },
-      { id: '04', name: '茶力', top: 58, left: 28, width: 180, ...getPaths('coffee', '04_chali', hasNoTitle) },
-      { id: '05', name: '新公园咖啡', top: 68, left: 52, width: 180, ...getPaths('coffee', '05_newparkcoffee', hasNoTitle) },
-      { id: '06', name: '新公园', top: 78, left: 32, width: 180, ...getPaths('coffee', '06_newpark', hasNoTitle) },
-      { id: '07', name: 'wavve', top: 85, left: 62, width: 180, ...getPaths('coffee', '07_wavve', hasNoTitle) },
-      { id: '08', name: '山池', top: 18, left: 48, width: 180, ...getPaths('coffee', '08_shanchi', hasNoTitle) },
-      { id: '09', name: 'KUDDO', top: 28, left: 72, width: 180, ...getPaths('coffee', '09_kuddo', hasNoTitle) },
-      { id: '10', name: '艾米丽', top: 35, left: 15, width: 180, ...getPaths('coffee', '10_emily', hasNoTitle) }
+      { id: '01', name: '正在生活', top: 25, left: 28, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '01_zhengzaishenghuo', hasNoTitle) },
+      { id: '02', name: '绿木咖啡', top: 38, left: 62, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '02_greenwood', hasNoTitle) },
+      { id: '03', name: 'JOJO咖啡', top: 48, left: 42, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '03_jojo', hasNoTitle) },
+      { id: '04', name: '茶力', top: 58, left: 28, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '04_chali', hasNoTitle) },
+      { id: '05', name: '新公园咖啡', top: 68, left: 52, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '05_newparkcoffee', hasNoTitle) },
+      { id: '06', name: '新公园', top: 78, left: 32, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '06_newpark', hasNoTitle) },
+      { id: '07', name: 'wavve', top: 85, left: 62, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '07_wavve', hasNoTitle) },
+      { id: '08', name: '山池', top: 18, left: 48, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '08_shanchi', hasNoTitle) },
+      { id: '09', name: 'KUDDO', top: 28, left: 72, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '09_kuddo', hasNoTitle) },
+      { id: '10', name: '艾米丽', top: 35, left: 15, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '10_emily', hasNoTitle) }
     ];
   },
   computed: {
@@ -150,6 +202,11 @@ export default {
   onLoad(options) {
     this.routeId = options.id || 'laojie';
     
+    // 获取屏幕尺寸
+    const sys = uni.getSystemInfoSync();
+    this.windowWidth = sys.windowWidth;
+    this.windowHeight = sys.windowHeight;
+    
     // 根据 ID 写死对应的路线名称，避免编码转换导致的乱码
     const nameMap = {
       'laojie': '老街路线',
@@ -163,6 +220,102 @@ export default {
     this.setMapSrc();
   },
   methods: {
+    onMapLoad(e) {
+      console.log('✅ 路线地图加载完成');
+      this.mapLoaded = true;
+      const { width, height } = e.detail;
+      
+      // 设置地图宽度为屏幕宽度的 3 倍，以支持大范围拖拽
+      this.mapWidth = this.windowWidth * 3; 
+      this.mapHeight = (this.mapWidth * height) / width;
+      
+      // 计算最小缩放比例，确保地图至少能填满屏幕
+      const minScaleW = this.windowWidth / this.mapWidth;
+      const minScaleH = this.windowHeight / this.mapHeight;
+      this.minScale = Math.max(minScaleW, minScaleH);
+      
+      // 默认聚焦到 POI 聚集区（登山路线默认聚焦左下角）
+      this.focusRouteArea();
+    },
+    focusRouteArea() {
+      if (!this.mapLoaded) return;
+      
+      let targetScale = 1.5;
+      let focusX = 50; 
+      let focusY = 50;
+      
+      if (this.routeId === 'dengshan') {
+        targetScale = 1.8;
+        focusX = 50;
+        focusY = 40; 
+      } else if (this.routeId === 'laojie') {
+        targetScale = 1.6;
+        focusX = 50;
+        focusY = 45;
+      } else if (this.routeId === 'binhai') {
+        targetScale = 1.8;
+        focusX = 50;
+        focusY = 55;
+      } else if (this.routeId === 'xican') {
+        targetScale = 1.5;
+        focusX = 50;
+        focusY = 60;
+      } else if (this.routeId === 'kafei') {
+        targetScale = 1.6;
+        focusX = 50;
+        focusY = 40;
+      }
+      
+      const poiX = (this.mapWidth * focusX) / 100;
+      const poiY = (this.mapHeight * focusY) / 100;
+      
+      const targetX = (this.windowWidth / 2) - (poiX * targetScale);
+      const targetY = (this.windowHeight / 2) - (poiY * targetScale);
+      
+      // 使用 index.vue 的强制更新逻辑
+      this.scaleValue = targetScale + 0.001;
+      
+      this.$nextTick(() => {
+        this.scaleValue = targetScale;
+        this.curScale = targetScale;
+        
+        this.mapX = targetX + 0.01;
+        this.mapY = targetY + 0.01;
+        
+        this.$nextTick(() => {
+          this.mapX = targetX;
+          this.mapY = targetY;
+        });
+      });
+    },
+    onMouseWheel(e) {
+      const delta = e.deltaY < 0 ? 0.2 : -0.2;
+      this.updateScale(this.curScale + delta);
+    },
+    zoomIn() {
+      this.updateScale(this.curScale + 0.4);
+    },
+    zoomOut() {
+      this.updateScale(this.curScale - 0.4);
+    },
+    updateScale(newScale) {
+      let targetScale = Math.min(Math.max(newScale, this.minScale), 4);
+      // 强制触发更新
+      this.scaleValue = targetScale + 0.0001;
+      this.$nextTick(() => {
+        this.scaleValue = targetScale;
+        this.curScale = targetScale;
+      });
+    },
+    onScale(e) {
+      this.curScale = e.detail.scale;
+    },
+    onChange(e) {
+      if (e.detail.source !== '') {
+        this.mapX = e.detail.x;
+        this.mapY = e.detail.y;
+      }
+    },
     setMapSrc() {
       const mapMap = {
         'kafei': this.assets.route.coffee.map,
@@ -247,51 +400,77 @@ export default {
 
 .map-container {
   flex: 1;
+  width: 100vw;
+  height: 100vh;
   position: relative;
   overflow: hidden;
+  background: #004b91;
   
-  &.full-map {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #004b91;
+  .map-view {
+    position: relative;
+    
+    .route-map {
+      display: block;
+    }
   }
   
-  .route-map {
-    width: 100%;
-    height: auto;
-  }
-  
-  .poi-item-wrapper {
+  .poi-hotspot {
     position: absolute;
     z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     transform: translate(-50%, -50%); // 以中心点定位
+    pointer-events: auto;
     
-    .poi-pic {
-      width: 100%;
-      height: auto;
-      display: block;
-      margin-bottom: 4rpx;
-      // 添加发光边，帮助从底图中脱离出来
-      filter: drop-shadow(0 0 12rpx rgba(255, 255, 255, 0.8)) 
-              drop-shadow(0 0 4rpx rgba(255, 255, 255, 0.5));
-    }
-    
-    .poi-title-img {
-      width: 80%; // 标题通常比图标窄一点
-      height: auto;
-      display: block;
-      // 标题也添加轻微发光
-      filter: drop-shadow(0 0 8rpx rgba(255, 255, 255, 0.8));
+    // 默认透明，仅在 debugMode 下可见
+    background-color: transparent;
+    border: 2rpx solid transparent;
+
+    &.debug-visible {
+      background-color: rgba(255, 0, 0, 0.3);
+      border: 2rpx solid #ff0000;
+      
+      &::after {
+        content: attr(data-name);
+        position: absolute;
+        bottom: -30rpx;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 20rpx;
+        color: #ff0000;
+        white-space: nowrap;
+      }
     }
 
     &:active {
-      transform: translate(-50%, -50%) scale(0.95);
-      opacity: 0.8;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.floating-ui {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  
+  .side-controls {
+    position: absolute; top: 200rpx; right: 30rpx;
+    display: flex; flex-direction: column; gap: 40rpx;
+    pointer-events: auto;
+    .control-item {
+      display: flex; flex-direction: column; align-items: center; gap: 8rpx;
+      .icon-wrapper {
+        position: relative; width: 110rpx; height: 110rpx;
+        display: flex; align-items: center; justify-content: center;
+        &.small { width: 80rpx; height: 80rpx; }
+        .ellipse-bg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; filter: drop-shadow(0 8rpx 20rpx rgba(0,0,0,0.15)); }
+        .inner-icon { position: relative; z-index: 1; width: 42rpx; height: 42rpx; }
+        .zoom-text { position: relative; z-index: 1; font-size: 40rpx; font-weight: bold; color: #333; }
+        &:active { transform: scale(0.9); transition: transform 0.2s; }
+      }
+      .control-label {
+        font-size: 20rpx; color: #333; font-weight: 900;
+        background: rgba(255,255,255,0.85); padding: 4rpx 16rpx; border-radius: 20rpx; backdrop-filter: blur(4px);
+      }
     }
   }
 }
