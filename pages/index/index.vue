@@ -11,48 +11,57 @@
         :scale-value="scaleValue"
         :x="mapX" 
         :y="mapY"
-        :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }"
+        :style="{ width: (mapWidth + mapPadding * 2) + 'px', height: (mapHeight + mapPadding * 2) + 'px' }"
         @scale="onScale"
         @change="onChange"
       >
-        <!-- 渐进式地图层 -->
-        <view class="map-wrapper" :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }" @click="onMapClick">
-          <!-- 1. 本地模糊占位图 (改为从云端加载以减小程序包体积) -->
-          <image 
-            class="map-layer low-res" 
-            :src="assets.images.blankMap" 
-            mode="aspectFill"
-          ></image>
-          
-          <!-- 2. 云端高清图 -->
-          <image 
-            class="map-layer high-res" 
-            :class="{ loaded: mapLoaded }"
-            :src="assets.index.bigMap" 
-            mode="aspectFill"
-            @load="onMapLoad"
-          ></image>
-        </view>
-        
-        <!-- 景点标记点：相对于地图定位 -->
-        <view
-          class="marker"
-          v-for="(poi, index) in markers"
-          :key="index"
-          :style="{ top: poi.top + '%', left: poi.left + '%' }"
-          @click.stop="showPoiDetail(poi)"
-        >
-          <image class="marker-icon" :src="assets.images.markerPlaceholder" mode="aspectFit"></image>
-        </view>
-
-        <!-- 用户当前位置标记点 -->
+        <!-- 地图容器：增加边距实现留白效果 -->
         <view 
-          class="user-marker" 
-          v-if="userLocation"
-          :style="{ top: userLocation.top + '%', left: userLocation.left + '%' }"
+          class="map-inner-container"
+          :style="{ 
+            width: mapWidth + 'px', 
+            height: mapHeight + 'px',
+            padding: mapPadding + 'px'
+          }"
         >
-          <view class="user-dot-pulse"></view>
-          <view class="user-dot"></view>
+          <!-- 渐进式地图层 -->
+          <view class="map-wrapper" :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }" @click="onMapClick">
+            <!-- 1. 本地模糊占位图 (改为从云端加载以减小程序包体积) -->
+            <image 
+              class="map-layer low-res" 
+              :src="assets.images.blankMap" 
+              mode="aspectFill"
+            ></image>
+            
+            <!-- 2. 云端高清图 -->
+            <image 
+              class="map-layer high-res" 
+              :class="{ loaded: mapLoaded }"
+              :src="assets.index.bigMap" 
+              mode="aspectFill"
+              @load="onMapLoad"
+            ></image>
+          </view>
+          
+          <!-- 景点标记点：相对于地图定位 -->
+          <view
+            class="marker"
+            v-for="(poi, index) in markers"
+            :key="index"
+            :style="{ top: poi.top + '%', left: poi.left + '%' }"
+            @click.stop="showPoiDetail(poi)"
+          >
+            <image class="marker-icon" :src="assets.images.markerPlaceholder" mode="aspectFit"></image>
+          </view>
+
+          <!-- 用户当前位置标记点 -->
+          <view 
+            class="user-marker" 
+            v-if="userLocation"
+            :style="{ top: userLocation.top + '%', left: userLocation.left + '%' }"
+          >
+            <image class="user-avatar" :src="assets.images.avatarPlaceholder" mode="aspectFit"></image>
+          </view>
         </view>
       </movable-view>
     </movable-area>
@@ -196,7 +205,8 @@ export default {
       currentDetailImg: '',
       userLocation: null, // { top, left } 百分比坐标
       outOfBounds: false,
-      locationWatcher: null
+      locationWatcher: null,
+      mapPadding: 100 // 地图四周留白的像素值
     }
   },
   onLoad() {
@@ -254,16 +264,19 @@ export default {
       this.mapWidth = this.windowWidth * 3; 
       this.mapHeight = (this.mapWidth * height) / width;
       
-      const minScaleW = this.windowWidth / this.mapWidth;
-      const minScaleH = this.windowHeight / this.mapHeight;
+      const minScaleW = this.windowWidth / (this.mapWidth + this.mapPadding * 2);
+      const minScaleH = this.windowHeight / (this.mapHeight + this.mapPadding * 2);
       this.minScale = Math.max(minScaleW, minScaleH);
       
       // 记录初始视角状态 (居中，且略微放大)
       const startScale = this.minScale * 1.5;
+      const centerX = (this.mapWidth / 2) + this.mapPadding;
+      const centerY = (this.mapHeight / 2) + this.mapPadding;
+
       this.initialState = {
         scale: startScale,
-        x: (this.windowWidth - this.mapWidth * startScale) / 2,
-        y: (this.windowHeight - this.mapHeight * startScale) / 2
+        x: (this.windowWidth / 2) - (centerX * startScale),
+        y: (this.windowHeight / 2) - (centerY * startScale)
       };
       
       this.resetMap();
@@ -375,8 +388,8 @@ export default {
       
       // 计算目标位置，使 POI 居中
       // POI 的位置是百分比，相对于 mapWidth 和 mapHeight
-      const poiX = (this.mapWidth * poi.left) / 100;
-      const poiY = (this.mapHeight * poi.top) / 100;
+      const poiX = (this.mapWidth * poi.left) / 100 + this.mapPadding;
+      const poiY = (this.mapHeight * poi.top) / 100 + this.mapPadding;
       
       const targetX = (this.windowWidth / 2) - (poiX * targetScale);
       const targetY = (this.windowHeight / 2) - (poiY * targetScale);
@@ -430,12 +443,12 @@ export default {
 
           // data.left/top 是地图相对于视口的当前位置（包含滚动和缩放后的偏移）
           // data.width/height 是地图当前的实际渲染尺寸
-          const clickX = x - data.left;
-          const clickY = y - data.top;
+          const clickX = x - data.left - (this.mapPadding * this.curScale);
+          const clickY = y - data.top - (this.mapPadding * this.curScale);
 
           // 计算相对于地图完整内容的百分比
-          const relativeLeft = Math.round((clickX / data.width) * 100);
-          const relativeTop = Math.round((clickY / data.height) * 100);
+          const relativeLeft = Math.round((clickX / (this.mapWidth * this.curScale)) * 100);
+          const relativeTop = Math.round((clickY / (this.mapHeight * this.curScale)) * 100);
 
           if (!isNaN(relativeLeft) && !isNaN(relativeTop)) {
             console.log(`🗺️ 修正后的地图点击坐标: left=${relativeLeft}%, top=${relativeTop}%`);
@@ -541,6 +554,11 @@ export default {
 }
 
 .map-view {
+  .map-inner-container {
+    position: relative;
+    background-color: transparent;
+  }
+  
   .map-wrapper {
     position: relative;
     width: 100%;
@@ -756,39 +774,19 @@ export default {
 
 .user-marker {
   position: absolute;
-  width: 40rpx;
-  height: 40rpx;
+  width: 64rpx;
+  height: 64rpx;
   z-index: 10;
   transform: translate(-50%, -50%);
   pointer-events: none;
   
-  .user-dot {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 24rpx;
-    height: 24rpx;
-    background: #007AFF;
-    border: 4rpx solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 4rpx 10rpx rgba(0,122,255,0.4);
+  .user-avatar {
+    width: 100%;
+    height: 100%;
+    // 移除多余的白色背景和边框，直接显示头像本身
+    // 头像本身通常已经自带了圆圈背景
+    filter: drop-shadow(0 4rpx 10rpx rgba(0,0,0,0.3));
   }
-  
-  .user-dot-pulse {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60rpx;
-    height: 60rpx;
-    background: rgba(0,122,255,0.3);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-}
-
-@keyframes pulse {
-  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
 }
 
 .poi-preview-card {
