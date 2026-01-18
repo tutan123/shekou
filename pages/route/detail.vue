@@ -256,29 +256,29 @@ export default {
     },
     focusRouteArea() {
       if (!this.mapLoaded) return;
-      
-      let targetScale = 1.5;
-      let focusX = 50; 
+
+      let targetScale = 1.0;
+      let focusX = 50;
       let focusY = 50;
-      
+
       if (this.routeId === 'dengshan') {
-        targetScale = 1.8;
+        targetScale = 1.2;
         focusX = 50;
-        focusY = 40; 
+        focusY = 40;
       } else if (this.routeId === 'laojie') {
-        targetScale = 1.6;
+        targetScale = 1.1;
         focusX = 50;
         focusY = 45;
       } else if (this.routeId === 'binhai') {
-        targetScale = 1.8;
+        targetScale = 1.2;
         focusX = 50;
         focusY = 55;
       } else if (this.routeId === 'xican') {
-        targetScale = 1.5;
+        targetScale = 1.0;
         focusX = 50;
         focusY = 60;
       } else if (this.routeId === 'kafei') {
-        targetScale = 1.6;
+        targetScale = 1.1;
         focusX = 50;
         focusY = 40;
       }

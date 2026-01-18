@@ -187,15 +187,9 @@ export const CATEGORIES = {
         icon: ATLAS_BASE + 'western/宝可多.png',
         ...getRoutePaths('western', '00_benji')
       },
-      'Birol Bistronomy': { 
-        top: 800, left: 550, width: 240,
-        frame: ATLAS_BASE + 'western/alla_frame.png', // Fallback
-        icon: ATLAS_BASE + 'western/alla.png', // Fallback
-        ...getRoutePaths('western', '01_birol')
-      },
-      'minimal': { 
-        top: 420, left: 120, width: 230, 
-        frame: ATLAS_BASE + 'western/minimal_frame.png', 
+      'minimal': {
+        top: 342, left: 131, width: 230,
+        frame: ATLAS_BASE + 'western/minimal_frame.png',
         icon: ATLAS_BASE + 'western/minimal.png',
         ...getRoutePaths('western', '02_minimal')
       },
@@ -205,15 +199,15 @@ export const CATEGORIES = {
         icon: ATLAS_BASE + 'western/alla.png',
         ...getRoutePaths('western', '03_alla')
       },
-      'doors': { 
-        top: 250, left: 420, width: 210, 
-        frame: ATLAS_BASE + 'western/doors_frame.png', 
+      'doors': {
+        top: 610, left: 579, width: 210,
+        frame: ATLAS_BASE + 'western/doors_frame.png',
         icon: ATLAS_BASE + 'western/doors.png',
         ...getRoutePaths('western', '04_doors')
       },
-      'madloba': { 
-        top: 400, left: 580, width: 220, 
-        frame: ATLAS_BASE + 'western/madloba_frame.png', 
+      'madloba': {
+        top: 313, left: 407, width: 220,
+        frame: ATLAS_BASE + 'western/madloba_frame.png',
         icon: ATLAS_BASE + 'western/madloba.png',
         ...getRoutePaths('western', '05_madloba')
       },
@@ -230,13 +224,13 @@ export const CATEGORIES = {
         ...getRoutePaths('western', '07_gecko')
       },
       'baker': {
-        top: 690, left: 622, width: 220,
+        top: 581, left: 112, width: 220,
         frame: ATLAS_BASE + 'western/baker_frame.png',
         icon: ATLAS_BASE + 'western/baker.png',
         ...getRoutePaths('western', '08_baker')
       },
       'the_flames': {
-        top: 744, left: 311, width: 230,
+        top: 538, left: 352, width: 230,
         frame: ATLAS_BASE + 'western/the_flames_frame.png',
         icon: ATLAS_BASE + 'western/the_flames.png',
         ...getRoutePaths('western', '09_flames')
@@ -267,27 +261,27 @@ export const CATEGORIES = {
         icon: ATLAS_BASE + 'coffee/03_jojo_pic.png',
         ...getRoutePaths('coffee', '03_jojo')
       },
-      '查理': { 
-        top: 580, left: 380, width: 200, 
-        frame: ATLAS_BASE + 'coffee/04_chali_frame.png', 
+      '查理': {
+        top: 563, left: 75, width: 200,
+        frame: ATLAS_BASE + 'coffee/04_chali_frame.png',
         icon: ATLAS_BASE + 'coffee/04_chali_pic.png',
         ...getRoutePaths('coffee', '04_chali')
       },
-      '山池': { 
-        top: 720, left: 580, width: 230, 
-        frame: ATLAS_BASE + 'coffee/08_shanchi_frame.png', 
+      '山池': {
+        top: 959, left: 431, width: 230,
+        frame: ATLAS_BASE + 'coffee/08_shanchi_frame.png',
         icon: ATLAS_BASE + 'coffee/08_shanchi_pic.png',
         ...getRoutePaths('coffee', '08_shanchi')
       },
-      'NewPark': { 
-        top: 750, left: 150, width: 210, 
-        frame: ATLAS_BASE + 'coffee/06_newpark_frame.png', 
+      'NewPark': {
+        top: 564, left: 273, width: 210,
+        frame: ATLAS_BASE + 'coffee/06_newpark_frame.png',
         icon: ATLAS_BASE + 'coffee/06_newpark_pic.png',
         ...getRoutePaths('coffee', '06_newpark')
       },
-      'KUDDO': { 
-        top: 920, left: 420, width: 210, 
-        frame: ATLAS_BASE + 'coffee/09_kuddo_frame.png', 
+      'KUDDO': {
+        top: 272, left: 320, width: 210,
+        frame: ATLAS_BASE + 'coffee/09_kuddo_frame.png',
         icon: ATLAS_BASE + 'coffee/09_kuddo_pic.png',
         ...getRoutePaths('coffee', '09_kuddo')
       },
@@ -303,9 +297,9 @@ export const CATEGORIES = {
         icon: ATLAS_BASE + 'coffee/07_wavve_pic.png',
         ...getRoutePaths('coffee', '07_wavve')
       },
-      'NewPark C': { 
-        top: 1120, left: 550, width: 210, 
-        frame: ATLAS_BASE + 'coffee/05_newparkcoffee_frame.png', 
+      'NewPark C': {
+        top: 457, left: 389, width: 210,
+        frame: ATLAS_BASE + 'coffee/05_newparkcoffee_frame.png',
         icon: ATLAS_BASE + 'coffee/05_newparkcoffee_pic.png',
         ...getRoutePaths('coffee', '05_newparkcoffee')
       }
