@@ -101,7 +101,7 @@ export default {
   width: 100vw;
   position: relative;
   overflow: hidden;
-  background-color: #fff;
+  background-color: #FFCB32;
 }
 
 .bg-layer {

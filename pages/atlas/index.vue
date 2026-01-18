@@ -32,7 +32,7 @@
         <!-- 景点画框组合：容器包含框和图 -->
         <view 
           class="poi-frame-container"
-          v-for="(item, name) in currentCatData.items" 
+          v-for="(item, name) in displayItems" 
           :key="name"
           :data-name="name"
           :style="{
@@ -112,11 +112,26 @@ export default {
     currentCatData() {
       return this.categories[this.activeCat] || this.categories.history;
     },
+    displayItems() {
+      if (!this.currentCatData || !this.currentCatData.items) return {};
+      const filtered = {};
+      Object.keys(this.currentCatData.items).forEach(name => {
+        const item = this.currentCatData.items[name];
+        // 严格过滤：只包含有画框和图标定义的正式图鉴项
+        if (item.frame && item.icon) {
+          filtered[name] = item;
+        }
+      });
+      return filtered;
+    },
     completedCount() {
-      return (this.checkInData[this.activeCat] || []).length;
+      const completedNames = this.checkInData[this.activeCat] || [];
+      const displayNames = Object.keys(this.displayItems);
+      // 只统计属于正式图鉴项的已完成数量
+      return completedNames.filter(name => displayNames.includes(name)).length;
     },
     totalCount() {
-      return this.currentCatData ? Object.keys(this.currentCatData.items).length : 0;
+      return Object.keys(this.displayItems).length;
     },
     isCategoryCompleted() {
       return this.completedCount === this.totalCount && this.totalCount > 0;
@@ -173,7 +188,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   height: 100vh;
-  background-color: #FFF9E6;
+  background-color: #FFCB32;
   display: flex;
   flex-direction: column;
 }
@@ -183,7 +198,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  background: rgba(255, 249, 230, 0.9);
+  background: rgba(255, 203, 50, 0.9);
   backdrop-filter: blur(10px);
   z-index: 100;
   white-space: nowrap;

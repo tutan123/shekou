@@ -5,11 +5,17 @@
       <text class="title">个人设置</text>
     </view>
 
+    <!-- 提示告示 -->
+    <view v-if="showNotice" class="notice-toast">
+      <text class="notice-icon">ℹ️</text>
+      <text class="notice-text">游客即可访问，登录注册暂不启用</text>
+    </view>
+
     <view class="content">
       <view class="settings-card">
         <view class="form-item">
           <text class="label">邮箱</text>
-          <input class="input" type="text" placeholder="请输入您的邮箱进行验证" placeholder-style="color: #ccc" />
+          <input class="input" type="text" placeholder="请输入您的邮箱进行验证" placeholder-style="color: #ccc" disabled />
         </view>
         
         <view class="form-item">
@@ -17,17 +23,17 @@
             <text class="label">当前密码</text>
             <text class="forgot">忘记密码？</text>
           </view>
-          <input class="input" type="password" />
+          <input class="input" type="password" disabled />
         </view>
         
         <view class="form-item">
           <text class="label">新密码</text>
-          <input class="input" type="password" placeholder="请输入您的新密码" placeholder-style="color: #ccc" />
+          <input class="input" type="password" placeholder="请输入您的新密码" placeholder-style="color: #ccc" disabled />
         </view>
         
         <view class="form-item">
           <text class="label">再次输入</text>
-          <input class="input" type="password" placeholder="请再输入您的新密码" placeholder-style="color: #ccc" />
+          <input class="input" type="password" placeholder="请再输入您的新密码" placeholder-style="color: #ccc" disabled />
         </view>
       </view>
       
@@ -41,7 +47,7 @@
       </view>
       
       <view class="finish-btn-box">
-        <view class="finish-btn" @click="handleFinish">完成</view>
+        <view class="finish-btn disabled">完成</view>
       </view>
     </view>
   </view>
@@ -49,6 +55,14 @@
 
 <script>
 export default {
+  data() {
+    return {
+      showNotice: true
+    }
+  },
+  onLoad() {
+    // 提示告示常驻
+  },
   methods: {
     goBack() {
       uni.navigateBack();
@@ -64,7 +78,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #FFF9E6;
+  background-color: #FFCB32;
 }
 
 .nav-header {
@@ -81,6 +95,44 @@ export default {
   .title {
     font-size: 34rpx;
     font-weight: bold;
+  }
+}
+
+.notice-toast {
+  position: fixed;
+  top: 180rpx;
+  left: 40rpx;
+  right: 40rpx;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 24rpx 40rpx;
+  border-radius: 50rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeInDown 0.5s ease;
+  
+  .notice-icon {
+    margin-right: 16rpx;
+    font-size: 32rpx;
+  }
+  
+  .notice-text {
+    color: #fff;
+    font-size: 26rpx;
+    font-weight: 500;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -167,7 +219,7 @@ export default {
 .finish-btn-box {
   margin-top: 80rpx;
   
-  .finish-btn {
+    .finish-btn {
     background: #00A99D;
     color: #fff;
     height: 100rpx;
@@ -178,6 +230,12 @@ export default {
     font-size: 32rpx;
     font-weight: bold;
     box-shadow: 0 10rpx 20rpx rgba(0, 169, 157, 0.2);
+    
+    &.disabled {
+      background: #ccc;
+      box-shadow: none;
+      color: #f0f0f0;
+    }
   }
 }
 </style>

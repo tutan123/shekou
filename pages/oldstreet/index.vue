@@ -191,7 +191,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #FFF9E6;
+  background-color: #FFCB32;
   position: relative;
 }
 
@@ -202,7 +202,7 @@ export default {
   right: 0;
   height: 88rpx;
   padding-top: env(safe-area-inset-top);
-  background: rgba(255, 249, 230, 0.95);
+  background: rgba(255, 203, 50, 0.95);
   backdrop-filter: blur(10rpx);
   display: flex;
   align-items: center;

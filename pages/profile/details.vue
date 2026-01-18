@@ -113,7 +113,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #FFF9E1; // 对应设计稿背景色
+  background-color: #FFCB32; // 对应设计稿背景色
   padding-bottom: 80rpx;
 }
 

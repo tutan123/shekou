@@ -116,7 +116,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #FFF9E6;
+  background-color: #FFCB32;
 }
 
 .nav-header {

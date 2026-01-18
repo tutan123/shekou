@@ -139,10 +139,6 @@
       <view class="detail-popup-content" @click.stop>
         <view class="close-btn" @click="hideDetail">✕</view>
         <image class="detail-image" :src="currentDetailImg" mode="widthFix"></image>
-        <view class="check-in-btn-container" @click="hideDetail">
-          <image class="btn-bg" :src="assets.route.checkinBtn" mode="scaleToFill"></image>
-          <text class="btn-text">查看详情</text>
-        </view>
       </view>
     </view>
   </view>
@@ -364,6 +360,9 @@ export default {
       });
     },
     showPoiDetail(poi) {
+      // 打印相对坐标用于调试
+      console.log(`📍 标记点点击: ${poi.name} - 相对坐标: top=${poi.top}%, left=${poi.left}%`);
+
       this.selectedPoi = poi;
     },
     goToDetail() {
@@ -398,14 +397,14 @@ export default {
 .container {
   height: 100vh;
   width: 100vw;
-  background-color: #FFF9E6;
+  background-color: #FFCB32;
   overflow: hidden;
 }
 
 .map-area {
   width: 100%;
   height: 100%;
-  background-color: #FFF9E6; 
+  background-color: #FFCB32; 
 }
 
 .map-view {
@@ -615,8 +614,8 @@ export default {
   
   .close-btn {
     position: absolute;
-    top: -80rpx;
-    right: 0;
+    top: 20rpx;
+    right: 20rpx;
     width: 60rpx;
     height: 60rpx;
     background: rgba(255,255,255,0.2);
@@ -632,7 +631,7 @@ export default {
   .check-in-btn-container {
     width: 320rpx;
     height: 96rpx;
-    margin-top: -60rpx; // 向上移动，叠在卡片内容上
+    margin-top: -120rpx; // 向上移动，叠在卡片内容上，更靠近详情图片
     display: flex;
     align-items: center;
     justify-content: center;

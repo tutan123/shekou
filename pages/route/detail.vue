@@ -389,7 +389,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   height: 100vh;
-  background-color: #FFF9E6;
+  background-color: #FFCB32;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -604,7 +604,7 @@ export default {
   .check-in-btn-container {
     width: 320rpx;
     height: 96rpx;
-    margin-top: -60rpx; // 向上移动，叠在卡片内容上
+    margin-top: -120rpx; // 向上移动，叠在卡片内容上，更靠近详情图片
     display: flex;
     align-items: center;
     justify-content: center;

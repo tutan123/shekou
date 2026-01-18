@@ -125,7 +125,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  background-color: #FFF9E6;
+  background-color: #FFCB32;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -136,7 +136,7 @@ export default {
   padding: 0rpx 30rpx;
   display: flex;
   align-items: center;
-  background-color: #FFF9E6;
+  background-color: #FFCB32;
   position: relative;
   z-index: 100;
   overflow: hidden;

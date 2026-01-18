@@ -53,7 +53,7 @@ export default {
 /* 全局样式 */
 page {
   min-height: 100vh;
-  background-color: #FFF9E6;
+  background-color: #FFCB32;
 }
 
 ::-webkit-scrollbar {
