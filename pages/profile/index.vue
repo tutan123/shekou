@@ -4,8 +4,8 @@
     <view class="header-section">
       <!-- 底层：高保真地图背景图 -->
       <view class="map-bg-layer">
-        <!-- 使用 mode="widthFix" 让图片宽度撑满并保持比例，外层容器 overflow: hidden 会自动裁掉底部多余部分 -->
-        <image class="map-img" src="/static/personal_page/back_map.png" mode="widthFix"></image>
+        <!-- 使用 mode="widthFix" 让图片宽度撑满并保持比例，由资产配置从云端加载 -->
+        <image class="map-img" :src="assets.profile.backMap" mode="widthFix"></image>
       </view>
       
       <!-- 用户信息 -->
@@ -31,22 +31,22 @@
       <view class="action-grid">
         <view class="action-item" @click="goTo('/pages/profile/favorites')">
           <view class="action-icon-box">
-            <image class="box-bg" src="/static/personal_page/round_rect.png" mode="scaleToFill"></image>
-            <image class="action-icon" src="/static/personal_page/个人收藏_图标.svg" mode="aspectFit"></image>
+            <image class="box-bg" :src="assets.profile.roundRect" mode="scaleToFill"></image>
+            <image class="action-icon" :src="assets.profile.favIcon" mode="aspectFit"></image>
           </view>
           <text class="action-label">个人收藏</text>
         </view>
         <view class="action-item" @click="goTo('/pages/profile/details')">
           <view class="action-icon-box">
-            <image class="box-bg" src="/static/personal_page/round_rect.png" mode="scaleToFill"></image>
-            <image class="action-icon" src="/static/personal_page/个人资料_图标.svg" mode="aspectFit"></image>
+            <image class="box-bg" :src="assets.profile.roundRect" mode="scaleToFill"></image>
+            <image class="action-icon" :src="assets.profile.profileIcon" mode="aspectFit"></image>
           </view>
           <text class="action-label">个人资料</text>
         </view>
         <view class="action-item" @click="goTo('/pages/profile/settings')">
           <view class="action-icon-box">
-            <image class="box-bg" src="/static/personal_page/round_rect.png" mode="scaleToFill"></image>
-            <image class="action-icon" src="/static/personal_page/个人设置_图标.svg" mode="aspectFit"></image>
+            <image class="box-bg" :src="assets.profile.roundRect" mode="scaleToFill"></image>
+            <image class="action-icon" :src="assets.profile.settingIcon" mode="aspectFit"></image>
           </view>
           <text class="action-label">个人设置</text>
         </view>
@@ -54,7 +54,7 @@
 
       <!-- 地图预览卡片 -->
       <view class="map-card" @click="goTo('/pages/index/index')">
-        <image class="map-preview-img" src="/static/personal_page/map_shortcut.png" mode="aspectFill"></image>
+        <image class="map-preview-img" :src="assets.profile.mapShortcut" mode="aspectFill"></image>
       </view>
     </view>
 

@@ -23,7 +23,7 @@
         <SafeImage
           class="bg-map"
           :src="isCategoryCompleted ? currentCatData.map : currentCatData.map_bw"
-          fallback-src="/static/images/blank_map.png"
+          :fallback-src="assets.images.blankMap"
           mode="widthFix"
         >
           <template #error>

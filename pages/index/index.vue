@@ -17,10 +17,10 @@
       >
         <!-- 渐进式地图层 -->
         <view class="map-wrapper" :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }">
-          <!-- 1. 本地模糊占位图 (始终存在，直到高清图完全覆盖) -->
+          <!-- 1. 本地模糊占位图 (改为从云端加载以减小程序包体积) -->
           <image 
             class="map-layer low-res" 
-            src="/static/images/blank_map.png" 
+            :src="assets.images.blankMap" 
             mode="aspectFill"
           ></image>
           

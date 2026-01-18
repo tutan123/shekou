@@ -2,9 +2,9 @@
   <view class="container">
     <!-- 顶部背景与导航 -->
     <view class="header-section">
-      <!-- 高保真地图背景 -->
+      <!-- 高保真地图背景 - 从云端加载 -->
       <view class="map-bg">
-        <image class="map-img" src="/static/personal_page/back_map.png" mode="aspectFill"></image>
+        <image class="map-img" :src="assets.profile.backMap" mode="aspectFill"></image>
       </view>
       
       <!-- 自定义导航栏 -->
@@ -21,7 +21,7 @@
         <view class="avatar-box">
           <image class="avatar" :src="assets.images.avatarPlaceholder" mode="aspectFill"></image>
         </view>
-        <text class="nickname">Hello, DWQ</text>
+        <text class="nickname">Hello, 游客</text>
       </view>
     </view>
 
@@ -113,7 +113,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #FFF9E1; // 对应图4标记的背景色
+  background-color: #FFF9E1; // 对应设计稿背景色
   padding-bottom: 80rpx;
 }
 
@@ -132,7 +132,7 @@ export default {
     .map-img { 
       width: 100%; 
       height: 100%; 
-      opacity: 0.6; // 细节页背景稍淡
+      opacity: 0.6; 
     }
   }
   

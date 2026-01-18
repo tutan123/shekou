@@ -59,7 +59,8 @@ const ASSETS_CONFIG = {
     forgotPwd: CLOUD_BASE_URL + 'images/forgot_pwd.png',
     locationIcon: CLOUD_BASE_URL + 'images/location_icon.png',
     markerPlaceholder: CLOUD_BASE_URL + 'images/marker_placeholder.png',
-    routeIcon: CLOUD_BASE_URL + 'images/route_icon.png'
+    routeIcon: CLOUD_BASE_URL + 'images/route_icon.png',
+    blankMap: CLOUD_BASE_URL + 'images/blank_map.png'
   },
 
   // 首页相关
@@ -203,6 +204,17 @@ const ASSETS_CONFIG = {
     poi8: CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-08.png',
     poi9: CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-10.png',
     poi10: CLOUD_BASE_URL + 'oldstreet/五条路线修改版本-11.png'
+  },
+
+  // 个人中心相关
+  profile: {
+    backMap: CLOUD_BASE_URL + 'personal_page/back_map.png',
+    mapShortcut: CLOUD_BASE_URL + 'personal_page/map_shortcut.png',
+    roundRect: '/static/personal_page/round_rect.png',
+    favIcon: '/static/personal_page/个人收藏_图标.svg',
+    profileIcon: '/static/personal_page/个人资料_图标.svg',
+    settingIcon: '/static/personal_page/个人设置_图标.svg',
+    bottomBar: '/static/personal_page/BOTTOMBAR.svg'
   }
 };
 
