@@ -11,11 +11,15 @@
       <!-- 动态加载对应线路的地图 -->
       <image class="route-map" :src="mapSrc" mode="widthFix"></image>
       
-      <!-- 所有路线的交互区域 -->
+      <!-- 所有路线的交互区域和图标 -->
       <view v-for="(item, index) in currentRoutePois" :key="index" 
-            class="poi-clickable-area" 
-            :style="{ top: item.top + '%', left: item.left + '%', width: item.width + 'rpx', height: item.height + 'rpx' }"
+            class="poi-item-wrapper" 
+            :style="{ top: item.top + '%', left: item.left + '%', width: item.width + 'rpx' }"
             @click="showDetail(item)">
+        <!-- POI图片 -->
+        <image v-if="item.pic" :src="item.pic" class="poi-pic" mode="widthFix"></image>
+        <!-- POI标题 -->
+        <image v-if="item.titleImg" :src="item.titleImg" class="poi-title-img" mode="widthFix"></image>
       </view>
     </view>
 
@@ -58,56 +62,77 @@ export default {
   },
   created() {
     // 在组件创建时初始化所有 POI 数据
+    const baseUrl = this.assets.CLOUD_BASE_URL + 'route/';
+    
+    // 助手函数：生成完整路径
+    const getPaths = (route, fileName, options = { hasPic: true, hasTitle: true, hasDetail: true }) => {
+      const paths = {};
+      if (options.hasDetail) paths.detailImg = `${baseUrl}${route}/${fileName}_detail.png`;
+      if (options.hasPic) paths.pic = `${baseUrl}${route}/${fileName}_pic.png`;
+      if (options.hasTitle) paths.titleImg = `${baseUrl}${route}/${fileName}_title.png`;
+      
+      // 特殊处理：老街 09 的图片名有个 typo
+      if (route === 'laojie' && fileName === '09_nanhaiyiku' && options.hasPic) {
+        paths.pic = `${baseUrl}laojie/09_nanhaiyiku_piv.png`;
+      }
+      return paths;
+    };
+
+    // 设置各路线配置
+    const hasNoTitle = { hasPic: true, hasTitle: false, hasDetail: true };
+
     this.laojiePois = [
-      { id: '01', name: '空谈误国', top: 10, left: 68, width: 190, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/01_biaoyupai_detail.png' },
-      { id: '02', name: '南玻集团', top: 7, left: 60, width: 170, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/02_nanbo_detail.png' },
-      { id: '03', name: 'K11', top: 20, left: 65, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/03_k11_detail.png' },
-      { id: '04', name: '创意社区', top: 12, left: 35, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/04_gg_detail.png' },
-      { id: '05', name: '源华公司', top: 30, left: 68, width: 160, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/05_shuiwanyuanhua_detail.png' },
-      { id: '06', name: '村史馆', top: 30, left: 68, width: 160, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/06_shuiwancunshiguan_detail.png' },
-      { id: '07', name: '水湾炮楼', top: 38, left: 58, width: 150, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/07_shuiwanpaolou_detail.png' },
-      { id: '08', name: '荔枝公园', top: 40, left: 15, width: 190, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/08_lizhigongyuan_detail.png' },
-      { id: '09', name: '南海意库', top: 38, left: 45, width: 200, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/09_nanhaiyiku_detail.png' },
-      { id: '10', name: '海滨花园', top: 48, left: 65, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/laojie/10_haibinhuayuan_detail.png' }
+      { id: '01', name: '空谈误国', top: 22, left: 63, width: 220, ...getPaths('laojie', '01_biaoyupai') },
+      { id: '02', name: '南玻集团', top: 12, left: 58, width: 180, ...getPaths('laojie', '02_nanbo') },
+      { id: '03', name: '育才学校', top: 28, left: 62, width: 180, ...getPaths('laojie', '03_yucai') },
+      { id: '04', name: '创意社区', top: 26, left: 32, width: 180, ...getPaths('laojie', '04_gg') },
+      { id: '05', name: '源华公司', top: 41, left: 63, width: 160, ...getPaths('laojie', '05_shuiwanyuanhua') },
+      { id: '06', name: '村史馆', top: 32, left: 63, width: 160, ...getPaths('laojie', '06_shuiwancunshiguan') },
+      { id: '07', name: '水湾炮楼', top: 38, left: 53, width: 150, ...getPaths('laojie', '07_shuiwanpaolou') },
+      { id: '08', name: '荔枝公园', top: 40, left: 23, width: 190, ...getPaths('laojie', '08_lizhigongyuan') },
+      { id: '09', name: '南海意库', top: 52, left: 42, width: 200, ...getPaths('laojie', '09_nanhaiyiku') },
+      { id: '10', name: '海滨花园', top: 50, left: 61, width: 180, ...getPaths('laojie', '10_haibinhuayuan') }
     ];
 
     this.dengshanPois = [
-      { id: '17', name: '时间就是金钱', top: 60, left: 15, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/dengshan/17_shijianbiaoyu_detail.png' },
-      { id: '18', name: '微波山', top: 32, left: 55, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/dengshan/18_weiboshan_detail.png' },
-      { id: '19', name: '历史博物馆', top: 80, left: 30, width: 220, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/dengshan/19_zhaoshangjulishi_detail.png' }
+      { id: '17', name: '时间就是金钱', top: 62, left: 18, width: 200, ...getPaths('dengshan', '17_shijianbiaoyu') },
+      { id: '18', name: '微波山', top: 68, left: 32, width: 180, ...getPaths('dengshan', '18_weiboshan') },
+      { id: '19', name: '历史博物馆', top: 82, left: 35, width: 220, ...getPaths('dengshan', '19_zhaoshangjulishi') }
     ];
 
     this.binhaiPois = [
-      { id: '11', name: '明华轮', top: 55, left: 38, width: 210, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/binhai/11_minghualun_detail.png' },
-      { id: '12', name: '女娲像', top: 45, left: 52, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/binhai/12_nvwaxiang_detail.png' },
-      { id: '13', name: '艺术中心', top: 68, left: 60, width: 230, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/binhai/13_haishangshijie_detail.png' },
-      { id: '15', name: '南海酒店', top: 65, left: 35, width: 190, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/binhai/15_nanhaijiudian_detail.png' },
-      { id: '16', name: '碧涛苑', top: 48, left: 65, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/binhai/16_bitaoyuan_detail.png' }
+      { id: '11', name: '明华轮', top: 58, left: 36, width: 210, ...getPaths('binhai', '11_minghualun') },
+      { id: '12', name: '女娲像', top: 55, left: 62, width: 180, ...getPaths('binhai', '12_nvwaxiang') },
+      { id: '13', name: '艺术中心', top: 65, left: 45, width: 230, ...getPaths('binhai', '13_haishangshijie') },
+      { id: '14', name: '原耕', top: 72, left: 48, width: 120, ...getPaths('binhai', '14_yuangeng', { hasPic: false, hasTitle: true, hasDetail: false }) },
+      { id: '15', name: '南海酒店', top: 68, left: 32, width: 190, ...getPaths('binhai', '15_nanhaijiudian') },
+      { id: '16', name: '碧涛苑', top: 52, left: 68, width: 180, ...getPaths('binhai', '16_bitaoyuan') }
     ];
 
     this.westernPois = [
-      { id: '00', name: 'Benji Bakery', top: 40, left: 8, width: 140, height: 140, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/00_benji_detail.png' },
-      { id: '01', name: 'Birol Bistronomy', top: 85, left: 52, width: 220, height: 100, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/01_birol_detail.png' },
-      { id: '02', name: 'Minimal', top: 82, left: 16, width: 140, height: 120, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/02_minimal_detail.png' },
-      { id: '03', name: 'Alla Torre', top: 52, left: 8, width: 140, height: 140, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/03_alla_detail.png' },
-      { id: '04', name: 'Doors', top: 48, left: 65, width: 140, height: 140, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/04_doors_detail.png' },
-      { id: '05', name: 'Madloba', top: 68, left: 8, width: 140, height: 140, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/05_madloba_detail.png' },
-      { id: '06', name: 'Commune', top: 78, left: 68, width: 200, height: 160, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/06_commune_detail.png' },
-      { id: '07', name: 'Gecko Pub', top: 52, left: 35, width: 180, height: 180, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/07_gecko_detail.png' },
-      { id: '08', name: 'Baker & Spice', top: 62, left: 70, width: 200, height: 120, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/08_baker_detail.png' },
-      { id: '09', name: 'The Flames', top: 70, left: 45, width: 180, height: 160, detailImg: this.assets.CLOUD_BASE_URL + 'route/western/09_flames_detail.png' }
+      { id: '00', name: 'Benji Bakery', top: 42, left: 12, width: 160, ...getPaths('western', '00_benji') },
+      { id: '01', name: 'Birol Bistronomy', top: 82, left: 55, width: 200, ...getPaths('western', '01_birol') },
+      { id: '02', name: 'Minimal', top: 80, left: 22, width: 160, ...getPaths('western', '02_minimal') },
+      { id: '03', name: 'Alla Torre', top: 55, left: 15, width: 160, ...getPaths('western', '03_alla') },
+      { id: '04', name: 'Doors', top: 48, left: 68, width: 160, ...getPaths('western', '04_doors') },
+      { id: '05', name: 'Madloba', top: 65, left: 12, width: 160, ...getPaths('western', '05_madloba') },
+      { id: '06', name: 'Commune', top: 75, left: 62, width: 180, ...getPaths('western', '06_commune') },
+      { id: '07', name: 'Gecko Pub', top: 55, left: 38, width: 180, ...getPaths('western', '07_gecko') },
+      { id: '08', name: 'Baker & Spice', top: 62, left: 65, width: 180, ...getPaths('western', '08_baker') },
+      { id: '09', name: 'The Flames', top: 72, left: 42, width: 180, ...getPaths('western', '09_flames') }
     ];
 
     this.kafeiPois = [
-      { id: '01', name: '正在生活', top: 22, left: 25, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/coffee/01_zhengzaishenghuo_detail.png' },
-      { id: '02', name: '绿木咖啡', top: 35, left: 65, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/coffee/02_greenwood_detail.png' },
-      { id: '03', name: 'JOJO咖啡', top: 45, left: 45, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/coffee/03_jojo_detail.png' },
-      { id: '04', name: '艾米丽咖啡', top: 55, left: 25, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/coffee/04_emily_detail.png' },
-      { id: '05', name: 'KUDDO', top: 65, left: 55, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/coffee/05_kuddo_detail.png' },
-      { id: '06', name: '新公园', top: 75, left: 35, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/coffee/06_newpark_detail.png' },
-      { id: '07', name: 'wavve', top: 85, left: 65, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/coffee/07_wavve_detail.png' },
-      { id: '08', name: '365日', top: 15, left: 45, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/coffee/08_365_detail.png' },
-      { id: '09', name: '山池', top: 25, left: 75, width: 180, height: 80, detailImg: this.assets.CLOUD_BASE_URL + 'route/coffee/09_shanchi_detail.png' }
+      { id: '01', name: '正在生活', top: 25, left: 28, width: 180, ...getPaths('coffee', '01_zhengzaishenghuo', hasNoTitle) },
+      { id: '02', name: '绿木咖啡', top: 38, left: 62, width: 180, ...getPaths('coffee', '02_greenwood', hasNoTitle) },
+      { id: '03', name: 'JOJO咖啡', top: 48, left: 42, width: 180, ...getPaths('coffee', '03_jojo', hasNoTitle) },
+      { id: '04', name: '茶力', top: 58, left: 28, width: 180, ...getPaths('coffee', '04_chali', hasNoTitle) },
+      { id: '05', name: '新公园咖啡', top: 68, left: 52, width: 180, ...getPaths('coffee', '05_newparkcoffee', hasNoTitle) },
+      { id: '06', name: '新公园', top: 78, left: 32, width: 180, ...getPaths('coffee', '06_newpark', hasNoTitle) },
+      { id: '07', name: 'wavve', top: 85, left: 62, width: 180, ...getPaths('coffee', '07_wavve', hasNoTitle) },
+      { id: '08', name: '山池', top: 18, left: 48, width: 180, ...getPaths('coffee', '08_shanchi', hasNoTitle) },
+      { id: '09', name: 'KUDDO', top: 28, left: 72, width: 180, ...getPaths('coffee', '09_kuddo', hasNoTitle) },
+      { id: '10', name: '艾米丽', top: 35, left: 15, width: 180, ...getPaths('coffee', '10_emily', hasNoTitle) }
     ];
   },
   computed: {
@@ -238,20 +263,31 @@ export default {
     height: auto;
   }
   
-  .poi-marker {
+  .poi-item-wrapper {
     position: absolute;
-    width: 30rpx;
-    height: 30rpx;
-    background: #FFCC00;
-    border: 6rpx solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.2);
-  }
-
-  .poi-clickable-area {
-    position: absolute;
-    // background: rgba(255, 255, 255, 0.1); // 调试时取消注释可见点击区域
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%, -50%); // 以中心点定位
+    
+    .poi-pic {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin-bottom: 4rpx;
+    }
+    
+    .poi-title-img {
+      width: 80%; // 标题通常比图标窄一点
+      height: auto;
+      display: block;
+    }
+
+    &:active {
+      transform: translate(-50%, -50%) scale(0.95);
+      opacity: 0.8;
+    }
   }
 }
 

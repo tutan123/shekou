@@ -161,6 +161,7 @@ export default {
       windowWidth: 0,
       windowHeight: 0,
       mapLoaded: false, // 地图是否已加载完成
+      initialState: null, // 记录初始视角状态
       searchKeyword: '',
       showResults: false,
       searchResults: [],
@@ -236,32 +237,37 @@ export default {
       const minScaleH = this.windowHeight / this.mapHeight;
       this.minScale = Math.max(minScaleW, minScaleH);
       
+      // 记录初始视角状态 (居中，且略微放大)
+      const startScale = this.minScale * 1.5;
+      this.initialState = {
+        scale: startScale,
+        x: (this.windowWidth - this.mapWidth * startScale) / 2,
+        y: (this.windowHeight - this.mapHeight * startScale) / 2
+      };
+      
       this.resetMap();
     },
     resetMap() {
-      if (!this.mapLoaded) return;
+      if (!this.mapLoaded || !this.initialState) return;
       
-      const targetScale = this.minScale * 1.5;
-      const targetX = (this.windowWidth - this.mapWidth * targetScale) / 2;
-      const targetY = (this.windowHeight - this.mapHeight * targetScale) / 2;
+      const { scale, x, y } = this.initialState;
+      console.log('🔄 重置视角到初始状态:', { scale, x, y });
       
-      console.log('🔄 重置视角:', { targetScale, targetX, targetY });
-      
-      // 1. 强制触发缩放更新 (使用微小偏移)
-      this.scaleValue = targetScale + 0.0001;
+      // 1. 强制触发缩放更新
+      this.scaleValue = scale + 0.001;
       
       this.$nextTick(() => {
-        this.scaleValue = targetScale;
-        this.curScale = targetScale;
+        this.scaleValue = scale;
+        this.curScale = scale;
         
         // 2. 强制触发位置更新
-        // 即使当前坐标在数据上没有变化，也通过微小偏移强制组件重绘
-        this.mapX = targetX + 0.01;
-        this.mapY = targetY + 0.01;
+        // 在缩放指令下发后，延迟设置坐标，防止被组件内部的缩放焦点偏移覆盖
+        this.mapX = x + 0.01;
+        this.mapY = y + 0.01;
         
         this.$nextTick(() => {
-          this.mapX = targetX;
-          this.mapY = targetY;
+          this.mapX = x;
+          this.mapY = y;
         });
       });
     },
@@ -270,9 +276,12 @@ export default {
       this.curScale = e.detail.scale;
     },
     onChange(e) {
-      // 记录最新位置，确保 resetMap 时能检测到相对于当前位置的变化
-      this.mapX = e.detail.x;
-      this.mapY = e.detail.y;
+      // 仅当用户手动操作（非程序设置）时记录坐标
+      // source 为 "" 表示程序设置，不应更新 mapX/mapY，否则会干扰重置逻辑
+      if (e.detail.source !== '') {
+        this.mapX = e.detail.x;
+        this.mapY = e.detail.y;
+      }
     },
     onMouseWheel(e) {
       const delta = e.deltaY < 0 ? 0.2 : -0.2;
