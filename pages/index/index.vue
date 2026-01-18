@@ -133,6 +133,18 @@
     </view>
 
     <CustomTabBar activePath="pages/index/index" />
+
+    <!-- 详情弹窗 -->
+    <view v-if="detailVisible" class="detail-popup-mask" @click="hideDetail">
+      <view class="detail-popup-content" @click.stop>
+        <view class="close-btn" @click="hideDetail">✕</view>
+        <image class="detail-image" :src="currentDetailImg" mode="widthFix"></image>
+        <view class="check-in-btn-container" @click="hideDetail">
+          <image class="btn-bg" :src="assets.route.checkinBtn" mode="scaleToFill"></image>
+          <text class="btn-text">查看详情</text>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -141,6 +153,7 @@ import CustomTabBar from '@/components/CustomTabBar.vue'
 import SafeImage from '@/components/SafeImage.vue'
 import { ASSETS_CONFIG, checkCloudFile } from '@/utils/assets-config.js'
 import { POI_DATA } from '@/utils/poi-data.js'
+import { CATEGORIES } from '@/utils/poi-config.js'
 
 export default {
   components: {
@@ -165,7 +178,9 @@ export default {
       searchKeyword: '',
       showResults: false,
       searchResults: [],
-      markers: POI_DATA
+      markers: POI_DATA,
+      detailVisible: false,
+      currentDetailImg: ''
     }
   },
   onLoad() {
@@ -352,7 +367,28 @@ export default {
       this.selectedPoi = poi;
     },
     goToDetail() {
-      uni.showToast({ title: '跳转详情页', icon: 'none' });
+      if (!this.selectedPoi) return;
+      
+      // 在 CATEGORIES 中查找详情图
+      let detailImg = '';
+      Object.keys(CATEGORIES).some(catKey => {
+        const item = CATEGORIES[catKey].items[this.selectedPoi.name];
+        if (item && item.detailImg) {
+          detailImg = item.detailImg;
+          return true;
+        }
+        return false;
+      });
+
+      if (detailImg) {
+        this.currentDetailImg = detailImg;
+        this.detailVisible = true;
+      } else {
+        uni.showToast({ title: '暂无详情', icon: 'none' });
+      }
+    },
+    hideDetail() {
+      this.detailVisible = false;
     }
   }
 }
@@ -549,4 +585,78 @@ export default {
 
 @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+// 详情弹窗样式
+.detail-popup-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  pointer-events: auto;
+}
+
+.detail-popup-content {
+  width: 85%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  .detail-image {
+    width: 100%;
+    border-radius: 40rpx;
+    box-shadow: 0 20rpx 60rpx rgba(0,0,0,0.4);
+    display: block;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: -80rpx;
+    right: 0;
+    width: 60rpx;
+    height: 60rpx;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 40rpx;
+    border: 2rpx solid rgba(255,255,255,0.3);
+  }
+
+  .check-in-btn-container {
+    width: 320rpx;
+    height: 96rpx;
+    margin-top: -60rpx; // 向上移动，叠在卡片内容上
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    position: relative; // 使用相对定位更稳定
+    left: 0;
+    transform: none;
+    margin-left: auto;
+    margin-right: auto;
+    
+    .btn-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 1;
+    }
+    
+    .btn-text {
+      position: relative;
+      z-index: 2;
+      color: #fff;
+      font-size: 32rpx;
+      font-weight: bold;
+      letter-spacing: 4rpx;
+    }
+  }
+}
 </style>

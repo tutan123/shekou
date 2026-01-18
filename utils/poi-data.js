@@ -1,3 +1,4 @@
+// 修改日期: 2026-01-18
 import { ASSETS_CONFIG } from './assets-config.js';
 
 /**
@@ -12,7 +13,7 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.atlas.history.items['08'] 
   },
   { 
-    name: '空谈误国标语', top: 22, left: 38, 
+    name: '空谈误国', top: 22, left: 38, 
     desc: '“空谈误国，实干兴邦”标语牌，见证蛇口奋斗精神。', 
     img: ASSETS_CONFIG.atlas.history.items['01'] 
   },
@@ -27,7 +28,7 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.atlas.history.items['08'] 
   },
   { 
-    name: 'G&G创意社区', top: 25, left: 32, 
+    name: 'G&G', top: 25, left: 32, 
     desc: '由旧工厂改造的网红创意园区，充满生活美学。', 
     img: ASSETS_CONFIG.atlas.history.items['04'] 
   },
@@ -39,12 +40,12 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.atlas.history.items['02'] 
   },
   { 
-    name: '育才中学', top: 31, left: 35, 
+    name: '育才一小', top: 31, left: 35, 
     desc: '蛇口名校，为特区建设培养了大量优秀人才。', 
     img: ASSETS_CONFIG.atlas.history.items['03'] 
   },
   { 
-    name: '水湾源华公司', top: 34, left: 32, 
+    name: '水湾源华', top: 34, left: 32, 
     desc: '记录了水湾村与蛇口共同发展的历史足迹。', 
     img: ASSETS_CONFIG.atlas.history.items['05'] 
   },
@@ -86,7 +87,7 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.atlas.history.items['11'] 
   },
   { 
-    name: '女娲补天', top: 54, left: 34, 
+    name: '女娲像', top: 54, left: 34, 
     desc: '屹立在海边的标志性雕塑，象征着开拓创新的精神。', 
     img: ASSETS_CONFIG.atlas.history.items['12'] 
   },
@@ -108,7 +109,7 @@ export const POI_DATA = [
 
   // --- 西南区域 ---
   { 
-    name: '时间标语牌', top: 71, left: 24, 
+    name: '时间标语', top: 71, left: 24, 
     desc: '“时间就是金钱，效率就是生命”，中国改革开放最响亮的口号。', 
     img: ASSETS_CONFIG.atlas.history.items['17'] 
   },

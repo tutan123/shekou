@@ -91,6 +91,7 @@
 <script>
 import CustomTabBar from '@/components/CustomTabBar.vue'
 import { ASSETS_CONFIG } from '@/utils/assets-config.js'
+import { CATEGORIES } from '@/utils/poi-config.js'
 
 export default {
   components: {
@@ -104,11 +105,8 @@ export default {
       selectedItem: '',
       scrollTop: 0,
       checkInData: {},
-      categories: {}
+      categories: CATEGORIES
     }
-  },
-  created() {
-    this.initCategories();
   },
   computed: {
     currentCatData() {
@@ -132,90 +130,6 @@ export default {
     this.loadCheckInData(); // 每次显示页面时重新加载打卡数据
   },
   methods: {
-    initCategories() {
-      // 切换回云存储路径，确保从云端获取资源
-      const CLOUD_BASE = this.assets.CLOUD_BASE_URL;
-      const H_BASE = CLOUD_BASE + 'atlas/history/';
-      const B_BASE = CLOUD_BASE + 'atlas/binhai/';
-      const D_BASE = CLOUD_BASE + 'atlas/dengshan/';
-      const W_BASE = CLOUD_BASE + 'atlas/western/';
-      const C_BASE = CLOUD_BASE + 'atlas/coffee/';
-      
-      this.categories = {
-        history: {
-          name: '老街',
-          map: H_BASE + 'map.png',
-          map_bw: H_BASE + 'map_bw.png',
-          items: {
-            '荔枝公园': { top: 180, left: 60, width: 230, frame: H_BASE+'08_lizhigongyuan_frame.png', icon: H_BASE+'08_lizhigongyuan_pic.png' },
-            '育才一小': { top: 160, left: 450, width: 220, frame: H_BASE+'03_yucai_frame.png', icon: H_BASE+'03_yucai_pic.png' },
-            '南玻集团': { top: 400, left: 100, width: 240, frame: H_BASE+'02_nanbo_frame.png', icon: H_BASE+'02_nanbo_pic.png' },
-            'G&G': { top: 380, left: 460, width: 230, frame: H_BASE+'04_gg_frame.png', icon: H_BASE+'04_gg_pic.png' },
-            '水湾村史馆': { top: 620, left: 70, width: 220, frame: H_BASE+'06_shuiwancunshiguan_frame.png', icon: H_BASE+'06_shuiwancunshiguan_pic.png' },
-            '海滨花园': { top: 600, left: 480, width: 220, frame: H_BASE+'10_haibinhuayuan_frame.png', icon: H_BASE+'10_haibinhuayuan_pic.png' },
-            '水湾源华': { top: 850, left: 90, width: 230, frame: H_BASE+'05_shuiwanyuanhua_frame.png', icon: H_BASE+'05_shuiwanyuanhua_pic.png' },
-            '南海意库': { top: 830, left: 470, width: 230, frame: H_BASE+'11_yiku_frame.png', icon: H_BASE+'11_yiku_pic.png' },
-            '水湾炮楼': { top: 1080, left: 60, width: 220, frame: H_BASE+'07_shuiwanpaolou_frame.png', icon: H_BASE+'07_shuiwanpaolou_pic.png' },
-            '空谈误国': { top: 1060, left: 450, width: 230, frame: H_BASE+'01_biaoyupai_frame.png', icon: H_BASE+'01_biaoyupai_pic.png' }
-          }
-        },
-        binhai: {
-          name: '滨海',
-          map: B_BASE + 'map.png',
-          map_bw: B_BASE + 'map_bw.png',
-          items: {
-            '明华轮': { top: 120, left: 245, width: 260, frame: B_BASE+'11_minghualun_frame.png', icon: B_BASE+'11_minghualun_pic.png' },
-            '碧涛苑': { top: 380, left: 50, width: 240, frame: B_BASE+'16_bitaoyuan_frame.png', icon: B_BASE+'16_bitaoyuan_pic.png' },
-            '女娲像': { top: 410, left: 460, width: 230, frame: B_BASE+'12_nvwaxiang_frame.png', icon: B_BASE+'12_nvwaxiang_pic.png' },
-            '海上世界': { top: 680, left: 60, width: 240, frame: B_BASE+'13_haishangshijie_frame.png', icon: B_BASE+'13_haishangshijie_pic.png' },
-            '南海酒店': { top: 710, left: 450, width: 250, frame: B_BASE+'15_nanhaijiudian_frame.png', icon: B_BASE+'15_nanhaijiudian_pic.png' }
-          }
-        },
-        dengshan: {
-          name: '登山',
-          map: D_BASE + 'map.png',
-          map_bw: D_BASE + 'map_bw.png',
-          items: {
-            '时间标语': { top: 250, left: 235, width: 280, frame: D_BASE+'17_shijianbiaoyu_frame.png', icon: D_BASE+'17_shijianbiaoyu_pic.png' },
-            '微波山': { top: 580, left: 225, width: 300, frame: D_BASE+'18_weiboshan_frame.png', icon: D_BASE+'18_weiboshan_pic.png' },
-            '招商局历史博物馆': { top: 910, left: 240, width: 320, frame: D_BASE+'19_zhaoshangjulishi_frame.png', icon: D_BASE+'19_zhaoshangjulishi_pic.png' }
-          }
-        },
-        western: {
-          name: '西餐',
-          map: this.assets.atlas.western.map,
-          map_bw: this.assets.atlas.western.mapBw,
-          items: {
-            'doors': { top: 250, left: 420, width: 210, frame: W_BASE+'doors_frame.png', icon: W_BASE+'doors.png' },
-            'minimal': { top: 420, left: 120, width: 230, frame: W_BASE+'minimal_frame.png', icon: W_BASE+'minimal.png' },
-            'madloba': { top: 400, left: 580, width: 220, frame: W_BASE+'madloba_frame.png', icon: W_BASE+'madloba.png' },
-            'the_flames': { top: 580, left: 380, width: 230, frame: W_BASE+'the_flames_frame.png', icon: W_BASE+'the_flames.png' },
-            '宝可多': { top: 900, left: 350, width: 220, frame: W_BASE+'宝可多_frame.png', icon: W_BASE+'宝可多.png' },
-            'commune': { top: 850, left: 100, width: 230, frame: W_BASE+'commune_frame.png', icon: W_BASE+'commune.png' },
-            'baker': { top: 820, left: 600, width: 220, frame: W_BASE+'baker_frame.png', icon: W_BASE+'baker.png' },
-            'Gecko Pub': { top: 1050, left: 520, width: 250, frame: W_BASE+'壁虎餐厅_frame.png', icon: W_BASE+'Gecko Pub.png' },
-            'alla': { top: 1080, left: 120, width: 250, frame: W_BASE+'alla_frame.png', icon: W_BASE+'alla.png' }
-          }
-        },
-        coffee: {
-          name: '咖啡',
-          map: this.assets.CLOUD_BASE_URL + 'atlas/coffee/map.png',
-          map_bw: this.assets.CLOUD_BASE_URL + 'atlas/coffee/map_bw.png',
-          items: {
-            '正在生活': { top: 300, left: 450, width: 210, frame: C_BASE+'01_zhengzaishenghuo_frame.png', icon: C_BASE+'01_zhengzaishenghuo_pic.png' },
-            '绿木': { top: 420, left: 120, width: 200, frame: C_BASE+'02_greenwood_frame.png', icon: C_BASE+'02_greenwood_pic.png' },
-            'JOJO': { top: 400, left: 580, width: 220, frame: C_BASE+'03_jojo_frame.png', icon: C_BASE+'03_jojo_pic.png' },
-            '查理': { top: 580, left: 380, width: 200, frame: C_BASE+'04_chali_frame.png', icon: C_BASE+'04_chali_pic.png' },
-            '山池': { top: 720, left: 580, width: 230, frame: C_BASE+'08_shanchi_frame.png', icon: C_BASE+'08_shanchi_pic.png' },
-            'NewPark': { top: 750, left: 150, width: 210, frame: C_BASE+'06_newpark_frame.png', icon: C_BASE+'06_newpark_pic.png' },
-            'KUDDO': { top: 920, left: 420, width: 210, frame: C_BASE+'09_kuddo_frame.png', icon: C_BASE+'09_kuddo_pic.png' },
-            '艾米丽': { top: 950, left: 100, width: 210, frame: C_BASE+'10_emily_frame.png', icon: C_BASE+'10_emily_pic.png' },
-            'Wavve': { top: 1080, left: 250, width: 190, frame: C_BASE+'07_wavve_frame.png', icon: C_BASE+'07_wavve_pic.png' },
-            'NewPark C': { top: 1120, left: 550, width: 210, frame: C_BASE+'05_newparkcoffee_frame.png', icon: C_BASE+'05_newparkcoffee_pic.png' }
-          }
-        }
-      };
-    },
     handleTabChange(key) {
       this.activeCat = key;
       this.scrollTop = 0;

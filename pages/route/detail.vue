@@ -24,14 +24,20 @@
         <!-- 动态加载对应线路的地图 -->
         <image class="route-map" :src="mapSrc" mode="aspectFill" @load="onMapLoad" :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }"></image>
         
-        <!-- 所有路线的交互响应区域 (透明热区) -->
+        <!-- 所有路线的交互响应区域 (多边形热区) -->
         <view v-for="(item, index) in currentRoutePois" :key="index" 
               class="poi-hotspot" 
               :class="{ 'debug-visible': debugMode }"
               :data-name="item.name"
-              :style="{ top: item.top + '%', left: item.left + '%', width: (item.hotWidth || 120) + 'rpx', height: (item.hotHeight || 120) + 'rpx' }"
+              :style="{ 
+                top: item.top + '%', 
+                left: item.left + '%', 
+                width: (item.hotWidth || 150) + 'rpx', 
+                height: (item.hotHeight || 150) + 'rpx',
+                'clip-path': item.polygon ? 'polygon(' + item.polygon + ')' : 'none',
+                '-webkit-clip-path': item.polygon ? 'polygon(' + item.polygon + ')' : 'none'
+              }"
               @click="showDetail(item)">
-          <!-- 不再渲染图片和标题，直接作为点击热区 -->
         </view>
       </movable-view>
     </movable-area>
@@ -78,6 +84,60 @@
 
 <script>
 import { ASSETS_CONFIG } from '@/utils/assets-config.js'
+import { CATEGORIES } from '@/utils/poi-config.js'
+
+// 所有路线的坐标和多边形配置 (放在组件外避免初始化顺序问题)
+const ROUTE_COORDS = {
+  'laojie': [
+    { id: '01', name: '空谈误国', top: 30, left: 70, hotWidth: 320, hotHeight: 260, polygon: '0% 15%, 100% 0%, 100% 85%, 0% 100%' },
+    { id: '02', name: '南玻集团', top: 34, left: 58, hotWidth: 280, hotHeight: 300, polygon: '20% 0%, 80% 0%, 100% 100%, 0% 100%' },
+    { id: '03', name: '育才一小', top: 38, left: 72, hotWidth: 300, hotHeight: 240, polygon: '0% 20%, 100% 0%, 100% 80%, 0% 100%' },
+    { id: '04', name: 'G&G', top: 44, left: 40, hotWidth: 340, hotHeight: 280, polygon: '10% 0%, 90% 10%, 100% 90%, 0% 100%' },
+    { id: '05', name: '水湾源华', top: 47, left: 65, hotWidth: 260, hotHeight: 220, polygon: '0% 0%, 100% 20%, 100% 100%, 0% 80%' },
+    { id: '06', name: '水湾村史馆', top: 52, left: 63, hotWidth: 240, hotHeight: 200, polygon: '10% 0%, 90% 0%, 100% 100%, 0% 100%' },
+    { id: '07', name: '水湾炮楼', top: 59, left: 46, hotWidth: 240, hotHeight: 280, polygon: '20% 0%, 80% 0%, 100% 100%, 0% 100%' },
+    { id: '08', name: '荔枝公园', top: 60, left: 22, hotWidth: 340, hotHeight: 320, polygon: '0% 30%, 100% 0%, 100% 70%, 0% 100%' },
+    { id: '09', name: '南海意库', top: 70, left: 45, hotWidth: 320, hotHeight: 280, polygon: '0% 0%, 100% 0%, 90% 100%, 10% 100%' },
+    { id: '10', name: '海滨花园', top: 78, left: 55, hotWidth: 300, hotHeight: 260, polygon: '0% 20%, 100% 0%, 100% 80%, 0% 100%' }
+  ],
+  'dengshan': [
+    { id: '17', name: '时间标语', top: 28, left: 40, hotWidth: 360, hotHeight: 320, polygon: '15% 0%, 85% 10%, 100% 85%, 0% 100%' },
+    { id: '18', name: '微波山', top: 43, left: 52, hotWidth: 320, hotHeight: 280, polygon: '30% 0%, 70% 0%, 100% 100%, 0% 100%' },
+    { id: '19', name: '招商局历史博物馆', top: 58, left: 55, hotWidth: 380, hotHeight: 320, polygon: '0% 20%, 100% 0%, 100% 80%, 0% 100%' }
+  ],
+  'binhai': [
+    { id: '11', name: '明华轮', top: 48, left: 40, hotWidth: 380, hotHeight: 280, polygon: '0% 40%, 100% 0%, 90% 100%, 10% 90%' },
+    { id: '12', name: '女娲像', top: 48, left: 65, hotWidth: 280, hotHeight: 340, polygon: '20% 0%, 80% 0%, 100% 100%, 0% 100%' },
+    { id: '13', name: '海上世界', top: 60, left: 60, hotWidth: 400, hotHeight: 300, polygon: '0% 0%, 100% 30%, 100% 100%, 0% 70%' },
+    { id: '14', name: '原耕', top: 62, left: 75, hotWidth: 220, hotHeight: 200, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '15', name: '南海酒店', top: 65, left: 38, hotWidth: 340, hotHeight: 280, polygon: '10% 0%, 90% 0%, 100% 100%, 0% 100%' },
+    { id: '16', name: '碧涛苑', top: 55, left: 25, hotWidth: 300, hotHeight: 260, polygon: '0% 0%, 100% 20%, 100% 100%, 0% 80%' }
+  ],
+  'xican': [
+    { id: '00', name: 'Benji Bakery', top: 43, left: 15, hotWidth: 280, hotHeight: 240, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '01', name: 'Birol Bistronomy', top: 76, left: 55, hotWidth: 320, hotHeight: 280, polygon: '15% 0%, 85% 0%, 100% 100%, 0% 100%' },
+    { id: '02', name: 'minimal', top: 68, left: 35, hotWidth: 280, hotHeight: 240, polygon: '0% 25%, 100% 0%, 100% 75%, 0% 100%' },
+    { id: '03', name: 'alla', top: 56, left: 26, hotWidth: 280, hotHeight: 240, polygon: '0% 10%, 100% 0%, 100% 90%, 0% 100%' },
+    { id: '04', name: 'doors', top: 52, left: 76, hotWidth: 280, hotHeight: 240, polygon: '0% 0%, 90% 10%, 100% 100%, 10% 90%' },
+    { id: '05', name: 'madloba', top: 66, left: 22, hotWidth: 280, hotHeight: 240, polygon: '0% 0%, 100% 15%, 100% 100%, 0% 85%' },
+    { id: '06', name: 'commune', top: 72, left: 78, hotWidth: 320, hotHeight: 240, polygon: '10% 0%, 100% 10%, 90% 100%, 0% 90%' },
+    { id: '07', name: 'Gecko Pub', top: 58, left: 46, hotWidth: 340, hotHeight: 360, polygon: '20% 0%, 80% 0%, 100% 50%, 100% 100%, 0% 100%, 0% 50%' },
+    { id: '08', name: 'baker', top: 60, left: 80, hotWidth: 280, hotHeight: 240, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '09', name: 'the_flames', top: 68, left: 62, hotWidth: 280, hotHeight: 240, polygon: '0% 20%, 100% 0%, 100% 80%, 0% 100%' }
+  ],
+  'kafei': [
+    { id: '01', name: '正在生活', top: 25, left: 28, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '02', name: '绿木', top: 38, left: 62, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '03', name: 'JOJO', top: 48, left: 42, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '04', name: '查理', top: 58, left: 28, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '05', name: 'NewPark C', top: 68, left: 52, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '06', name: 'NewPark', top: 78, left: 32, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '07', name: 'Wavve', top: 85, left: 62, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '08', name: '山池', top: 18, left: 48, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '09', name: 'KUDDO', top: 28, left: 72, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '10', name: '艾米丽', top: 35, left: 15, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' }
+  ]
+};
 
 export default {
   data() {
@@ -101,103 +161,35 @@ export default {
       windowHeight: 0,
       mapLoaded: false,
       checkInData: { history: [], binhai: [], dengshan: [], coffee: [], western: [] },
-      // 老街路线
-      laojiePois: [],
-      // 登山路线
-      dengshanPois: [],
-      // 滨海路线
-      binhaiPois: [],
-      // 西餐路线坐标点映射 (百分比定位)
-      westernPois: [],
-      // 咖啡路线
-      kafeiPois: []
+      // POI 数据通过计算属性获取
     }
-  },
-  created() {
-    // 在组件创建时初始化所有 POI 数据
-    const baseUrl = this.assets.CLOUD_BASE_URL + 'route/';
-    
-    // 助手函数：生成完整路径
-    const getPaths = (route, fileName, options = { hasPic: true, hasTitle: true, hasDetail: true }) => {
-      const paths = {};
-      if (options.hasDetail) paths.detailImg = `${baseUrl}${route}/${fileName}_detail.png`;
-      if (options.hasPic) paths.pic = `${baseUrl}${route}/${fileName}_pic.png`;
-      if (options.hasTitle) paths.titleImg = `${baseUrl}${route}/${fileName}_title.png`;
-      
-      // 特殊处理：老街 09 的图片名有个 typo
-      if (route === 'laojie' && fileName === '09_nanhaiyiku' && options.hasPic) {
-        paths.pic = `${baseUrl}laojie/09_nanhaiyiku_piv.png`;
-      }
-      return paths;
-    };
-
-    // 设置各路线配置
-    const hasNoTitle = { hasPic: true, hasTitle: false, hasDetail: true };
-
-    this.laojiePois = [
-      { id: '01', name: '空谈误国', top: 30, left: 70, hotWidth: 180, hotHeight: 120, ...getPaths('laojie', '01_biaoyupai') },
-      { id: '02', name: '南玻集团', top: 34, left: 58, hotWidth: 150, hotHeight: 120, ...getPaths('laojie', '02_nanbo') },
-      { id: '03', name: '育才一小', top: 38, left: 72, hotWidth: 150, hotHeight: 120, ...getPaths('laojie', '03_yucai') },
-      { id: '04', name: 'G&G', top: 44, left: 40, hotWidth: 200, hotHeight: 150, ...getPaths('laojie', '04_gg') },
-      { id: '05', name: '水湾源华', top: 47, left: 65, hotWidth: 180, hotHeight: 100, ...getPaths('laojie', '05_shuiwanyuanhua') },
-      { id: '06', name: '水湾村史馆', top: 52, left: 63, hotWidth: 150, hotHeight: 100, ...getPaths('laojie', '06_shuiwancunshiguan') },
-      { id: '07', name: '水湾炮楼', top: 59, left: 46, hotWidth: 120, hotHeight: 150, ...getPaths('laojie', '07_shuiwanpaolou') },
-      { id: '08', name: '荔枝公园', top: 60, left: 22, hotWidth: 200, hotHeight: 180, ...getPaths('laojie', '08_lizhigongyuan') },
-      { id: '09', name: '南海意库', top: 70, left: 45, hotWidth: 200, hotHeight: 150, ...getPaths('laojie', '09_nanhaiyiku') },
-      { id: '10', name: '海滨花园', top: 78, left: 55, hotWidth: 180, hotHeight: 120, ...getPaths('laojie', '10_haibinhuayuan') }
-    ];
-
-    this.dengshanPois = [
-      { id: '17', name: '时间标语', top: 28, left: 40, hotWidth: 220, hotHeight: 180, ...getPaths('dengshan', '17_shijianbiaoyu') },
-      { id: '18', name: '微波山', top: 43, left: 52, hotWidth: 180, hotHeight: 150, ...getPaths('dengshan', '18_weiboshan') },
-      { id: '19', name: '招商局历史博物馆', top: 58, left: 55, hotWidth: 220, hotHeight: 180, ...getPaths('dengshan', '19_zhaoshangjulishi') }
-    ];
-
-    this.binhaiPois = [
-      { id: '11', name: '明华轮', top: 48, left: 40, hotWidth: 220, hotHeight: 150, ...getPaths('binhai', '11_minghualun') },
-      { id: '12', name: '女娲像', top: 48, left: 65, hotWidth: 150, hotHeight: 180, ...getPaths('binhai', '12_nvwaxiang') },
-      { id: '13', name: '海上世界', top: 60, left: 60, hotWidth: 250, hotHeight: 150, ...getPaths('binhai', '13_haishangshijie') },
-      { id: '14', name: '原耕', top: 62, left: 75, hotWidth: 120, hotHeight: 100, ...getPaths('binhai', '14_yuangeng', { hasPic: false, hasTitle: true, hasDetail: false }) },
-      { id: '15', name: '南海酒店', top: 65, left: 38, hotWidth: 200, hotHeight: 150, ...getPaths('binhai', '15_nanhaijiudian') },
-      { id: '16', name: '碧涛苑', top: 55, left: 25, hotWidth: 180, hotHeight: 120, ...getPaths('binhai', '16_bitaoyuan') }
-    ];
-
-    this.westernPois = [
-      { id: '00', name: 'Benji Bakery', top: 42, left: 15, hotWidth: 150, hotHeight: 120, ...getPaths('western', '00_benji') },
-      { id: '01', name: 'Birol Bistronomy', top: 80, left: 55, hotWidth: 180, hotHeight: 120, ...getPaths('western', '01_birol') },
-      { id: '02', name: 'minimal', top: 72, left: 35, hotWidth: 150, hotHeight: 100, ...getPaths('western', '02_minimal') },
-      { id: '03', name: 'alla', top: 55, left: 25, hotWidth: 150, hotHeight: 120, ...getPaths('western', '03_alla') },
-      { id: '04', name: 'doors', top: 52, left: 75, hotWidth: 150, hotHeight: 120, ...getPaths('western', '04_doors') },
-      { id: '05', name: 'madloba', top: 65, left: 22, hotWidth: 150, hotHeight: 120, ...getPaths('western', '05_madloba') },
-      { id: '06', name: 'commune', top: 72, left: 80, hotWidth: 150, hotHeight: 120, ...getPaths('western', '06_commune') },
-      { id: '07', name: 'Gecko Pub', top: 52, left: 45, hotWidth: 150, hotHeight: 120, ...getPaths('western', '07_gecko') },
-      { id: '08', name: 'baker', top: 60, left: 78, hotWidth: 150, hotHeight: 120, ...getPaths('western', '08_baker') },
-      { id: '09', name: 'the_flames', top: 68, left: 60, hotWidth: 150, hotHeight: 120, ...getPaths('western', '09_flames') }
-    ];
-
-    this.kafeiPois = [
-      { id: '01', name: '正在生活', top: 25, left: 28, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '01_zhengzaishenghuo', hasNoTitle) },
-      { id: '02', name: '绿木', top: 38, left: 62, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '02_greenwood', hasNoTitle) },
-      { id: '03', name: 'JOJO', top: 48, left: 42, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '03_jojo', hasNoTitle) },
-      { id: '04', name: '查理', top: 58, left: 28, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '04_chali', hasNoTitle) },
-      { id: '05', name: 'NewPark C', top: 68, left: 52, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '05_newparkcoffee', hasNoTitle) },
-      { id: '06', name: 'NewPark', top: 78, left: 32, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '06_newpark', hasNoTitle) },
-      { id: '07', name: 'Wavve', top: 85, left: 62, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '07_wavve', hasNoTitle) },
-      { id: '08', name: '山池', top: 18, left: 48, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '08_shanchi', hasNoTitle) },
-      { id: '09', name: 'KUDDO', top: 28, left: 72, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '09_kuddo', hasNoTitle) },
-      { id: '10', name: '艾米丽', top: 35, left: 15, hotWidth: 150, hotHeight: 120, ...getPaths('coffee', '10_emily', hasNoTitle) }
-    ];
   },
   computed: {
     currentRoutePois() {
-      const poiMap = {
-        'laojie': this.laojiePois,
-        'dengshan': this.dengshanPois,
-        'binhai': this.binhaiPois,
-        'xican': this.westernPois,
-        'kafei': this.kafeiPois
+      // 映射配置中的 items 到数组格式供页面循环
+      let catKey = '';
+      const routeToCatMap = {
+        'laojie': 'history',
+        'dengshan': 'dengshan',
+        'binhai': 'binhai',
+        'xican': 'western',
+        'kafei': 'coffee'
       };
-      return poiMap[this.routeId] || [];
+      catKey = routeToCatMap[this.routeId] || 'history';
+      
+      const catData = CATEGORIES[catKey];
+      if (!catData) return [];
+
+      // 获取原始坐标和多边形配置
+      const originalCoords = ROUTE_COORDS[this.routeId] || [];
+      
+      return originalCoords.map(coord => {
+        const itemInfo = catData.items[coord.name] || {};
+        return {
+          ...itemInfo,
+          ...coord
+        };
+      });
     },
     atlasCat() {
       const routeToAtlasMap = {
@@ -612,14 +604,16 @@ export default {
   .check-in-btn-container {
     width: 320rpx;
     height: 96rpx;
-    position: absolute;
-    bottom: -48rpx; // 居中压在详情卡片底部边缘
-    left: 50%;
-    transform: translateX(-50%);
+    margin-top: -60rpx; // 向上移动，叠在卡片内容上
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10;
+    position: relative; // 使用相对定位配合 margin-top 更稳定
+    left: 0;
+    transform: none;
+    margin-left: auto;
+    margin-right: auto;
     
     .btn-bg {
       position: absolute;
