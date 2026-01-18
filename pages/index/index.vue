@@ -14,17 +14,16 @@
         :inertia="true"
         :damping="40"
         :friction="1"
-        :style="{ width: (mapWidth + mapPadding * 2) + 'px', height: (mapHeight + mapPadding * 2) + 'px' }"
+        :style="{ width: mapWidth + 'px', height: mapHeight + 'px' }"
         @scale="onScale"
         @change="onChange"
       >
         <!-- 地图容器：增加边距实现留白效果 -->
-        <view 
+        <view
           class="map-inner-container"
-          :style="{ 
-            width: mapWidth + 'px', 
-            height: mapHeight + 'px',
-            padding: mapPadding + 'px'
+          :style="{
+            width: mapWidth + 'px',
+            height: mapHeight + 'px'
           }"
         >
           <!-- 渐进式地图层 -->
@@ -211,7 +210,7 @@ export default {
       userLocation: null, // { top, left } 百分比坐标
       outOfBounds: false,
       locationWatcher: null,
-      mapPadding: 100 // 地图四周留白的像素值
+      // mapPadding: 100 // 移除地图四周留白，避免坐标偏移
     }
   },
   onLoad() {
@@ -269,14 +268,14 @@ export default {
       this.mapWidth = this.windowWidth * 3; 
       this.mapHeight = (this.mapWidth * height) / width;
       
-      const minScaleW = this.windowWidth / (this.mapWidth + this.mapPadding * 2);
-      const minScaleH = this.windowHeight / (this.mapHeight + this.mapPadding * 2);
+      const minScaleW = this.windowWidth / this.mapWidth;
+      const minScaleH = this.windowHeight / this.mapHeight;
       this.minScale = Math.max(minScaleW, minScaleH);
       
       // 记录初始视角状态 (居中，且略微放大)
       const startScale = this.minScale * 1.5;
-      const centerX = (this.mapWidth / 2) + this.mapPadding;
-      const centerY = (this.mapHeight / 2) + this.mapPadding;
+      const centerX = this.mapWidth / 2;
+      const centerY = this.mapHeight / 2;
 
       this.initialState = {
         scale: startScale,
@@ -416,8 +415,8 @@ export default {
       
       // 计算目标位置，使 POI 居中
       // POI 的位置是百分比，相对于 mapWidth 和 mapHeight
-      const poiX = (this.mapWidth * poi.left) / 100 + this.mapPadding;
-      const poiY = (this.mapHeight * poi.top) / 100 + this.mapPadding;
+      const poiX = (this.mapWidth * poi.left) / 100;
+      const poiY = (this.mapHeight * poi.top) / 100;
       
       const targetX = (this.windowWidth / 2) - (poiX * targetScale);
       const targetY = (this.windowHeight / 2) - (poiY * targetScale);
@@ -473,8 +472,8 @@ export default {
 
           // data.left/top 是地图相对于视口的当前位置（包含滚动和缩放后的偏移）
           // data.width/height 是地图当前的实际渲染尺寸
-          const clickX = x - data.left - (this.mapPadding * this.curScale);
-          const clickY = y - data.top - (this.mapPadding * this.curScale);
+          const clickX = x - data.left;
+          const clickY = y - data.top;
 
           // 计算相对于地图完整内容的百分比
           const relativeLeft = Math.round((clickX / (this.mapWidth * this.curScale)) * 100);

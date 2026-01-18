@@ -1,17 +1,10 @@
 <template>
   <view class="container">
     <!-- 顶部导航栏 -->
-    <view class="header animate-slide-down" :style="{ paddingTop: statusBarHeight + 'px' }">
-      <SafeImage class="header-bg-img" :src="assets.route.headerBgMap" mode="aspectFill">
-        <template #error>
-          <view class="error-placeholder">
-            <text>🎯 路线选择背景加载失败</text>
-            <text>{{ assets.route.headerBgMap }}</text>
-          </view>
-        </template>
-      </SafeImage>
+    <view class="header animate-slide-down">
+      <image class="header-bg-img" :src="assets.route.headerBgMap" mode="aspectFill"></image>
       <view class="back-btn" :style="{ top: (statusBarHeight + 10) + 'px' }" @click="goBack">←</view>
-      <view class="title-container">
+      <view class="title-container" :style="{ paddingTop: statusBarHeight + 'px' }">
         <text class="title">路线选择</text>
       </view>
     </view>
@@ -29,7 +22,7 @@
 
         <view class="route-card-body">
           <!-- 背景图 (带切口和阴影的黄色底) -->
-          <image class="card-bg" :src="route.bg" mode="scaleToFill"></image>
+          <image class="card-bg" :src="route.bg" mode="aspectFill"></image>
           
           <view class="card-content">
             <view class="text-area">
@@ -137,7 +130,7 @@ export default {
 }
 
 .header {
-  height: 160rpx; // 调小一点，大约是字体高度的2-3倍加上状态栏
+  height: 200rpx; // 增加高度，确保有足够空间容纳状态栏和标题
   padding: 0rpx;
   display: flex;
   align-items: center;
@@ -145,16 +138,16 @@ export default {
   position: relative;
   z-index: 100;
   overflow: hidden;
-  border-bottom: 2rpx solid rgba(0,0,0,0.05); // 移除粗黑边框，改为浅色线
+  border-bottom: 2rpx solid rgba(0,0,0,0.05);
   
   .header-bg-img {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw; // 确保撑满屏幕宽度
+    width: 100%; // 使用 100% 宽度
     height: 100%;
     z-index: -1;
-    transform: none;
+    display: block; // 确保块级显示
   }
   
   .back-btn { 
@@ -168,11 +161,10 @@ export default {
     font-weight: 900; 
     position: absolute;
     left: 20rpx;
-    // top 由 style 动态计算
     z-index: 10;
-    background: rgba(255,255,255,0.8); // 增加背景不透明度
+    background: rgba(255,255,255,0.8);
     border-radius: 50%;
-    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1); // 改为阴影而非黑边
+    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
   }
   
   .title-container {
@@ -180,24 +172,24 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 10rpx; // 稍微向下偏移一点
+    height: 100%;
+    padding-top: 40rpx; // 手动调整标题位置，使其在状态栏下方居中
   }
   
   .title { 
-    font-size: 42rpx; 
+    font-size: 44rpx; // 稍微调大一点
     font-weight: 900; 
     color: #222; 
     letter-spacing: 4rpx;
     font-family: 'RuilingTi', sans-serif !important;
-    // 增加白色描边/发光，确保在地图背景上清晰
-    text-shadow: 0 0 10rpx #fff, 0 0 10rpx #fff, 0 0 10rpx #fff;
+    text-shadow: 0 0 10rpx #fff, 0 0 10rpx #fff;
   }
 }
 
 .route-list {
   flex: 1;
   padding: 30rpx; 
-  padding-top: 40rpx;
+  padding-top: 20rpx; // 减小顶部间距
   box-sizing: border-box;
 }
 
@@ -315,29 +307,27 @@ export default {
 
 .explore-side {
   position: absolute;
-  right: -35rpx; // 向右移动（相对于右边界向外偏移）
-  bottom: 35rpx; // 向上移动
-  width: 150rpx;
+  right: 0;
+  bottom: 0;
+  width: 130rpx; // 稍微增加宽度以容纳投影
+  height: 130rpx; // 稍微增加高度以容纳投影
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  box-sizing: border-box;
+  justify-content: center;
   z-index: 20;
   
   .circle-btn {
-    width: 125rpx;
-    height: 125rpx;
+    width: 110rpx; // 稍微调小一点，确保在卡片边缘内对齐更美观
+    height: 110rpx;
     background: linear-gradient(135deg, #FFB800 0%, #FF8A00 100%);
     border-radius: 50%;
-    // border: 5rpx solid #222; // 同样移除按钮的粗黑边框
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8rpx 20rpx rgba(255, 138, 0, 0.4); // 改为彩色阴影
+    box-shadow: 0 8rpx 20rpx rgba(255, 138, 0, 0.4);
     
     .btn-text {
-      font-size: 28rpx;
+      font-size: 26rpx;
       font-weight: 900;
       color: #fff;
       font-family: 'RuilingTi', sans-serif !important;

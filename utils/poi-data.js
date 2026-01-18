@@ -7,10 +7,10 @@ import { ASSETS_CONFIG } from './assets-config.js';
  */
 export const POI_DATA = [
   // --- 北部区域 ---
-  { 
-    name: '蛇口招商花园城', top: 6, left: 40, 
-    desc: '蛇口核心商业综合体，集购物、餐饮、休闲于一体。', 
-    img: ASSETS_CONFIG.atlas.history.items['08'] 
+  {
+    name: '蛇口招商花园城', top: 6, left: 39,
+    desc: '蛇口核心商业综合体，集购物、餐饮、休闲于一体。',
+    img: ASSETS_CONFIG.atlas.history.items['08']
   },
   {
     name: '空谈误国', top: 23, left: 34,

@@ -149,6 +149,12 @@ export default {
   height: 100%;
 }
 
+.safe-image-container image {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .safe-image-container.has-error image {
   opacity: 0.3;
 }
