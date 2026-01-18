@@ -15,32 +15,33 @@
     </scroll-view>
 
     <!-- 图鉴主体区域：可缩放/滚动的地图区域 -->
-    <scroll-view 
-      scroll-x 
-      scroll-y 
+    <scroll-view
+      scroll-x
+      scroll-y
       class="atlas-scroll-view"
       :scroll-top="scrollTop"
     >
-      <view class="map-content">
+      <view class="map-content" @tap="onAtlasMapClick">
         <!-- 底图：根据打卡情况决定分类地图颜色 -->
         <image
           class="bg-map"
           :src="isCategoryCompleted ? currentCatData.map : currentCatData.map_bw"
           mode="widthFix"
+          style="pointer-events: none;"
         ></image>
         
         <!-- 景点画框组合：容器包含框和图 -->
-        <view 
+        <view
           class="poi-frame-container"
-          v-for="(item, name) in displayItems" 
+          v-for="(item, name) in displayItems"
           :key="name"
           :data-name="name"
           :style="{
-            top: item.top + 'rpx', 
+            top: item.top + 'rpx',
             left: item.left + 'rpx',
             width: (item.width || 180) + 'rpx'
           }"
-          @click="showCheckIn(name)"
+          @click.stop="showCheckIn(name)"
         >
           <!-- 1. 画框背景 -->
           <image
@@ -167,10 +168,10 @@ export default {
       }
       this.checkInData[this.activeCat].push(this.selectedItem);
       uni.setStorageSync('shekou_checkin', this.checkInData);
-      
+
       this.showingModal = false;
       uni.showToast({ title: '点亮图鉴！', icon: 'success' });
-      
+
       if (this.isCategoryCompleted) {
         setTimeout(() => {
           uni.showModal({
@@ -180,7 +181,45 @@ export default {
           });
         }, 1000);
       }
-    }
+    },
+    onAtlasMapClick(e) {
+      console.log('✅ onAtlasMapClick 触发!', e);
+      
+      const query = uni.createSelectorQuery().in(this);
+      query.select('.bg-map').boundingClientRect(data => {
+        if (!data) return;
+        
+        // 获取点击位置相对于视口的坐标
+        let clientX = 0;
+        let clientY = 0;
+        
+        if (e.detail && (e.detail.x || e.detail.clientX)) {
+          clientX = e.detail.x || e.detail.clientX;
+          clientY = e.detail.y || e.detail.clientY;
+        } else if (e.touches && e.touches[0]) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else if (e.changedTouches && e.changedTouches[0]) {
+          clientX = e.changedTouches[0].clientX;
+          clientY = e.changedTouches[0].clientY;
+        }
+        
+        // 计算相对于地图容器左上角的坐标
+        const x = clientX - data.left;
+        const y = clientY - data.top;
+        
+        const leftPercent = Math.round((x / data.width) * 100);
+        const topPercent = Math.round((y / data.height) * 100);
+        
+        const rpxX = Math.round((x / data.width) * 750);
+        const rpxY = Math.round(y * (750 / data.width));
+        
+        const result = `left=${leftPercent}%, top=${topPercent}%`;
+        const rpxResult = `RPX: ${rpxX}, ${rpxY}`;
+        
+        console.log(`🗺️ [${this.activeCat}] 修正后的图鉴地图点击坐标: ${result} | ${rpxResult}`);
+      }).exec();
+    },
   }
 }
 </script>
@@ -279,15 +318,14 @@ export default {
 .map-content {
   position: relative;
   width: 750rpx;
-  min-height: 100%;
-  overflow: hidden; /* 防止图标溢出地图区域 */
+  display: block;
+  overflow: hidden; 
+  pointer-events: auto; /* 显式开启点击 */
 }
 
 .bg-map {
   width: 750rpx;
   display: block;
-  /* 确保地图至少占满屏幕高度，避免留白 */
-  min-height: 100vh;
 }
 
 .poi-frame-container {

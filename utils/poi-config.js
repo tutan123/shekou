@@ -49,18 +49,18 @@ export const CATEGORIES = {
       '育才中学': { 
         ...getRoutePaths('laojie', '03_yucai')
       },
-      'G&G': { 
-        top: 380, left: 460, width: 230, 
-        frame: ATLAS_BASE + 'history/04_gg_frame.png', 
+      'G&G': {
+        top: 475, left: 569, width: 230,
+        frame: ATLAS_BASE + 'history/04_gg_frame.png',
         icon: ATLAS_BASE + 'history/04_gg_pic.png',
         ...getRoutePaths('laojie', '04_gg')
       },
       'G&G创意社区': { 
         ...getRoutePaths('laojie', '04_gg')
       },
-      '水湾源华': { 
-        top: 850, left: 90, width: 230, 
-        frame: ATLAS_BASE + 'history/05_shuiwanyuanhua_frame.png', 
+      '水湾源华': {
+        top: 906, left: 85, width: 230,
+        frame: ATLAS_BASE + 'history/05_shuiwanyuanhua_frame.png',
         icon: ATLAS_BASE + 'history/05_shuiwanyuanhua_pic.png',
         ...getRoutePaths('laojie', '05_shuiwanyuanhua')
       },
@@ -92,7 +92,7 @@ export const CATEGORIES = {
         ...getRoutePaths('laojie', '09_nanhaiyiku')
       },
       '海滨花园': {
-        top: 500, left: 310, width: 220,
+        top: 697, left: 308, width: 220,
         frame: ATLAS_BASE + 'history/10_haibinhuayuan_frame.png',
         icon: ATLAS_BASE + 'history/10_haibinhuayuan_pic.png',
         ...getRoutePaths('laojie', '10_haibinhuayuan')
@@ -229,15 +229,15 @@ export const CATEGORIES = {
         icon: ATLAS_BASE + 'western/Gecko Pub.png',
         ...getRoutePaths('western', '07_gecko')
       },
-      'baker': { 
-        top: 820, left: 600, width: 220, 
-        frame: ATLAS_BASE + 'western/baker_frame.png', 
+      'baker': {
+        top: 690, left: 622, width: 220,
+        frame: ATLAS_BASE + 'western/baker_frame.png',
         icon: ATLAS_BASE + 'western/baker.png',
         ...getRoutePaths('western', '08_baker')
       },
-      'the_flames': { 
-        top: 580, left: 380, width: 230, 
-        frame: ATLAS_BASE + 'western/the_flames_frame.png', 
+      'the_flames': {
+        top: 744, left: 311, width: 230,
+        frame: ATLAS_BASE + 'western/the_flames_frame.png',
         icon: ATLAS_BASE + 'western/the_flames.png',
         ...getRoutePaths('western', '09_flames')
       }
