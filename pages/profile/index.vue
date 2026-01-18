@@ -2,81 +2,63 @@
   <view class="container">
     <!-- 顶部：地图背景 + 头像区域 -->
     <view class="header-section">
-      <!-- 底层：地图背景图 -->
+      <!-- 底层：高保真地图背景图 -->
       <view class="map-bg-layer">
-        <image class="map-img" :src="assets.images.loginBg" mode="aspectFill"></image>
-        <view class="overlay"></view>
+        <!-- 使用 mode="widthFix" 让图片宽度撑满并保持比例，外层容器 overflow: hidden 会自动裁掉底部多余部分 -->
+        <image class="map-img" src="/static/personal_page/back_map.png" mode="widthFix"></image>
       </view>
       
-      <!-- 中层：波浪装饰（上层图概念） -->
-      <view class="wave-layer">
-        <image class="wave-img" :src="assets.images.wave" mode="aspectFill"></image>
-      </view>
-      
-      <!-- 顶层：用户信息 -->
-      <view class="user-content">
-        <view class="avatar-box animate-scale-in">
+      <!-- 用户信息 -->
+      <view class="user-info">
+        <view class="avatar-wrapper animate-pop-in">
           <image class="avatar" :src="assets.images.avatarPlaceholder" mode="aspectFill"></image>
         </view>
-        <text class="nickname">Hello, DWQ</text>
+        <text class="nickname">Hello, 游客</text>
       </view>
     </view>
 
-    <!-- 下半部分内容 -->
+    <!-- 主体内容 -->
     <view class="main-content">
-      <!-- 登录设置 & 实名认证 -->
-      <view class="quick-nav-card">
-        <view class="nav-row" @click="goTo('/pages/profile/settings')">
-          <text class="nav-label">登录设置</text>
-          <text class="nav-arrow">→</text>
-        </view>
-        <view class="nav-divider"></view>
-        <view class="nav-row">
-          <text class="nav-label">实名认证</text>
-          <text class="nav-arrow">→</text>
+      <!-- 搜索框 -->
+      <view class="search-box">
+        <view class="search-inner">
+          <icon type="search" size="18" color="#999" class="search-icon" />
+          <input class="search-input" placeholder="查找地点" placeholder-class="search-placeholder" />
         </view>
       </view>
 
-      <!-- 个人信息卡片 -->
-      <view class="info-grid-card">
-        <view class="info-item" @click="goTo('/pages/profile/details')">
-          <text class="label">头像</text>
-          <view class="val">
-            <image class="sm-avatar" :src="assets.images.avatarPlaceholder" mode="aspectFill"></image>
-            <text class="arrow">〉</text>
+      <!-- 功能按钮区域 -->
+      <view class="action-grid">
+        <view class="action-item" @click="goTo('/pages/profile/favorites')">
+          <view class="action-icon-box">
+            <image class="box-bg" src="/static/personal_page/round_rect.png" mode="scaleToFill"></image>
+            <image class="action-icon" src="/static/personal_page/个人收藏_图标.svg" mode="aspectFit"></image>
           </view>
+          <text class="action-label">个人收藏</text>
         </view>
-        <view class="info-item">
-          <text class="label">名字</text>
-          <view class="val">
-            <text class="txt">DWQ</text>
-            <text class="arrow">〉</text>
+        <view class="action-item" @click="goTo('/pages/profile/details')">
+          <view class="action-icon-box">
+            <image class="box-bg" src="/static/personal_page/round_rect.png" mode="scaleToFill"></image>
+            <image class="action-icon" src="/static/personal_page/个人资料_图标.svg" mode="aspectFit"></image>
           </view>
+          <text class="action-label">个人资料</text>
         </view>
-        <view class="info-item">
-          <text class="label">电话</text>
-          <view class="val">
-            <text class="txt">19106572834</text>
-            <text class="arrow">〉</text>
+        <view class="action-item" @click="goTo('/pages/profile/settings')">
+          <view class="action-icon-box">
+            <image class="box-bg" src="/static/personal_page/round_rect.png" mode="scaleToFill"></image>
+            <image class="action-icon" src="/static/personal_page/个人设置_图标.svg" mode="aspectFit"></image>
           </view>
-        </view>
-        <view class="info-item">
-          <text class="label">地址</text>
-          <view class="val">
-            <text class="txt">广东省深圳市深圳大学</text>
-            <text class="arrow">〉</text>
-          </view>
+          <text class="action-label">个人设置</text>
         </view>
       </view>
 
-      <!-- 退出按钮 -->
-      <view class="btn-area">
-        <view class="logout-btn" @click="handleLogout">退出登录</view>
+      <!-- 地图预览卡片 -->
+      <view class="map-card" @click="goTo('/pages/index/index')">
+        <image class="map-preview-img" src="/static/personal_page/map_shortcut.png" mode="aspectFill"></image>
       </view>
-      <view class="bottom-spacer"></view>
     </view>
 
-    <!-- 自定义底部导航 -->
+    <!-- 底部导航 -->
     <CustomTabBar activePath="pages/profile/index" />
   </view>
 </template>
@@ -100,9 +82,6 @@ export default {
   methods: {
     goTo(url) {
       uni.navigateTo({ url });
-    },
-    handleLogout() {
-      uni.reLaunch({ url: '/pages/login/login' });
     }
   }
 }
@@ -111,149 +90,175 @@ export default {
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #FFF9E6;
+  background-color: #FFCB32; // 高保真黄色背景
+  position: relative;
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
 }
 
 .header-section {
   position: relative;
-  height: 560rpx;
-  overflow: hidden;
+  height: 600rpx;
+  background-color: #FFCB32;
+  overflow: hidden; // 关键：裁切掉背景图底部
   
   .map-bg-layer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
     z-index: 1;
-    .map-img { width: 100%; height: 100%; }
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(180deg, rgba(255,249,230,0.1) 0%, rgba(255,249,230,0.4) 100%);
+    
+    .map-img { 
+      width: 100%; 
+      display: block;
     }
   }
   
-  .wave-layer {
-    position: absolute;
-    bottom: -2rpx;
-    left: 0;
-    width: 100%;
-    height: 400rpx;
-    z-index: 2;
-    .wave-img { width: 100%; height: 100%; }
-  }
-  
-  .user-content {
+  .user-info {
     position: relative;
     z-index: 10;
-    padding-top: 160rpx;
+    padding-top: 260rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
     
-    .avatar-box {
+    .avatar-wrapper {
       width: 180rpx;
       height: 180rpx;
       background: #fff;
       border-radius: 50%;
-      padding: 10rpx;
+      padding: 8rpx;
       box-shadow: 0 10rpx 40rpx rgba(0,0,0,0.1);
-      .avatar { width: 100%; height: 100%; border-radius: 50%; }
+      margin-bottom: 24rpx;
+      
+      .avatar { 
+        width: 100%; 
+        height: 100%; 
+        border-radius: 50%; 
+      }
     }
     
     .nickname {
-      margin-top: 24rpx;
-      font-size: 48rpx;
-      font-weight: 800;
-      color: #333;
+      font-size: 56rpx;
+      font-weight: bold;
+      color: #000;
+      letter-spacing: 1rpx;
     }
   }
 }
 
 .main-content {
-  padding: 0 40rpx 60rpx;
-  margin-top: -60rpx;
+  padding: 0 50rpx;
+  margin-top: -30rpx;
   position: relative;
-  z-index: 20;
+  z-index: 10;
 }
 
-.quick-nav-card {
-  background: #FFE4B5; // 稍微深一点的黄色卡片
-  border-radius: 40rpx;
+.search-box {
+  background: #fff;
+  height: 110rpx;
+  border-radius: 55rpx;
+  display: flex;
+  align-items: center;
   padding: 0 40rpx;
-  margin-bottom: 40rpx;
-  box-shadow: 0 8rpx 20rpx rgba(0,0,0,0.05);
+  margin-bottom: 50rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05);
   
-  .nav-row {
-    height: 110rpx;
+  .search-inner {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    .nav-label { font-size: 32rpx; font-weight: 600; color: #333; }
-    .nav-arrow { font-size: 36rpx; color: #666; }
-  }
-  .nav-divider { height: 2rpx; background: rgba(0,0,0,0.05); }
-}
-
-.info-grid-card {
-  background: #FFF9E6;
-  border-radius: 40rpx;
-  padding: 20rpx 40rpx;
-  box-shadow: 0 10rpx 40rpx rgba(0,0,0,0.03);
-  margin-bottom: 60rpx;
-  border: 4rpx solid #fff;
-  
-  .info-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 34rpx 0;
-    border-bottom: 2rpx solid rgba(0,0,0,0.03);
-    &:last-child { border-bottom: none; }
+    width: 100%;
     
-    .label { font-size: 30rpx; color: #666; }
-    .val {
-      display: flex;
-      align-items: center;
-      gap: 16rpx;
-      .txt { font-size: 30rpx; color: #333; font-weight: 500; }
-      .sm-avatar { width: 70rpx; height: 70rpx; border-radius: 16rpx; }
-      .arrow { font-size: 24rpx; color: #ccc; }
+    .search-icon {
+      margin-right: 15rpx;
+    }
+    
+    .search-input { 
+      flex: 1; 
+      font-size: 30rpx; 
+      color: #333;
+    }
+    
+    .search-placeholder { 
+      color: #999; 
     }
   }
 }
 
-.btn-area {
-  .logout-btn {
-    background: #00A99D;
-    color: #fff;
-    height: 100rpx;
-    border-radius: 50rpx;
+.action-grid {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 50rpx;
+  
+  .action-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    font-size: 34rpx;
-    font-weight: 800;
-    box-shadow: 0 10rpx 30rpx rgba(0, 169, 157, 0.2);
+    flex: 1;
     
-    &:active { opacity: 0.9; transform: scale(0.98); }
+    .action-icon-box {
+      width: 152rpx;
+      height: 148rpx;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12rpx;
+      
+      .box-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+      
+      .action-icon { 
+        width: 80rpx; 
+        height: 80rpx; 
+        position: relative;
+        z-index: 2;
+      }
+    }
+    
+    .action-label {
+      font-size: 26rpx;
+      color: #fff;
+      font-weight: 500;
+    }
+    
+    &:active {
+      opacity: 0.8;
+      transform: scale(0.96);
+    }
   }
 }
 
-.bottom-spacer {
-  height: 160rpx;
+.map-card {
+  width: 100%;
+  height: 340rpx;
+  border-radius: 48rpx;
+  overflow: hidden;
+  box-shadow: 0 12rpx 45rpx rgba(0,0,0,0.12);
+  background: #fff;
+  
+  .map-preview-img { 
+    width: 100%; 
+    height: 100%; 
+  }
+  
+  &:active {
+    opacity: 0.9;
+  }
 }
 
-.animate-scale-in {
-  animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+.animate-pop-in {
+  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.5); }
-  to { opacity: 1; transform: scale(1); }
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 </style>

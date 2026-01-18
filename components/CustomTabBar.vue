@@ -1,25 +1,30 @@
 <template>
-  <view class="tab-bar">
-    <view 
-      v-for="(item, index) in list" 
-      :key="index" 
-      class="tab-item" 
-      @click="switchTab(item.pagePath)"
-    >
-      <view :class="['icon-wrapper', activePath === item.pagePath ? 'active' : '']">
-        <image 
-          class="tab-icon" 
-          :src="activePath === item.pagePath ? item.selectedIconPath : item.iconPath" 
-          mode="aspectFit"
-        ></image>
+  <view class="tab-bar-container">
+    <view class="tab-bar">
+      <view 
+        v-for="(item, index) in list" 
+        :key="index" 
+        class="tab-item" 
+        @click="switchTab(item.pagePath)"
+      >
+        <!-- 容器：处理图标的定位 -->
+        <view class="icon-container">
+          <view :class="['icon-wrapper', activePath === item.pagePath ? 'active' : '']">
+            <image 
+              class="tab-icon" 
+              :src="activePath === item.pagePath ? item.selectedIconPath : item.iconPath" 
+              mode="aspectFit"
+            ></image>
+          </view>
+        </view>
+        <!-- 文字固定在底部 -->
+        <text :class="['tab-text', activePath === item.pagePath ? 'active' : '']">{{ item.text }}</text>
       </view>
-      <text :class="['tab-text', activePath === item.pagePath ? 'active' : '']">{{ item.text }}</text>
     </view>
   </view>
 </template>
 
 <script>
-
 export default {
   props: {
     activePath: {
@@ -63,21 +68,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.tab-bar {
+.tab-bar-container {
   position: fixed;
-  bottom: 30rpx; // 距离底部一点距离，产生悬浮感
-  left: 30rpx;
-  right: 30rpx;
-  height: 110rpx; // 稍微加高一点点，适配文字
-  background: rgba(255, 255, 255, 0.95);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: #ffffff; // 底部栏背景色
+  padding-bottom: env(safe-area-inset-bottom); // 适配全面屏底部
+  box-shadow: 0 -2rpx 15rpx rgba(0, 0, 0, 0.05);
+}
+
+.tab-bar {
+  height: 110rpx;
   display: flex;
   justify-content: space-around;
-  align-items: flex-end; // 改为底部对齐
-  border-radius: 60rpx;
-  box-shadow: 0 15rpx 40rpx rgba(0, 0, 0, 0.1);
-  z-index: 9999;
-  padding-bottom: 10rpx;
-  backdrop-filter: blur(10px);
+  align-items: center;
+  position: relative;
 }
 
 .tab-item {
@@ -86,52 +93,59 @@ export default {
   align-items: center;
   justify-content: flex-end;
   flex: 1;
-  height: 140rpx; // 增加点击区域高度
+  height: 100%;
+  padding-bottom: 10rpx;
+}
+
+.icon-container {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
 }
 
 .icon-wrapper {
-  width: 80rpx;
-  height: 80rpx;
+  width: 70rpx;
+  height: 70rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  background: #fff;
-  border-radius: 50%;
-  box-shadow: 0 8rpx 20rpx rgba(0,0,0,0.08);
   position: absolute;
-  top: -30rpx; // 让它凸出来
-  
+  bottom: 0rpx; // 默认位置在 BAR 内部（稍微偏下，对齐文字）
+
   &.active {
-    width: 100rpx;
-    height: 100rpx;
-    top: -50rpx; // 激活时凸得更多
-    background: #FFCC00; // 激活时背景变色
-    box-shadow: 0 12rpx 30rpx rgba(255, 204, 0, 0.3);
+    width: 140rpx;
+    height: 120rpx;
+    bottom: 50rpx; // 激活时向上伸出
+    background: #ffffff;
+    border-radius: 40rpx 40rpx 15rpx 15rpx;
+    box-shadow: 0 -10rpx 30rpx rgba(0, 0, 0, 0.1);
     
     .tab-icon {
-      filter: none; // 确保彩色图标不被滤镜影响
+      width: 80rpx;
+      height: 80rpx;
     }
   }
   
   .tab-icon {
-    width: 50rpx; // 固定图标大小
-    height: 50rpx;
+    width: 68rpx; // 非激活状态图标加大，从 50 -> 68
+    height: 68rpx;
+    transition: all 0.3s;
   }
 }
 
 .tab-text {
-  font-size: 20rpx;
+  font-size: 24rpx;
   color: #999999;
-  margin-bottom: 15rpx;
   transition: all 0.3s;
-  font-weight: 600;
+  font-weight: 500;
   
   &.active {
-    color: #333333;
-    font-weight: 800;
-    transform: scale(1.1);
+    color: #007AFF;
+    font-weight: bold;
   }
 }
 </style>

@@ -1,158 +1,275 @@
-<script>
-import { ASSETS_CONFIG } from '@/utils/assets-config.js'
-
-export default {
-  data() {
-    return {
-      avatarSrc: ASSETS_CONFIG.images.avatarPlaceholder
-    }
-  },
-  onShow() {
-    uni.hideTabBar();
-  },
-  methods: {
-    goBack() {
-      uni.navigateBack();
-    },
-    handleLogout() {
-      uni.reLaunch({
-        url: '/pages/login/login'
-      });
-    }
-  }
-}
-</script>
-
 <template>
   <view class="container">
-    <view class="nav-header">
-      <view class="back-btn" @click="goBack">←</view>
-      <text class="title">个人资料</text>
+    <!-- 顶部背景与导航 -->
+    <view class="header-section">
+      <!-- 高保真地图背景 -->
+      <view class="map-bg">
+        <image class="map-img" src="/static/personal_page/back_map.png" mode="aspectFill"></image>
+      </view>
+      
+      <!-- 自定义导航栏 -->
+      <view class="nav-bar">
+        <view class="back-btn" @click="goBack">
+          <text class="back-icon">←</text>
+        </view>
+        <text class="nav-title">个人资料</text>
+        <view class="placeholder"></view>
+      </view>
+      
+      <!-- 用户概览 -->
+      <view class="user-summary animate-fade-in">
+        <view class="avatar-box">
+          <image class="avatar" :src="assets.images.avatarPlaceholder" mode="aspectFill"></image>
+        </view>
+        <text class="nickname">Hello, DWQ</text>
+      </view>
     </view>
 
-    <view class="content">
+    <!-- 主体内容 -->
+    <view class="main-content">
+      <!-- 快捷导航 -->
+      <view class="link-group">
+        <view class="link-item" @click="goTo('/pages/profile/settings')">
+          <text class="link-label">登录设置</text>
+          <text class="link-arrow">→</text>
+        </view>
+        <view class="link-item">
+          <text class="link-label">实名认证</text>
+          <text class="link-arrow">→</text>
+        </view>
+      </view>
+
+      <!-- 详细信息卡片 -->
       <view class="info-card">
-        <view class="info-item avatar-item">
+        <view class="info-row">
           <text class="label">头像</text>
-          <view class="value">
-            <image class="avatar" :src="avatarSrc" mode="aspectFill"></image>
+          <view class="value-area">
+            <image class="avatar-mini" :src="assets.images.avatarPlaceholder" mode="aspectFill"></image>
             <text class="arrow">〉</text>
           </view>
         </view>
-
-        <view class="info-item">
+        <view class="info-row">
           <text class="label">名字</text>
-          <view class="value">
-            <text class="text">DWQ</text>
+          <view class="value-area">
+            <text class="value-text">DWQ</text>
             <text class="arrow">〉</text>
           </view>
         </view>
-
-        <view class="info-item">
+        <view class="info-row">
           <text class="label">电话</text>
-          <view class="value">
-            <text class="text">19106572834</text>
+          <view class="value-area">
+            <text class="value-text bold">19106572834</text>
             <text class="arrow">〉</text>
           </view>
         </view>
-
-        <view class="info-item">
+        <view class="info-row">
           <text class="label">地址</text>
-          <view class="value">
-            <text class="text">广东省深圳市深圳大学</text>
+          <view class="value-area">
+            <text class="value-text">广东省深圳市深圳大学</text>
             <text class="arrow">〉</text>
           </view>
         </view>
       </view>
 
-      <view class="logout-btn-box">
+      <!-- 退出登录按钮 -->
+      <view class="logout-section">
         <view class="logout-btn" @click="handleLogout">退出登录</view>
       </view>
     </view>
   </view>
 </template>
 
+<script>
+import { ASSETS_CONFIG } from '@/utils/assets-config.js'
+
+export default {
+  data() {
+    return {
+      assets: ASSETS_CONFIG
+    }
+  },
+  methods: {
+    goBack() {
+      uni.navigateBack();
+    },
+    goTo(url) {
+      uni.navigateTo({ url });
+    },
+    handleLogout() {
+      uni.showModal({
+        title: '提示',
+        content: '确定要退出登录吗？',
+        success: (res) => {
+          if (res.confirm) {
+            uni.reLaunch({ url: '/pages/login/login' });
+          }
+        }
+      });
+    }
+  }
+}
+</script>
+
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #FFF9E6;
+  background-color: #FFF9E1; // 对应图4标记的背景色
+  padding-bottom: 80rpx;
 }
 
-.nav-header {
-  height: 88rpx;
-  padding: 80rpx 30rpx 20rpx;
-  display: flex;
-  align-items: center;
+.header-section {
+  position: relative;
+  height: 520rpx;
+  overflow: hidden;
   
-  .back-btn {
-    font-size: 40rpx;
-    margin-right: 20rpx;
+  .map-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 520rpx;
+    z-index: 1;
+    .map-img { 
+      width: 100%; 
+      height: 100%; 
+      opacity: 0.6; // 细节页背景稍淡
+    }
   }
   
-  .title {
-    font-size: 34rpx;
-    font-weight: bold;
-  }
-}
-
-.content {
-  padding: 30rpx;
-  
-  .info-card {
-    background: #fff;
-    border-radius: 40rpx;
-    padding: 0 40rpx;
-    box-shadow: 0 10rpx 30rpx rgba(0,0,0,0.05);
+  .nav-bar {
+    position: relative;
+    z-index: 10;
+    padding: 80rpx 40rpx 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     
-    .info-item {
+    .back-btn {
+      width: 80rpx;
+      height: 80rpx;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 40rpx 0;
-      border-bottom: 2rpx solid #f9f9f9;
+      .back-icon { font-size: 44rpx; color: #333; font-weight: bold; }
+    }
+    
+    .nav-title {
+      font-size: 34rpx;
+      font-weight: bold;
+      color: #333;
+    }
+    
+    .placeholder { width: 80rpx; }
+  }
+  
+  .user-summary {
+    position: relative;
+    z-index: 10;
+    margin-top: 20rpx;
+    padding: 0 60rpx;
+    display: flex;
+    align-items: center;
+    
+    .avatar-box {
+      width: 160rpx;
+      height: 160rpx;
+      background: #fff;
+      border-radius: 50%;
+      padding: 6rpx;
+      box-shadow: 0 10rpx 30rpx rgba(0,0,0,0.1);
       
-      &:last-child {
-        border-bottom: none;
+      .avatar { width: 100%; height: 100%; border-radius: 50%; }
+    }
+    
+    .nickname {
+      margin-left: 35rpx;
+      font-size: 50rpx;
+      font-weight: bold;
+      color: #000;
+    }
+  }
+}
+
+.main-content {
+  padding: 0 45rpx;
+  margin-top: 10rpx;
+}
+
+.link-group {
+  margin-bottom: 50rpx;
+  border-top: 1rpx solid #DCD8C8;
+  
+  .link-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 38rpx 0;
+    border-bottom: 1rpx solid #DCD8C8;
+    
+    .link-label {
+      font-size: 34rpx;
+      font-weight: 500;
+      color: #000;
+    }
+    
+    .link-arrow {
+      font-size: 32rpx;
+      color: #666;
+    }
+    
+    &:active { opacity: 0.7; }
+  }
+}
+
+.info-card {
+  background: #fff;
+  border-radius: 45rpx;
+  padding: 10rpx 40rpx;
+  box-shadow: 0 8rpx 30rpx rgba(0,0,0,0.03);
+  margin-bottom: 80rpx;
+  
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 35rpx 0;
+    border-bottom: 1rpx solid #F2F2F2;
+    
+    &:last-child { border-bottom: none; }
+    
+    .label {
+      font-size: 32rpx;
+      color: #333;
+    }
+    
+    .value-area {
+      display: flex;
+      align-items: center;
+      
+      .avatar-mini {
+        width: 88rpx;
+        height: 88rpx;
+        border-radius: 20rpx;
+        margin-right: 20rpx;
       }
       
-      .label {
+      .value-text {
         font-size: 30rpx;
         color: #333;
+        margin-right: 12rpx;
+        
+        &.bold { font-weight: bold; }
       }
       
-      .value {
-        display: flex;
-        align-items: center;
-        
-        .avatar {
-          width: 80rpx;
-          height: 80rpx;
-          border-radius: 20rpx;
-          margin-right: 20rpx;
-        }
-        
-        .text {
-          font-size: 28rpx;
-          color: #666;
-          margin-right: 10rpx;
-        }
-        
-        .arrow {
-          font-size: 24rpx;
-          color: #ccc;
-        }
+      .arrow {
+        font-size: 26rpx;
+        color: #CCC;
       }
-    }
-    
-    .avatar-item {
-      padding: 30rpx 0;
     }
   }
 }
 
-.logout-btn-box {
-  margin-top: 100rpx;
-  padding: 0 40rpx;
+.logout-section {
+  padding: 0 10rpx;
   
   .logout-btn {
     background: #00A99D;
@@ -162,8 +279,23 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32rpx;
+    font-size: 36rpx;
     font-weight: bold;
+    box-shadow: 0 10rpx 30rpx rgba(0, 169, 157, 0.2);
+    
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
   }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10rpx); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
