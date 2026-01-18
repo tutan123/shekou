@@ -46,8 +46,7 @@
       "chooseLocation",
       "getLocation",
       "onLocationChange",
-      "startLocationUpdate",
-      "stopLocationUpdate"
+      "startLocationUpdate"
     ]
   },
   "mp-alipay": {
