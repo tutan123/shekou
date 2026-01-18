@@ -73,9 +73,9 @@ export const CATEGORIES = {
         icon: ATLAS_BASE + 'history/06_shuiwancunshiguan_pic.png',
         ...getRoutePaths('laojie', '06_shuiwancunshiguan')
       },
-      '水湾炮楼': { 
-        top: 1080, left: 60, width: 220, 
-        frame: ATLAS_BASE + 'history/07_shuiwanpaolou_frame.png', 
+      '水湾炮楼': {
+        top: 420, left: 290, width: 220,
+        frame: ATLAS_BASE + 'history/07_shuiwanpaolou_frame.png',
         icon: ATLAS_BASE + 'history/07_shuiwanpaolou_pic.png',
         ...getRoutePaths('laojie', '07_shuiwanpaolou')
       },
@@ -91,9 +91,9 @@ export const CATEGORIES = {
         icon: ATLAS_BASE + 'history/11_yiku_pic.png',
         ...getRoutePaths('laojie', '09_nanhaiyiku')
       },
-      '海滨花园': { 
-        top: 600, left: 480, width: 220, 
-        frame: ATLAS_BASE + 'history/10_haibinhuayuan_frame.png', 
+      '海滨花园': {
+        top: 500, left: 310, width: 220,
+        frame: ATLAS_BASE + 'history/10_haibinhuayuan_frame.png',
         icon: ATLAS_BASE + 'history/10_haibinhuayuan_pic.png',
         ...getRoutePaths('laojie', '10_haibinhuayuan')
       },

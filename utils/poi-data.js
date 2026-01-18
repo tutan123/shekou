@@ -12,10 +12,10 @@ export const POI_DATA = [
     desc: '蛇口核心商业综合体，集购物、餐饮、休闲于一体。', 
     img: ASSETS_CONFIG.atlas.history.items['08'] 
   },
-  { 
-    name: '空谈误国', top: 22, left: 38, 
-    desc: '“空谈误国，实干兴邦”标语牌，见证蛇口奋斗精神。', 
-    img: ASSETS_CONFIG.atlas.history.items['01'] 
+  {
+    name: '空谈误国', top: 23, left: 34,
+    desc: '“空谈误国，实干兴邦”标语牌，见证蛇口奋斗精神。',
+    img: ASSETS_CONFIG.atlas.history.items['01']
   },
   { 
     name: '四海公园', top: 24, left: 44, // 修正：左移
@@ -23,21 +23,21 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.atlas.history.items['04'] 
   },
   {
-    name: '荔枝公园', top: 42, left: 22, // 移动到海上世界左上角
+    name: '荔枝公园', top: 41, left: 24,
     desc: '充满自然气息的公园，蛇口居民休闲健身的好去处。',
     img: ASSETS_CONFIG.atlas.history.items['08']
   },
-  { 
-    name: 'G&G', top: 25, left: 32, 
-    desc: '由旧工厂改造的网红创意园区，充满生活美学。', 
-    img: ASSETS_CONFIG.atlas.history.items['04'] 
+  {
+    name: 'G&G', top: 33, left: 28,
+    desc: '由旧工厂改造的网红创意园区，充满生活美学。',
+    img: ASSETS_CONFIG.atlas.history.items['04']
   },
 
   // --- 中部区域 ---
-  { 
-    name: '南玻集团', top: 28, left: 28, 
-    desc: '中国玻璃工业的开拓者，蛇口早期工业的代表。', 
-    img: ASSETS_CONFIG.atlas.history.items['02'] 
+  {
+    name: '南玻集团', top: 28, left: 32,
+    desc: '中国玻璃工业的开拓者，蛇口早期工业的代表。',
+    img: ASSETS_CONFIG.atlas.history.items['02']
   },
   { 
     name: '育才一小', top: 31, left: 35, 
@@ -59,10 +59,10 @@ export const POI_DATA = [
     desc: '融合历史底缘与现代商业的时尚地标。', 
     img: ASSETS_CONFIG.images.markerPlaceholder 
   },
-  { 
-    name: '南海意库', top: 45, left: 33, 
-    desc: '由三洋厂房改造而成，是深港创意产业的聚集地。', 
-    img: ASSETS_CONFIG.atlas.history.items['09'] 
+  {
+    name: '南海意库', top: 46, left: 29,
+    desc: '由三洋厂房改造而成，是深港创意产业的聚集地。',
+    img: ASSETS_CONFIG.atlas.history.items['09']
   },
 
   // --- 南部区域 ---
@@ -77,14 +77,14 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.atlas.history.items['13'] 
   },
   { 
-    name: '海上世界文化艺术中心', top: 50, left: 43, // 新增：艺术文化中心
+    name: '海上世界文化艺术中心', top: 63, left: 34, 
     desc: '世界级的文化艺术地标，由建筑大师槙文彦设计。', 
     img: ASSETS_CONFIG.atlas.history.items['13'] 
   },
-  { 
-    name: '明华轮', top: 58, left: 25, 
-    desc: '原名为“安瑟尔广场”号，邓小平同志亲笔题名“海上世界”。', 
-    img: ASSETS_CONFIG.atlas.history.items['11'] 
+  {
+    name: '明华轮', top: 55, left: 27,
+    desc: '原名为“安瑟尔广场”号，邓小平同志亲笔题名“海上世界”。',
+    img: ASSETS_CONFIG.atlas.history.items['11']
   },
   { 
     name: '女娲像', top: 54, left: 34, 
@@ -101,17 +101,17 @@ export const POI_DATA = [
     desc: '蛇口早期的涉外别墅区，环境优美，充满异国风情。', 
     img: ASSETS_CONFIG.atlas.history.items['16'] 
   },
-  { 
-    name: '防波堤公园', top: 58, left: 42, 
-    desc: '漫步海边长廊，感受海风拂面，享受宁静的滨海时光。', 
-    img: ASSETS_CONFIG.images.markerPlaceholder 
+  {
+    name: '防波堤公园', top: 60, left: 38,
+    desc: '漫步海边长廊，感受海风拂面，享受宁静的滨海时光。',
+    img: ASSETS_CONFIG.images.markerPlaceholder
   },
 
   // --- 西南区域 ---
-  { 
-    name: '时间标语', top: 71, left: 24, 
-    desc: '“时间就是金钱，效率就是生命”，中国改革开放最响亮的口号。', 
-    img: ASSETS_CONFIG.atlas.history.items['17'] 
+  {
+    name: '时间标语', top: 60, left: 20,
+    desc: '“时间就是金钱，效率就是生命”，中国改革开放最响亮的口号。',
+    img: ASSETS_CONFIG.atlas.history.items['17']
   },
   { 
     name: '微波山', top: 74, left: 21, 
@@ -128,10 +128,10 @@ export const POI_DATA = [
     desc: '融合艺术、人文、自然的高端购物艺术中心。', 
     img: ASSETS_CONFIG.images.markerPlaceholder 
   },
-  { 
-    name: '招商局历史博物馆', top: 82, left: 29, 
-    desc: '收藏了大量珍贵历史档案，见证招商局跨越百年的沧桑。', 
-    img: ASSETS_CONFIG.atlas.history.items['19'] 
+  {
+    name: '招商局历史博物馆', top: 69, left: 23,
+    desc: '收藏了大量珍贵历史档案，见证招商局跨越百年的沧桑。',
+    img: ASSETS_CONFIG.atlas.history.items['19']
   }
 ];
 

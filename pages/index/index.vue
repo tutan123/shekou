@@ -368,18 +368,38 @@ export default {
     onMapClick(e) {
       // 在小程序环境中使用uni.createSelectorQuery获取元素信息
       const query = uni.createSelectorQuery().in(this);
-      query.select('.map-wrapper').boundingClientRect(data => {
+      query.select('.map-view').boundingClientRect(data => {
         if (data) {
-          // 获取点击位置 - 优先使用detail，如果没有则使用touches
-          const touch = e.detail || e.touches[0] || e.changedTouches[0];
-          if (touch && touch.x !== undefined && touch.y !== undefined) {
-            // touch.x和touch.y是相对于元素左上角的坐标
-            const relativeLeft = Math.round((touch.x / data.width) * 100);
-            const relativeTop = Math.round((touch.y / data.height) * 100);
-
-            console.log(`🗺️ 地图点击坐标: left=${relativeLeft}%, top=${relativeTop}%`);
+          // 获取点击位置相对于页面的坐标 (兼容小程序 detail.x 和 touch.pageX)
+          let x = 0;
+          let y = 0;
+          
+          if (e.detail && typeof e.detail.x !== 'undefined') {
+            // 小程序 click/tap 事件
+            x = e.detail.x;
+            y = e.detail.y;
           } else {
-            console.log('🗺️ 点击事件参数:', e);
+            // 触摸事件
+            const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+            if (touch) {
+              x = touch.pageX || touch.clientX;
+              y = touch.pageY || touch.clientY;
+            }
+          }
+
+          // data.left/top 是地图相对于视口的当前位置（包含滚动和缩放后的偏移）
+          // data.width/height 是地图当前的实际渲染尺寸
+          const clickX = x - data.left;
+          const clickY = y - data.top;
+
+          // 计算相对于地图完整内容的百分比
+          const relativeLeft = Math.round((clickX / data.width) * 100);
+          const relativeTop = Math.round((clickY / data.height) * 100);
+
+          if (!isNaN(relativeLeft) && !isNaN(relativeTop)) {
+            console.log(`🗺️ 修正后的地图点击坐标: left=${relativeLeft}%, top=${relativeTop}%`);
+          } else {
+            console.log('🗺️ 坐标计算失败:', { x, y, data });
           }
         } else {
           console.log('🗺️ 未找到地图容器元素');
