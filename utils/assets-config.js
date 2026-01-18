@@ -174,19 +174,49 @@ const ASSETS_CONFIG = {
 
     // 西餐图鉴
     western: {
-      map: CLOUD_BASE_URL + 'atlas/western/西餐地图.png',
-      mapBw: CLOUD_BASE_URL + 'atlas/western/西餐地图黑白.png',
+      map: CLOUD_BASE_URL + 'atlas/western/map.png',
+      mapBw: CLOUD_BASE_URL + 'atlas/western/map_bw.png',
       items: {
-        'alla': CLOUD_BASE_URL + 'atlas/western/alla.png',
-        'baker': CLOUD_BASE_URL + 'atlas/western/baker.png',
-        'commune': CLOUD_BASE_URL + 'atlas/western/commune.png',
-        'doors': CLOUD_BASE_URL + 'atlas/western/doors.png',
-        'madloba': CLOUD_BASE_URL + 'atlas/western/madloba.png',
-        'minimal': CLOUD_BASE_URL + 'atlas/western/minimal.png',
-        'the_flames': CLOUD_BASE_URL + 'atlas/western/the_flames.png',
-        '壁虎餐厅': CLOUD_BASE_URL + 'atlas/western/壁虎餐厅.png',
-        '宝可多': CLOUD_BASE_URL + 'atlas/western/宝可多.png',
-        'Gecko Pub': CLOUD_BASE_URL + 'atlas/western/壁虎餐厅.png'
+        'alla': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/alla.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/alla_frame.png'
+        },
+        'baker': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/baker.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/baker_frame.png'
+        },
+        'commune': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/commune.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/commune_frame.png'
+        },
+        'doors': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/doors.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/doors_frame.png'
+        },
+        'madloba': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/madloba.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/madloba_frame.png'
+        },
+        'minimal': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/minimal.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/minimal_frame.png'
+        },
+        'the_flames': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/the_flames.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/the_flames_frame.png'
+        },
+        '壁虎餐厅': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/壁虎餐厅.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/壁虎餐厅_frame.png'
+        },
+        '宝可多': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/宝可多.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/宝可多_frame.png'
+        },
+        'Gecko Pub': { 
+          icon: CLOUD_BASE_URL + 'atlas/western/Gecko Pub.png',
+          frame: CLOUD_BASE_URL + 'atlas/western/壁虎餐厅_frame.png' // 图3中 Gecko Pub 似乎也用壁虎餐厅的框
+        }
       }
     }
   },
