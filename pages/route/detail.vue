@@ -124,7 +124,17 @@ export default {
   },
   onLoad(options) {
     this.routeId = options.id || 'laojie';
-    this.routeName = options.name || '路线详情';
+    
+    // 根据 ID 写死对应的路线名称，避免编码转换导致的乱码
+    const nameMap = {
+      'laojie': '老街路线',
+      'dengshan': '登山路线',
+      'binhai': '滨海路线',
+      'xican': '西餐路线',
+      'kafei': '咖啡路线'
+    };
+    this.routeName = nameMap[this.routeId] || options.name || '路线详情';
+    
     this.setMapSrc();
   },
   methods: {

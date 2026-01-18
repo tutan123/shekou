@@ -1,16 +1,18 @@
 <template>
   <view class="container">
     <!-- 分类切换 Tabs -->
-    <view class="category-tabs">
-      <view 
-        v-for="(tab, key) in categories" 
-        :key="key" 
-        :class="['tab', activeCat === key ? 'active' : '']"
-        @click="handleTabChange(key)"
-      >
-        {{ tab.name }}
+    <scroll-view class="category-tabs-scroll" scroll-x :show-scrollbar="false">
+      <view class="category-tabs">
+        <view 
+          v-for="(tab, key) in categories" 
+          :key="key" 
+          :class="['tab', activeCat === key ? 'active' : '']"
+          @click="handleTabChange(key)"
+        >
+          {{ tab.name }}
+        </view>
       </view>
-    </view>
+    </scroll-view>
 
     <!-- 图鉴主体区域：可缩放/滚动的地图区域 -->
     <scroll-view 
@@ -187,7 +189,7 @@ export default {
             'minimal': { top: 420, left: 120, width: 230, frame: W_BASE+'minimal_frame.png', icon: W_BASE+'minimal.png' },
             'madloba': { top: 400, left: 580, width: 220, frame: W_BASE+'madloba_frame.png', icon: W_BASE+'madloba.png' },
             'the_flames': { top: 580, left: 380, width: 230, frame: W_BASE+'the_flames_frame.png', icon: W_BASE+'the_flames.png' },
-            '宝可多': { top: 720, left: 350, width: 220, frame: W_BASE+'宝可多_frame.png', icon: W_BASE+'宝可多.png' },
+            '宝可多': { top: 800, left: 350, width: 220, frame: W_BASE+'宝可多_frame.png', icon: W_BASE+'宝可多.png' },
             'commune': { top: 850, left: 100, width: 230, frame: W_BASE+'commune_frame.png', icon: W_BASE+'commune.png' },
             'baker': { top: 820, left: 600, width: 220, frame: W_BASE+'baker_frame.png', icon: W_BASE+'baker.png' },
             'Gecko Pub': { top: 1050, left: 520, width: 250, frame: W_BASE+'壁虎餐厅_frame.png', icon: W_BASE+'Gecko Pub.png' },
@@ -261,40 +263,56 @@ export default {
   flex-direction: column;
 }
 
-.category-tabs {
+.category-tabs-scroll {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 30rpx 0;
-  gap: 20rpx;
   background: rgba(255, 249, 230, 0.9);
   backdrop-filter: blur(10px);
   z-index: 100;
+  white-space: nowrap;
+  
+  /* 隐藏滚动条 */
+  ::-webkit-scrollbar {
+    display: none;
+    width: 0 !important;
+    height: 0 !important;
+    -webkit-appearance: none;
+    background: transparent;
+  }
+}
+
+.category-tabs {
+  display: flex;
+  padding: 30rpx 40rpx;
+  gap: 24rpx;
+  align-items: center;
   
   .tab {
-    padding: 12rpx 45rpx;
+    flex-shrink: 0;
+    padding: 16rpx 42rpx;
     background: #fff;
     border-radius: 40rpx;
     font-size: 28rpx;
-    color: #666;
+    color: #888;
     box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
     transition: all 0.3s;
+    line-height: 1.2;
     
     &.active {
       background: #FFCB32;
       color: #333;
       font-weight: 800;
       transform: scale(1.05);
+      box-shadow: 0 6rpx 20rpx rgba(255, 203, 50, 0.4);
     }
   }
 }
 
 .progress-bar-floating {
   position: fixed;
-  top: 125rpx;
+  top: 145rpx;
   left: 40rpx;
   right: 40rpx;
   background: rgba(255, 255, 255, 0.95);

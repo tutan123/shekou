@@ -53,7 +53,34 @@
       <view class="header-search animate-slide-down">
         <view class="search-box">
           <text class="search-icon">🔍</text>
-          <input class="search-input" placeholder="查找地点" placeholder-style="color: #999" />
+          <input 
+            class="search-input" 
+            placeholder="查找地点" 
+            placeholder-style="color: #999" 
+            v-model="searchKeyword"
+            @input="onSearchInput"
+            @confirm="onSearchConfirm"
+          />
+          <text class="clear-icon" v-if="searchKeyword" @click="clearSearch">✕</text>
+        </view>
+        
+        <!-- 搜索结果列表 -->
+        <scroll-view class="search-results" v-if="showResults && searchResults.length > 0" scroll-y>
+          <view 
+            class="result-item" 
+            v-for="(item, index) in searchResults" 
+            :key="index"
+            @click="selectSearchResult(item)"
+          >
+            <image class="result-icon" :src="item.img || assets.images.markerPlaceholder" mode="aspectFill"></image>
+            <view class="result-info">
+              <text class="result-name">{{ item.name }}</text>
+              <text class="result-desc">{{ item.desc }}</text>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="search-results no-result" v-else-if="showResults && searchKeyword">
+          <text>未找到相关地点</text>
         </view>
       </view>
       
@@ -134,9 +161,50 @@ export default {
       windowWidth: 0,
       windowHeight: 0,
       mapLoaded: false, // 地图是否已加载完成
+      searchKeyword: '',
+      showResults: false,
+      searchResults: [],
       markers: [
-        { name: '海上世界', top: 45, left: 52 },
-        { name: '老街入口', top: 30, left: 40 }
+        { 
+          name: '海上世界', top: 45, left: 52, 
+          desc: '蛇口最著名的商业中心与地标，明华轮所在地。', 
+          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/13_haishangshijie_pic.png' 
+        },
+        { 
+          name: '老街入口', top: 30, left: 40, 
+          desc: '充满生活气息的蛇口旧街区，地道美食聚集地。', 
+          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'images/marker_placeholder.png' 
+        },
+        { 
+          name: '南海意库', top: 38, left: 55, 
+          desc: '由旧工厂改造的创意园区，充满艺术氛围。', 
+          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/09_nanhaiyiku_detail.png' 
+        },
+        { 
+          name: '女娲补天', top: 62, left: 48, 
+          desc: '滨海长廊上的标志性雕塑，蛇口的象征之一。', 
+          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/12_nvwaxiang_pic.png' 
+        },
+        { 
+          name: 'G&G创意社区', top: 25, left: 35, 
+          desc: '网红打卡地，集市、创意办公与艺术展览空间。', 
+          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/04_gg_pic.png' 
+        },
+        { 
+          name: '招商局历史博物馆', top: 55, left: 42, 
+          desc: '记录蛇口从荒滩到现代化城区的奋斗历程。', 
+          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/19_zhaoshangjulishi_pic.png' 
+        },
+        { 
+          name: '时间广场', top: 50, left: 45, 
+          desc: '矗立着“时间就是金钱，效率就是生命”标语牌。', 
+          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/01_biaoyupai_pic.png' 
+        },
+        { 
+          name: '明华轮', top: 43, left: 50, 
+          desc: '海上世界的灵魂，邓小平同志亲笔题名。', 
+          img: ASSETS_CONFIG.CLOUD_BASE_URL + 'atlas/history/11_minghualun_pic.png' 
+        }
       ]
     }
   },
@@ -168,17 +236,33 @@ export default {
       const minScaleH = this.windowHeight / this.mapHeight;
       this.minScale = Math.max(minScaleW, minScaleH);
       
-      this.curScale = this.minScale * 1.5;
-      this.scaleValue = this.curScale;
       this.resetMap();
     },
     resetMap() {
-      this.curScale = this.minScale * 1.5;
-      this.scaleValue = this.curScale;
-      // 延迟计算位置，确保缩放已应用
+      if (!this.mapLoaded) return;
+      
+      const targetScale = this.minScale * 1.5;
+      const targetX = (this.windowWidth - this.mapWidth * targetScale) / 2;
+      const targetY = (this.windowHeight - this.mapHeight * targetScale) / 2;
+      
+      console.log('🔄 重置视角:', { targetScale, targetX, targetY });
+      
+      // 1. 强制触发缩放更新 (使用微小偏移)
+      this.scaleValue = targetScale + 0.0001;
+      
       this.$nextTick(() => {
-        this.mapX = (this.windowWidth - this.mapWidth * this.curScale) / 2;
-        this.mapY = (this.windowHeight - this.mapHeight * this.curScale) / 2;
+        this.scaleValue = targetScale;
+        this.curScale = targetScale;
+        
+        // 2. 强制触发位置更新
+        // 即使当前坐标在数据上没有变化，也通过微小偏移强制组件重绘
+        this.mapX = targetX + 0.01;
+        this.mapY = targetY + 0.01;
+        
+        this.$nextTick(() => {
+          this.mapX = targetX;
+          this.mapY = targetY;
+        });
       });
     },
     onScale(e) {
@@ -186,11 +270,9 @@ export default {
       this.curScale = e.detail.scale;
     },
     onChange(e) {
-      // 仅记录位置，不回流修改 mapX/mapY
-      if (e.detail.source === '') {
-        this.mapX = e.detail.x;
-        this.mapY = e.detail.y;
-      }
+      // 记录最新位置，确保 resetMap 时能检测到相对于当前位置的变化
+      this.mapX = e.detail.x;
+      this.mapY = e.detail.y;
     },
     onMouseWheel(e) {
       const delta = e.deltaY < 0 ? 0.2 : -0.2;
@@ -214,11 +296,75 @@ export default {
     goToRouteSelect() {
       uni.navigateTo({ url: '/pages/route/select' });
     },
+    onSearchInput() {
+      if (!this.searchKeyword) {
+        this.searchResults = [];
+        this.showResults = false;
+        return;
+      }
+      this.searchResults = this.markers.filter(item => 
+        item.name.includes(this.searchKeyword) || 
+        (item.desc && item.desc.includes(this.searchKeyword))
+      );
+      this.showResults = true;
+    },
+    onSearchConfirm() {
+      if (this.searchResults.length > 0) {
+        this.selectSearchResult(this.searchResults[0]);
+      } else {
+        uni.showToast({ title: '未找到相关地点', icon: 'none' });
+      }
+    },
+    clearSearch() {
+      this.searchKeyword = '';
+      this.searchResults = [];
+      this.showResults = false;
+    },
+    selectSearchResult(poi) {
+      this.searchKeyword = poi.name;
+      this.showResults = false;
+      this.focusPoi(poi);
+    },
+    focusPoi(poi) {
+      if (!this.mapLoaded) return;
+      
+      this.selectedPoi = poi;
+      
+      const targetScale = 2.5; // 聚焦时放大比例
+      
+      // 计算目标位置，使 POI 居中
+      // POI 的位置是百分比，相对于 mapWidth 和 mapHeight
+      const poiX = (this.mapWidth * poi.left) / 100;
+      const poiY = (this.mapHeight * poi.top) / 100;
+      
+      const targetX = (this.windowWidth / 2) - (poiX * targetScale);
+      const targetY = (this.windowHeight / 2) - (poiY * targetScale);
+      
+      console.log('🎯 聚焦地点:', poi.name, { targetScale, targetX, targetY });
+      
+      this.updateScale(targetScale);
+      
+      this.$nextTick(() => {
+        // 使用微小偏移强制位置更新
+        this.mapX = targetX + 0.01;
+        this.mapY = targetY + 0.01;
+        
+        this.$nextTick(() => {
+          this.mapX = targetX;
+          this.mapY = targetY;
+        });
+      });
+    },
     showPoiDetail(name) {
-      this.selectedPoi = {
-        name: name,
-        desc: '探索蛇口艺术地图，点击查看详情...',
-        img: this.assets.images.avatarPlaceholder
+      const poi = this.markers.find(m => m.name === name);
+      if (poi) {
+        this.selectedPoi = poi;
+      } else {
+        this.selectedPoi = {
+          name: name,
+          desc: '探索蛇口艺术地图，点击查看详情...',
+          img: this.assets.images.avatarPlaceholder
+        }
       }
     },
     goToDetail() {
@@ -301,6 +447,60 @@ export default {
       box-shadow: 0 10rpx 30rpx rgba(0,0,0,0.08);
       .search-icon { margin-right: 20rpx; font-size: 32rpx; }
       .search-input { flex: 1; font-size: 28rpx; }
+      .clear-icon { padding: 10rpx; font-size: 24rpx; color: #999; }
+    }
+
+    .search-results {
+      margin-top: 10rpx;
+      background: #fff;
+      border-radius: 30rpx;
+      max-height: 400rpx;
+      box-shadow: 0 10rpx 40rpx rgba(0,0,0,0.1);
+      overflow: hidden;
+      
+      &.no-result {
+        padding: 30rpx;
+        text-align: center;
+        font-size: 26rpx;
+        color: #999;
+      }
+
+      .result-item {
+        display: flex;
+        align-items: center;
+        padding: 20rpx 30rpx;
+        border-bottom: 1rpx solid #f5f5f5;
+        
+        &:last-child { border-bottom: none; }
+        &:active { background: #f9f9f9; }
+        
+        .result-icon {
+          width: 60rpx;
+          height: 60rpx;
+          border-radius: 12rpx;
+          margin-right: 20rpx;
+          background: #f0f0f0;
+        }
+        
+        .result-info {
+          flex: 1;
+          overflow: hidden;
+          .result-name {
+            font-size: 28rpx;
+            font-weight: bold;
+            color: #333;
+            display: block;
+          }
+          .result-desc {
+            font-size: 22rpx;
+            color: #999;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
     }
   }
   

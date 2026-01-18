@@ -71,40 +71,40 @@ export default {
           id: 'laojie',
           name: '老街路线',
           desc: '蛇口老街漫步路线，从时代标签启程，经工业旧址、文创地标与人文景点，尽览开拓过往与诗意山海。',
-          bg: assets.route.cardBg1,
-          artImg: assets.route.oldstreetShip,
+          bg: ASSETS_CONFIG.route.cardBg1,
+          artImg: ASSETS_CONFIG.route.oldstreetShip,
           path: '/pages/route/detail?id=laojie'
         },
         {
           id: 'dengshan',
           name: '登山路线',
           desc: '从 "时间就是金钱，效率就是生命" 标语牌起步，沿微波山步道缓步登高，山海相伴，终点抵达招商局历史博物馆，一路见证蛇口的改革精神与百年变迁。',
-          bg: assets.route.cardBg2,
-          artImg: assets.route.mountainArt,
+          bg: ASSETS_CONFIG.route.cardBg2,
+          artImg: ASSETS_CONFIG.route.mountainArt,
           path: '/pages/route/detail?id=dengshan'
         },
         {
           id: 'binhai',
           name: '滨海路线',
           desc: '从海上世界明华轮启航，经女娲补天雕像与文化艺术中心的袁庚展，再到南海酒店与碧涛苑别墅群，一路海风相伴，尽览蛇口的开放气质与滨海风情。',
-          bg: assets.route.cardBg3,
-          artImg: assets.route.seaArt,
+          bg: ASSETS_CONFIG.route.cardBg3,
+          artImg: ASSETS_CONFIG.route.seaArt,
           path: '/pages/route/detail?id=binhai'
         },
         {
           id: 'xican',
           name: '西餐路线',
           desc: '蛇口西餐线条国际风味：宝可多、汉堡、意式披萨、格鲁吉亚菜，多种选择，家家有惊喜。',
-          bg: assets.route.cardBg2,
-          artImg: assets.route.westernPizza,
+          bg: ASSETS_CONFIG.route.cardBg2,
+          artImg: ASSETS_CONFIG.route.westernPizza,
           path: '/pages/route/detail?id=xican'
         },
         {
           id: 'kafei',
           name: '咖啡路线',
           desc: '蛇口咖啡漫游路线，是一场与香气的温柔邂逅。串联十家特色咖啡馆，慢品间，便读懂了蛇口。',
-          bg: assets.route.cardBg3,
-          artImg: assets.route.coffeeTools,
+          bg: ASSETS_CONFIG.route.cardBg3,
+          artImg: ASSETS_CONFIG.route.coffeeTools,
           path: '/pages/route/detail?id=kafei'
         }
       ]
