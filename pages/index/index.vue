@@ -35,12 +35,12 @@
         </view>
         
         <!-- 景点标记点：相对于地图定位 -->
-        <view 
-          class="marker" 
-          v-for="(poi, index) in markers" 
+        <view
+          class="marker"
+          v-for="(poi, index) in markers"
           :key="index"
-          :style="{ top: poi.top + '%', left: poi.left + '%' }" 
-          @click="showPoiDetail(poi)"
+          :style="{ top: poi.top + '%', left: poi.left + '%' }"
+          @click.stop="showPoiDetail(poi)"
         >
           <image class="marker-icon" :src="assets.images.markerPlaceholder" mode="aspectFit"></image>
         </view>
@@ -366,6 +366,10 @@ export default {
       this.selectedPoi = poi;
     },
     onMapClick(e) {
+      // 点击地图空白区域时关闭弹窗和预览卡片
+      this.hideDetail();
+      this.selectedPoi = null;
+
       // 在小程序环境中使用uni.createSelectorQuery获取元素信息
       const query = uni.createSelectorQuery().in(this);
       query.select('.map-view').boundingClientRect(data => {
