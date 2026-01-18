@@ -144,10 +144,12 @@ export default {
   color: #999999;
   transition: all 0.3s;
   font-weight: 500;
+  font-family: 'RuilingTi', sans-serif !important;
   
   &.active {
     color: #007AFF;
     font-weight: bold;
+    font-size: 26rpx;
   }
 }
 </style>

@@ -510,58 +510,80 @@ export default {
     padding: 20rpx 40rpx;
     pointer-events: auto;
     .search-box {
-      background: #fff; height: 90rpx; border-radius: 45rpx;
-      display: flex; align-items: center; padding: 0 40rpx;
-      box-shadow: 0 10rpx 30rpx rgba(0,0,0,0.08);
-      .search-icon { margin-right: 20rpx; font-size: 32rpx; }
-      .search-input { flex: 1; font-size: 28rpx; }
-      .clear-icon { padding: 10rpx; font-size: 24rpx; color: #999; }
+      background: #fff; 
+      height: 96rpx; 
+      // 不规则圆角：给四个角不同的弧度，打破 AI 的那种完美对称感
+      border-radius: 40rpx 60rpx 45rpx 55rpx;
+      display: flex; 
+      align-items: center; 
+      padding: 0 40rpx;
+      // 增加深色硬核边框，呼应地图的插画勾边风格
+      border: 5rpx solid #222;
+      // 更有“插画感”的偏置阴影，而不是模糊的渐变阴影
+      box-shadow: 10rpx 10rpx 0rpx rgba(0,0,0,0.1);
+      
+      .search-icon { 
+        margin-right: 20rpx; 
+        font-size: 38rpx; 
+        color: #222;
+        font-weight: bold;
+      }
+      .search-input { 
+        flex: 1; 
+        font-size: 32rpx; 
+        font-weight: 800;
+        color: #222;
+      }
+      .clear-icon { padding: 10rpx; font-size: 30rpx; color: #666; font-weight: bold; }
     }
 
     .search-results {
-      margin-top: 10rpx;
+      margin-top: 15rpx;
       background: #fff;
-      border-radius: 30rpx;
+      border: 4rpx solid #222;
+      border-radius: 35rpx 50rpx 40rpx 45rpx;
       max-height: 400rpx;
-      box-shadow: 0 10rpx 40rpx rgba(0,0,0,0.1);
+      box-shadow: 12rpx 12rpx 0rpx rgba(0,0,0,0.1);
       overflow: hidden;
       
       &.no-result {
         padding: 30rpx;
         text-align: center;
         font-size: 26rpx;
-        color: #999;
+        color: #666;
+        font-weight: bold;
       }
 
       .result-item {
         display: flex;
         align-items: center;
-        padding: 20rpx 30rpx;
-        border-bottom: 1rpx solid #f5f5f5;
+        padding: 25rpx 30rpx;
+        border-bottom: 3rpx solid #eee;
         
         &:last-child { border-bottom: none; }
         &:active { background: #f9f9f9; }
         
         .result-icon {
-          width: 60rpx;
-          height: 60rpx;
-          border-radius: 12rpx;
+          width: 70rpx;
+          height: 70rpx;
+          border-radius: 15rpx;
           margin-right: 20rpx;
           background: #f0f0f0;
+          border: 2rpx solid #222;
         }
         
         .result-info {
           flex: 1;
           overflow: hidden;
           .result-name {
-            font-size: 28rpx;
-            font-weight: bold;
-            color: #333;
+            font-size: 30rpx;
+            font-weight: 900;
+            color: #222;
             display: block;
           }
           .result-desc {
             font-size: 22rpx;
-            color: #999;
+            color: #666;
             display: block;
             white-space: nowrap;
             overflow: hidden;
@@ -573,23 +595,35 @@ export default {
   }
   
   .side-controls {
-    position: absolute; top: 240rpx; right: 30rpx;
-    display: flex; flex-direction: column; gap: 40rpx;
+    position: absolute; top: 260rpx; right: 30rpx;
+    display: flex; flex-direction: column; gap: 45rpx;
     pointer-events: auto;
     .control-item {
-      display: flex; flex-direction: column; align-items: center; gap: 8rpx;
+      display: flex; flex-direction: column; align-items: center; gap: 12rpx;
       .icon-wrapper {
         position: relative; width: 110rpx; height: 110rpx;
         display: flex; align-items: center; justify-content: center;
-        &.small { width: 80rpx; height: 80rpx; }
-        .ellipse-bg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; filter: drop-shadow(0 8rpx 20rpx rgba(0,0,0,0.15)); }
-        .inner-icon { position: relative; z-index: 1; width: 42rpx; height: 42rpx; }
-        .zoom-text { position: relative; z-index: 1; font-size: 40rpx; font-weight: bold; color: #333; }
-        &:active { transform: scale(0.9); transition: transform 0.2s; }
+        &.small { width: 85rpx; height: 85rpx; }
+        .ellipse-bg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; filter: drop-shadow(4rpx 8rpx 0rpx rgba(0,0,0,0.1)); }
+        .inner-icon { position: relative; z-index: 1; width: 48rpx; height: 48rpx; }
+        .zoom-text { 
+          position: relative; 
+          z-index: 1; 
+          font-size: 44rpx; 
+          font-weight: 900; 
+          color: #222; 
+        }
+        &:active { transform: scale(0.9) rotate(5deg); transition: transform 0.2s; }
       }
       .control-label {
-        font-size: 20rpx; color: #333; font-weight: 900;
-        background: rgba(255,255,255,0.85); padding: 4rpx 16rpx; border-radius: 20rpx; backdrop-filter: blur(4px);
+        font-size: 24rpx; 
+        color: #222; 
+        font-weight: 900;
+        background: #fff; 
+        border: 4rpx solid #222;
+        padding: 6rpx 20rpx; 
+        border-radius: 15rpx 25rpx 18rpx 22rpx;
+        box-shadow: 6rpx 6rpx 0rpx rgba(0,0,0,0.1);
       }
     }
   }
@@ -601,12 +635,40 @@ export default {
   left: 30rpx; right: 30rpx; z-index: 100;
   animation: slideUp 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   .card-content {
-    background: #fff; border-radius: 40rpx; padding: 24rpx;
-    display: flex; align-items: center; box-shadow: 0 20rpx 60rpx rgba(0,0,0,0.12);
-    .poi-avatar { width: 120rpx; height: 120rpx; border-radius: 24rpx; flex-shrink: 0; }
-    .poi-text { flex: 1; margin: 0 24rpx; overflow: hidden;
-      .poi-name { font-size: 34rpx; font-weight: 800; color: #333; display: block; margin-bottom: 6rpx; }
-      .poi-desc { font-size: 24rpx; color: #999; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    background: #fff; 
+    border-radius: 40rpx 50rpx 35rpx 45rpx; // 同样使用不规则圆角
+    padding: 24rpx;
+    display: flex; 
+    align-items: center; 
+    border: 5rpx solid #222; // 增加边框
+    box-shadow: 15rpx 15rpx 0rpx rgba(0,0,0,0.1); // 增加厚重感的偏置阴影
+    
+    .poi-avatar { 
+      width: 130rpx; 
+      height: 130rpx; 
+      border-radius: 30rpx; 
+      flex-shrink: 0; 
+      border: 4rpx solid #222;
+    }
+    .poi-text { 
+      flex: 1; 
+      margin: 0 24rpx; 
+      overflow: hidden;
+      .poi-name { 
+        font-size: 36rpx; 
+        font-weight: 900; 
+        color: #222; 
+        display: block; 
+        margin-bottom: 6rpx; 
+      }
+      .poi-desc { 
+        font-size: 24rpx; 
+        color: #666; 
+        display: block; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+      }
     }
     .detail-btn { 
       display: flex; 
