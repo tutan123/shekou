@@ -51,14 +51,14 @@
         <view class="info-row">
           <text class="label">名字</text>
           <view class="value-area">
-            <text class="value-text">DWQ</text>
+            <text class="value-text">Happy</text>
             <text class="arrow">〉</text>
           </view>
         </view>
         <view class="info-row">
           <text class="label">电话</text>
           <view class="value-area">
-            <text class="value-text bold">19106572834</text>
+            <text class="value-text bold">130000000</text>
             <text class="arrow">〉</text>
           </view>
         </view>

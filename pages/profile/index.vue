@@ -19,14 +19,14 @@
 
     <!-- 主体内容 -->
     <view class="main-content">
-      <!-- 搜索框 -->
-      <view class="search-box">
-        <view class="search-inner">
-          <icon type="search" size="18" color="#999" class="search-icon" />
+      <!-- 搜索框区域 -->
+      <view class="header-search">
+        <view class="search-box">
+          <text class="search-icon">🔍</text>
           <input 
             class="search-input" 
             placeholder="查找地点" 
-            placeholder-class="search-placeholder" 
+            placeholder-style="color: #999" 
             v-model="searchKeyword"
             @input="onSearchInput"
             @confirm="onSearchConfirm"
@@ -214,80 +214,89 @@ export default {
     
     .nickname {
       font-size: 56rpx;
-      font-weight: bold;
-      color: #000;
-      letter-spacing: 1rpx;
+      font-weight: 900;
+      color: #222;
+      letter-spacing: 2rpx;
+      font-family: 'RuilingTi', sans-serif !important;
+      text-shadow: 4rpx 4rpx 0rpx rgba(255, 255, 255, 0.5);
     }
   }
 }
 
 .main-content {
-  padding: 0 50rpx;
+  padding: 0 40rpx;
   margin-top: -30rpx;
   position: relative;
   z-index: 10;
 }
 
-.search-box {
-  background: #fff;
-  height: 110rpx;
-  border-radius: 55rpx;
-  display: flex;
-  align-items: center;
-  padding: 0 40rpx;
+.header-search {
   margin-bottom: 50rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05);
   
-  .search-inner {
+  .search-box {
+    background: #fff;
+    height: 96rpx;
+    // 不规则圆角：给四个角不同的弧度，对齐首页款式
+    border-radius: 40rpx 60rpx 45rpx 55rpx;
     display: flex;
     align-items: center;
-    width: 100%;
+    padding: 0 40rpx;
+    // 增加深色硬核边框
+    border: 5rpx solid #222;
+    // 更有“插画感”的偏置阴影
+    box-shadow: 10rpx 10rpx 0rpx rgba(0,0,0,0.1);
+    position: relative;
     
-    .search-icon {
-      margin-right: 15rpx;
+    .search-icon { 
+      margin-right: 20rpx; 
+      font-size: 38rpx; 
+      color: #222;
+      font-weight: bold;
     }
     
     .search-input { 
       flex: 1; 
-      font-size: 30rpx; 
-      color: #333;
+      font-size: 32rpx; 
+      font-weight: 800;
+      color: #222;
+      // 强制使用自定义字体
+      font-family: 'RuilingTi', sans-serif !important;
     }
     
-    .search-placeholder { 
-      color: #999; 
-    }
-
-    .clear-icon {
-      padding: 10rpx;
-      font-size: 32rpx;
-      color: #ccc;
+    .clear-icon { 
+      padding: 10rpx; 
+      font-size: 30rpx; 
+      color: #666; 
+      font-weight: bold; 
     }
   }
 
   .search-results {
+    margin-top: 15rpx;
+    background: #fff;
+    border: 4rpx solid #222;
+    border-radius: 35rpx 50rpx 40rpx 45rpx;
+    max-height: 400rpx;
+    box-shadow: 12rpx 12rpx 0rpx rgba(0,0,0,0.1);
+    overflow: hidden;
     position: absolute;
-    top: 120rpx;
     left: 0;
     right: 0;
-    background: #fff;
-    border-radius: 30rpx;
-    max-height: 400rpx;
-    box-shadow: 0 15rpx 40rpx rgba(0,0,0,0.1);
     z-index: 100;
-    overflow: hidden;
     
     &.no-result {
       padding: 30rpx;
       text-align: center;
       font-size: 26rpx;
-      color: #999;
+      color: #666;
+      font-weight: bold;
     }
 
     .result-item {
       display: flex;
       align-items: center;
-      padding: 24rpx 30rpx;
-      border-bottom: 1rpx solid #f5f5f5;
+      padding: 25rpx 30rpx;
+      border-bottom: 3rpx solid #eee;
       
       &:last-child { border-bottom: none; }
       &:active { background: #f9f9f9; }
@@ -295,9 +304,10 @@ export default {
       .result-icon {
         width: 70rpx;
         height: 70rpx;
-        border-radius: 12rpx;
-        margin-right: 24rpx;
+        border-radius: 15rpx;
+        margin-right: 20rpx;
         background: #f0f0f0;
+        border: 2rpx solid #222;
       }
       
       .result-info {
@@ -305,13 +315,13 @@ export default {
         overflow: hidden;
         .result-name {
           font-size: 30rpx;
-          font-weight: bold;
-          color: #333;
+          font-weight: 900;
+          color: #222;
           display: block;
         }
         .result-desc {
-          font-size: 24rpx;
-          color: #999;
+          font-size: 22rpx;
+          color: #666;
           display: block;
           white-space: nowrap;
           overflow: hidden;
@@ -326,6 +336,8 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 50rpx;
+  position: relative;
+  z-index: 5;
   
   .action-item {
     display: flex;
@@ -360,9 +372,15 @@ export default {
     }
     
     .action-label {
-      font-size: 26rpx;
-      color: #fff;
-      font-weight: 500;
+      font-size: 28rpx;
+      color: #222;
+      font-weight: 900;
+      font-family: 'RuilingTi', sans-serif !important;
+      background: #fff;
+      padding: 4rpx 16rpx;
+      border-radius: 12rpx;
+      border: 3rpx solid #222;
+      box-shadow: 4rpx 4rpx 0rpx rgba(0,0,0,0.1);
     }
     
     &:active {
@@ -376,13 +394,19 @@ export default {
   width: 100%;
   height: 340rpx;
   border-radius: 48rpx;
+  // 给小地图也加个边框，更有插画成组的感觉
+  border: 8rpx solid #222; // 加粗边框
+  box-sizing: border-box;
   overflow: hidden;
-  box-shadow: 0 12rpx 45rpx rgba(0,0,0,0.12);
-  background: #fff;
+  box-shadow: 12rpx 12rpx 0rpx rgba(0,0,0,0.1);
+  background: #222; // 改为黑色背景，确保白边不漏
   
   .map-preview-img { 
     width: 100%; 
     height: 100%; 
+    // 放大到 1.3 倍并向上微调，确保彻底覆盖
+    transform: scale(1.3) translateY(5rpx);
+    display: block;
   }
   
   &:active {

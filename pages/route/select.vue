@@ -2,7 +2,7 @@
   <view class="container">
     <!-- 顶部导航栏 -->
     <view class="header animate-slide-down">
-      <SafeImage class="header-bg-img" :src="assets.route.headerBgMap" mode="aspectFill">
+      <SafeImage class="header-bg-img" :src="assets.route.headerBgMap" mode="aspectFit">
         <template #error>
           <view class="error-placeholder">
             <text>🎯 路线选择背景加载失败</text>
@@ -12,7 +12,8 @@
       </SafeImage>
       <view class="back-btn" @click="goBack">←</view>
       <view class="title-container">
-        <text class="title">路线选择</text>
+        <!-- 移除代码里的标题文字，因为背景图里已经有漂亮的“路线选择”字样了，避免重叠 -->
+        <!-- <text class="title">路线选择</text> -->
       </view>
     </view>
     
@@ -42,7 +43,6 @@
             
             <!-- 右侧探索按钮区域 -->
             <view class="explore-side">
-              <image class="dots-img" :src="assets.route.pathDots1" mode="aspectFit"></image>
               <view class="circle-btn">
                 <text class="btn-text">去探索</text>
               </view>
@@ -125,44 +125,50 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  background-color: #FFCB32;
+  background-color: #FEF9E7; // 浅黄色/米色背景，比主色调浅
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 .header {
-  height: 320rpx; 
-  padding: 0rpx 30rpx;
+  height: 360rpx; // 进一步调高，给手绘图留出完整空间
+  padding: 0rpx;
   display: flex;
   align-items: center;
-  background-color: #FFCB32;
+  background-color: #FEF9E7;
   position: relative;
   z-index: 100;
   overflow: hidden;
+  border-bottom: 6rpx solid #222;
   
   .header-bg-img {
     position: absolute;
-    top: 0;
+    top: 20rpx; // 向下偏移一点，避开顶部状态栏
     left: 0;
     width: 100%;
     height: 100%;
     z-index: -1;
+    // 使用 aspectFit 并去掉拉伸相关的 transform
+    transform: none;
   }
   
   .back-btn { 
-    width: 60rpx;
-    height: 60rpx;
+    width: 80rpx;
+    height: 80rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 44rpx; 
-    color: #333; 
-    font-weight: bold; 
+    font-size: 50rpx; 
+    color: #222; 
+    font-weight: 900; 
     position: absolute;
-    left: 30rpx;
-    top: 140rpx; 
+    left: 20rpx;
+    top: 130rpx; 
     z-index: 10;
+    background: rgba(255,255,255,0.3); // 增加毛玻璃背景
+    border-radius: 50%;
+    backdrop-filter: blur(5px);
   }
   
   .title-container {
@@ -174,16 +180,18 @@ export default {
   }
   
   .title { 
-    font-size: 40rpx; 
+    font-size: 48rpx; 
     font-weight: 900; 
-    color: #333; 
-    letter-spacing: 4rpx;
+    color: #222; 
+    letter-spacing: 6rpx;
+    font-family: 'RuilingTi', sans-serif !important; // 使用新字体
+    text-shadow: 4rpx 4rpx 0rpx rgba(255, 255, 255, 0.8);
   }
 }
 
 .route-list {
   flex: 1;
-  padding: 20rpx 30rpx; 
+  padding: 30rpx; 
   box-sizing: border-box;
 }
 
@@ -191,7 +199,7 @@ export default {
   position: relative;
   width: 100%;
   height: 320rpx;
-  margin-bottom: 50rpx;
+  margin-bottom: 60rpx;
   display: flex;
   align-items: flex-end;
 }
@@ -200,7 +208,8 @@ export default {
   position: absolute;
   z-index: 10;
   pointer-events: none;
-  filter: drop-shadow(0 10rpx 15rpx rgba(0,0,0,0.15));
+  // 改为硬阴影
+  filter: drop-shadow(6rpx 10rpx 0rpx rgba(0,0,0,0.15));
   
   &.laojie {
     width: 340rpx;
@@ -234,9 +243,11 @@ export default {
 .route-card-body {
   position: relative;
   width: 100%;
-  height: 260rpx;
-  border-radius: 40rpx;
-  box-shadow: 0 15rpx 30rpx rgba(0,0,0,0.08);
+  height: 270rpx;
+  border-radius: 40rpx 60rpx 45rpx 55rpx; // 使用不规则圆角
+  border: 5rpx solid #222; // 增加黑边
+  box-shadow: 12rpx 12rpx 0rpx rgba(0,0,0,0.1); // 增加厚重阴影
+  overflow: hidden;
   
   .card-bg {
     position: absolute;
@@ -251,7 +262,7 @@ export default {
   width: 100%;
   height: 100%;
   display: flex;
-  padding-left: 260rpx; 
+  padding-left: 270rpx; 
   padding-right: 0rpx;
   box-sizing: border-box;
   align-items: center;
@@ -269,78 +280,73 @@ export default {
       margin-bottom: 12rpx;
       
       .name { 
-        font-size: 34rpx; 
+        font-size: 38rpx; 
         font-weight: 900; 
-        color: #333; 
+        color: #222; 
         letter-spacing: 2rpx;
+        font-family: 'RuilingTi', sans-serif !important; // 使用新字体
       }
       .arrow-double { 
-        font-size: 28rpx; 
-        color: #333; 
+        font-size: 32rpx; 
+        color: #222; 
         margin-left: 10rpx;
-        font-weight: bold;
+        font-weight: 900;
       }
     }
     
     .route-desc {
-      font-size: 22rpx;
-      color: #555;
-      line-height: 1.5;
-      font-weight: 500;
-      padding-right: 80rpx; 
+      font-size: 24rpx;
+      color: #444;
+      line-height: 1.4;
+      font-weight: 800; // 调粗一点，配合整体插画风格
+      font-family: 'RuilingTi', sans-serif !important; // 使用新字体
+      padding-right: 90rpx; 
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
       overflow: hidden;
+      letter-spacing: 1rpx;
     }
   }
 }
 
 .explore-side {
   position: absolute;
-  right: -40rpx; // 稍微增加向右偏移，圆心更靠外
+  right: -30rpx; 
   top: 0;
   bottom: 0;
-  width: 200rpx;
+  width: 180rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; // 改为顶部对齐，通过 padding-top 精确控制
-  padding-top: 125rpx; // 调大内边距以适配更小的圆圈
+  justify-content: center;
   box-sizing: border-box;
   
-  .dots-img {
-    width: 120rpx;
-    height: 40rpx;
-    margin-bottom: 5rpx;
-    margin-right: 40rpx;
-    opacity: 0.8;
-  }
-  
   .circle-btn {
-    width: 110rpx;
-    height: 110rpx;
+    width: 120rpx;
+    height: 120rpx;
     background: linear-gradient(135deg, #FFB800 0%, #FF8A00 100%);
     border-radius: 50%;
+    border: 5rpx solid #222; // 增加描边
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10rpx 25rpx rgba(255, 138, 0, 0.5);
-    margin-right: 40rpx;
-    transition: all 0.2s ease;
+    box-shadow: 8rpx 8rpx 0rpx rgba(0, 0, 0, 0.15); // 改为插画硬阴影
+    margin-right: 20rpx;
     
     .btn-text {
-      font-size: 22rpx;
+      font-size: 28rpx;
       font-weight: 900;
       color: #fff;
-      white-space: nowrap;
+      font-family: 'RuilingTi', sans-serif !important;
+      line-height: 1.1;
       text-align: center;
-      line-height: 1.2;
-      letter-spacing: 2rpx;
+      width: 70rpx; // 强制两行
+      word-break: break-all;
     }
     
     &:active {
-      transform: scale(0.9);
+      transform: scale(0.9) rotate(-10deg);
       opacity: 0.9;
     }
   }
