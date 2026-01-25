@@ -52,26 +52,43 @@ export default {
   methods: {
     loadCustomFont() {
       console.log('开始加载自定义字体...');
-      // 使用 HTTPS 链接并对中文文件名进行编码，确保加载成功率
+      
+      // 1. 定义字体配置
+      const fontFamily = 'RuilingTi';
+      const fontCloudPath = 'static/fonts/No.27-上首锐棱体.ttf';
       const fontUrl = 'https://636c-cloud1-1g2i7u3rb32a6ede-1396678568.tcb.qcloud.la/static/fonts/No.27-%E4%B8%8A%E9%A6%96%E9%94%90%E6%A3%B1%E4%BD%93.ttf';
       
-      wx.loadFontFace({
-        family: 'RuilingTi',
-        source: `url("${fontUrl}")`,
-        global: true,
+      // 2. 优先使用 cloud.downloadFile 下载到本地再加载（最稳妥的方法，解决 CORS 和白名单问题）
+      wx.cloud.downloadFile({
+        fileID: `cloud://cloud1-1g2i7u3rb32a6ede.636c-cloud1-1g2i7u3rb32a6ede-1396678568/${fontCloudPath}`,
         success: (res) => {
-          console.log('✅ 锐棱体加载成功', res.status);
-          // 加载成功后，可以在这里通知页面刷新或者做一些标志位
+          console.log('✅ 字体下载成功，准备加载:', res.tempFilePath);
+          wx.loadFontFace({
+            family: fontFamily,
+            source: `url("${res.tempFilePath}")`,
+            global: true,
+            success: () => console.log(`✅ ${fontFamily} 通过本地临时文件加载成功`),
+            fail: (err) => {
+              console.error(`❌ ${fontFamily} 通过本地路径加载失败`, err);
+              // 如果本地加载也失败，尝试直接用 HTTPS URL (最后的尝试)
+              this.loadFontFaceWithUrl(fontFamily, fontUrl);
+            }
+          });
         },
         fail: (err) => {
-          console.error('❌ 锐棱体加载失败', err);
-          // 如果 HTTPS 失败，尝试 cloud 协议作为后备
-          wx.loadFontFace({
-            family: 'RuilingTi',
-            source: 'url("cloud://cloud1-1g2i7u3rb32a6ede.636c-cloud1-1g2i7u3rb32a6ede-1396678568/static/fonts/No.27-上首锐棱体.ttf")',
-            global: true,
-          });
+          console.error('❌ 字体下载失败，尝试直接加载 URL', err);
+          this.loadFontFaceWithUrl(fontFamily, fontUrl);
         }
+      });
+    },
+
+    loadFontFaceWithUrl(family, url) {
+      wx.loadFontFace({
+        family: family,
+        source: `url("${url}")`,
+        global: true,
+        success: (res) => console.log(`✅ ${family} 通过 URL 加载成功`, res.status),
+        fail: (err) => console.error(`❌ ${family} 所有加载方式均失败`, err)
       });
     }
   }

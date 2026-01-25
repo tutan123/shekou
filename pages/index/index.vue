@@ -423,12 +423,19 @@ export default {
       
       console.log('🎯 聚焦地点:', poi.name, { targetScale, targetX, targetY });
       
-      this.updateScale(targetScale);
+      // 使用与 resetMap 一致的、更稳健的强制更新逻辑
+      // 1. 先触发缩放更新
+      this.scaleValue = targetScale + 0.001;
       
       this.$nextTick(() => {
-        // 使用微小偏移强制位置更新
+        this.scaleValue = targetScale;
+        this.curScale = targetScale;
+        
+        // 2. 在缩放指令下发后，延迟设置坐标，防止被组件内部的缩放焦点偏移覆盖
         this.lastX = targetX;
         this.lastY = targetY;
+        
+        // 强制位置更新：先微调再设为目标值
         this.mapX = targetX + 0.01;
         this.mapY = targetY + 0.01;
         
@@ -936,18 +943,19 @@ export default {
   
   .close-btn {
     position: absolute;
-    top: 20rpx;
-    right: 20rpx;
-    width: 60rpx;
-    height: 60rpx;
-    background: rgba(255,255,255,0.2);
+    top: 30rpx;
+    right: 30rpx;
+    width: 64rpx;
+    height: 64rpx;
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
-    font-size: 40rpx;
-    border: 2rpx solid rgba(255,255,255,0.3);
+    font-size: 36rpx;
+    z-index: 100;
+    backdrop-filter: blur(4px);
   }
 
   .check-in-btn-container {

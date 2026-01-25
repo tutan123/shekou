@@ -75,6 +75,7 @@
     <!-- 详情弹窗 -->
     <view v-if="detailVisible" class="detail-popup-mask" @click="hideDetail">
       <view class="detail-popup-content" @click.stop>
+        <view class="close-btn" @click="hideDetail">✕</view>
         <image class="detail-image" :src="currentPoi.detailImg" mode="widthFix"></image>
         <view class="check-in-btn-container" @click="handleCheckIn" :class="{ 'checked-in': isCheckedIn(currentPoi.name) }">
           <image class="btn-bg" :src="assets.route.checkinBtn" mode="scaleToFill"></image>
@@ -617,6 +618,23 @@ export default {
   flex-direction: column;
   align-items: center;
   
+  .close-btn {
+    position: absolute;
+    top: 30rpx;
+    right: 30rpx;
+    width: 64rpx;
+    height: 64rpx;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 36rpx;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+  }
+
   .detail-image {
     width: 100%;
     border-radius: 40rpx;
@@ -662,7 +680,7 @@ export default {
     }
     
     &:active {
-      transform: translateX(-50%) scale(0.95);
+      transform: scale(0.95);
     }
   }
 }
