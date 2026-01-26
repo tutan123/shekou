@@ -118,7 +118,7 @@ export const POI_DATA = [
     desc: '中国改革开放“第一炮”炸响的地方。', 
     img: ASSETS_CONFIG.atlas.history.items['18'] 
   },
-  { 
+  /* { 
     name: '大陆面粉厂', top: 80, left: 14, 
     desc: '曾经的亚洲最大面粉厂，现已变身为文化创意空间。', 
     img: ASSETS_CONFIG.images.markerPlaceholder 
@@ -127,7 +127,7 @@ export const POI_DATA = [
     name: 'K11购物中心', top: 87, left: 25,
     desc: '融合艺术、人文、自然的高端购物艺术中心。',
     img: ASSETS_CONFIG.images.markerPlaceholder
-  },
+  }, */
   {
     name: '招商局历史博物馆', top: 69, left: 23,
     desc: '收藏了大量珍贵历史档案，见证招商局跨越百年的沧桑。',

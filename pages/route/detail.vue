@@ -130,16 +130,16 @@ const ROUTE_COORDS = {
     { id: '09', name: 'the_flames', top: 68, left: 62, hotWidth: 280, hotHeight: 240, polygon: '0% 20%, 100% 0%, 100% 80%, 0% 100%' }
   ],
   'kafei': [
-    { id: '01', name: '正在生活', top: 25, left: 28, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
-    { id: '02', name: '绿木', top: 38, left: 62, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
-    { id: '03', name: 'JOJO', top: 48, left: 42, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
-    { id: '04', name: '查理', top: 58, left: 28, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
-    { id: '05', name: 'NewPark C', top: 68, left: 52, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
-    { id: '06', name: 'NewPark', top: 78, left: 32, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
-    { id: '07', name: 'Wavve', top: 85, left: 62, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
-    { id: '08', name: '山池', top: 18, left: 48, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
-    { id: '09', name: 'KUDDO', top: 28, left: 72, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
-    { id: '10', name: '艾米丽', top: 35, left: 15, hotWidth: 300, hotHeight: 280, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' }
+    { id: '01', name: 'KUDDO', top: 15.5, left: 45.5, hotWidth: 380, hotHeight: 380, polygon: '10% 0%, 90% 5%, 95% 85%, 50% 100%, 5% 85%' },
+    { id: '02', name: '绿木', top: 25.5, left: 38.5, hotWidth: 320, hotHeight: 220, polygon: '0% 20%, 60% 10%, 100% 30%, 100% 90%, 40% 100%, 0% 80%' },
+    { id: '03', name: 'NewPark', top: 31.5, left: 51.5, hotWidth: 320, hotHeight: 200, polygon: '0% 30%, 50% 15%, 100% 25%, 100% 95%, 40% 100%, 0% 80%' },
+    { id: '04', name: '查理', top: 36.5, left: 18.5, hotWidth: 340, hotHeight: 360, polygon: '15% 0%, 85% 10%, 100% 90%, 50% 100%, 0% 85%' },
+    { id: '05', name: 'Wavve', top: 41.5, left: 37.5, hotWidth: 350, hotHeight: 320, polygon: '5% 15%, 95% 0%, 100% 85%, 60% 100%, 0% 90%' },
+    { id: '06', name: '365', top: 37.5, left: 51.5, hotWidth: 280, hotHeight: 180, polygon: '0% 40%, 60% 20%, 100% 40%, 100% 90%, 50% 100%, 0% 80%' },
+    { id: '07', name: '艾米丽', top: 43.5, left: 50.5, hotWidth: 300, hotHeight: 300, polygon: '10% 0%, 90% 10%, 100% 90%, 50% 100%, 0% 85%' },
+    { id: '08', name: '正在生活', top: 46.5, left: 28.5, hotWidth: 340, hotHeight: 320, polygon: '5% 15%, 95% 5%, 100% 90%, 50% 100%, 0% 85%' },
+    { id: '09', name: '山池', top: 73.5, left: 58.5, hotWidth: 460, hotHeight: 440, polygon: '10% 0%, 90% 5%, 100% 85%, 55% 100%, 0% 80%' },
+    { id: '10', name: 'JOJO', top: 90.5, left: 49.5, hotWidth: 420, hotHeight: 400, polygon: '15% 10%, 85% 0%, 100% 85%, 50% 100%, 5% 85%' }
   ]
 };
 

@@ -244,64 +244,64 @@ export const CATEGORIES = {
     map_bw: ATLAS_BASE + 'coffee/map_bw.png',
     items: {
       '正在生活': { 
-        top: 300, left: 450, width: 210, 
+        top: 510, left: 215, width: 230, 
         frame: ATLAS_BASE + 'coffee/01_zhengzaishenghuo_frame.png', 
         icon: ATLAS_BASE + 'coffee/01_zhengzaishenghuo_pic.png',
         ...getRoutePaths('coffee', '01_zhengzaishenghuo')
       },
       '绿木': { 
-        top: 420, left: 120, width: 200, 
+        top: 280, left: 290, width: 220, 
         frame: ATLAS_BASE + 'coffee/02_greenwood_frame.png', 
         icon: ATLAS_BASE + 'coffee/02_greenwood_pic.png',
         ...getRoutePaths('coffee', '02_greenwood')
       },
       'JOJO': { 
-        top: 400, left: 580, width: 220, 
+        top: 995, left: 370, width: 240, 
         frame: ATLAS_BASE + 'coffee/03_jojo_frame.png', 
         icon: ATLAS_BASE + 'coffee/03_jojo_pic.png',
         ...getRoutePaths('coffee', '03_jojo')
       },
       '查理': {
-        top: 563, left: 75, width: 200,
+        top: 400, left: 140, width: 220,
         frame: ATLAS_BASE + 'coffee/04_chali_frame.png',
         icon: ATLAS_BASE + 'coffee/04_chali_pic.png',
         ...getRoutePaths('coffee', '04_chali')
       },
+      'NewPark': {
+        top: 345, left: 385, width: 230,
+        frame: ATLAS_BASE + 'coffee/05_newparkcoffee_frame.png',
+        icon: ATLAS_BASE + 'coffee/05_newparkcoffee_pic.png',
+        ...getRoutePaths('coffee', '05_newparkcoffee')
+      },
+      'Wavve': { 
+        top: 455, left: 280, width: 210, 
+        frame: ATLAS_BASE + 'coffee/06_wavve_frame.png', 
+        icon: ATLAS_BASE + 'coffee/06_wavve_pic.png',
+        ...getRoutePaths('coffee', '06_wavve')
+      },
+      '365': { 
+        top: 710, left: 385, width: 200, 
+        frame: ATLAS_BASE + 'coffee/07_365_frame.png', 
+        icon: ATLAS_BASE + 'coffee/07_365_pic.png',
+        ...getRoutePaths('coffee', '07_365')
+      },
       '山池': {
-        top: 959, left: 431, width: 230,
+        top: 810, left: 440, width: 250,
         frame: ATLAS_BASE + 'coffee/08_shanchi_frame.png',
         icon: ATLAS_BASE + 'coffee/08_shanchi_pic.png',
         ...getRoutePaths('coffee', '08_shanchi')
       },
-      'NewPark': {
-        top: 564, left: 273, width: 210,
-        frame: ATLAS_BASE + 'coffee/06_newpark_frame.png',
-        icon: ATLAS_BASE + 'coffee/06_newpark_pic.png',
-        ...getRoutePaths('coffee', '06_newpark')
-      },
-      'KUDDO': {
-        top: 272, left: 320, width: 210,
-        frame: ATLAS_BASE + 'coffee/09_kuddo_frame.png',
+      'KUDDO': { 
+        top: 170, left: 340, width: 230, 
+        frame: ATLAS_BASE + 'coffee/09_kuddo_frame.png', 
         icon: ATLAS_BASE + 'coffee/09_kuddo_pic.png',
         ...getRoutePaths('coffee', '09_kuddo')
       },
       '艾米丽': { 
-        top: 950, left: 100, width: 210, 
+        top: 480, left: 380, width: 210, 
         frame: ATLAS_BASE + 'coffee/10_emily_frame.png', 
         icon: ATLAS_BASE + 'coffee/10_emily_pic.png',
         ...getRoutePaths('coffee', '10_emily')
-      },
-      'Wavve': { 
-        top: 1080, left: 250, width: 190, 
-        frame: ATLAS_BASE + 'coffee/07_wavve_frame.png', 
-        icon: ATLAS_BASE + 'coffee/07_wavve_pic.png',
-        ...getRoutePaths('coffee', '07_wavve')
-      },
-      'NewPark C': {
-        top: 457, left: 389, width: 210,
-        frame: ATLAS_BASE + 'coffee/05_newparkcoffee_frame.png',
-        icon: ATLAS_BASE + 'coffee/05_newparkcoffee_pic.png',
-        ...getRoutePaths('coffee', '05_newparkcoffee')
       }
     }
   }
