@@ -139,7 +139,7 @@ const ROUTE_COORDS = {
     { id: '07', name: '艾米丽', top: 43.5, left: 50.5, hotWidth: 300, hotHeight: 300, polygon: '10% 0%, 90% 10%, 100% 90%, 50% 100%, 0% 85%' },
     { id: '08', name: '正在生活', top: 46.5, left: 28.5, hotWidth: 340, hotHeight: 320, polygon: '5% 15%, 95% 5%, 100% 90%, 50% 100%, 0% 85%' },
     { id: '09', name: '山池', top: 73.5, left: 58.5, hotWidth: 460, hotHeight: 440, polygon: '10% 0%, 90% 5%, 100% 85%, 55% 100%, 0% 80%' },
-    { id: '10', name: 'JOJO', top: 90.5, left: 49.5, hotWidth: 420, hotHeight: 400, polygon: '15% 10%, 85% 0%, 100% 85%, 50% 100%, 5% 85%' }
+    { id: '10', name: 'JOJO', top: 88.5, left: 46.5, hotWidth: 450, hotHeight: 420, polygon: '10% 10%, 90% 5%, 100% 90%, 50% 100%, 0% 90%' }
   ]
 };
 

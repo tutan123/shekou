@@ -256,7 +256,7 @@ export const CATEGORIES = {
         ...getRoutePaths('coffee', '02_greenwood')
       },
       'JOJO': { 
-        top: 995, left: 370, width: 240, 
+        top: 952, left: 348, width: 240, 
         frame: ATLAS_BASE + 'coffee/03_jojo_frame.png', 
         icon: ATLAS_BASE + 'coffee/03_jojo_pic.png',
         ...getRoutePaths('coffee', '03_jojo')
