@@ -93,6 +93,7 @@
 import CustomTabBar from '@/components/CustomTabBar.vue'
 import { ASSETS_CONFIG } from '@/utils/assets-config.js'
 import { CATEGORIES } from '@/utils/poi-config.js'
+import { getDistance } from '@/utils/map-projection.js'
 
 export default {
   components: {
@@ -163,6 +164,48 @@ export default {
       this.showingModal = true;
     },
     handleCheckIn() {
+      const item = this.displayItems[this.selectedItem];
+      if (!item) return;
+
+      // --- 地理围栏判断 (300米) ---
+      uni.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          // 如果点位有坐标配置
+          if (item.lng && item.lat) {
+            const dist = getDistance(
+              res.latitude, 
+              res.longitude,
+              item.lat,
+              item.lng
+            );
+            
+            console.log(`📏 图鉴点亮距离判断: [${this.activeCat}] 用户距离 [${this.selectedItem}] 约 ${Math.round(dist)} 米`);
+            
+            // 根据分类设定不同的判定距离：咖啡和西餐放宽到 2km，其余保持 300m
+            const threshold = (this.activeCat === 'coffee' || this.activeCat === 'western') ? 2000 : 300;
+            
+            if (dist > threshold) {
+              const distText = dist > 1000 ? `${(dist/1000).toFixed(1)}公里` : `${Math.round(dist)}米`;
+              uni.showModal({
+                title: '打卡失败',
+                content: `当前您不在点位附近（约${distText}），请靠近后再点亮图鉴。`,
+                showCancel: false,
+                confirmText: '我知道了'
+              });
+              return;
+            }
+          }
+
+          // 距离校验通过（或无坐标数据），执行点亮
+          this.executeCheckIn();
+        },
+        fail: () => {
+          uni.showToast({ title: '请开启定位以点亮图鉴', icon: 'none' });
+        }
+      });
+    },
+    executeCheckIn() {
       if (!this.checkInData[this.activeCat]) {
         this.checkInData[this.activeCat] = [];
       }
@@ -170,7 +213,7 @@ export default {
       uni.setStorageSync('shekou_checkin', this.checkInData);
 
       this.showingModal = false;
-      uni.showToast({ title: '点亮图鉴！', icon: 'success' });
+      uni.showToast({ title: '图鉴已点亮！', icon: 'success' });
 
       if (this.isCategoryCompleted) {
         setTimeout(() => {

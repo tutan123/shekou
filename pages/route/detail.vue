@@ -74,10 +74,9 @@
 
     <!-- 详情弹窗 -->
     <view v-if="detailVisible" class="detail-popup-mask" @click="hideDetail">
-      <view class="detail-popup-content" @click.stop>
-        <view class="close-btn" @click="hideDetail">✕</view>
+      <view class="detail-popup-content">
         <image class="detail-image" :src="currentPoi.detailImg" mode="widthFix"></image>
-        <view class="check-in-btn-container" @click="handleCheckIn" :class="{ 'checked-in': isCheckedIn(currentPoi.name) }">
+        <view class="check-in-btn-container" @click.stop="handleCheckIn" :class="{ 'checked-in': isCheckedIn(currentPoi.name) }">
           <image class="btn-bg" :src="assets.route.checkinBtn" mode="scaleToFill"></image>
           <text class="btn-text">{{ isCheckedIn(currentPoi.name) ? '已打卡' : '去打卡' }}</text>
         </view>
@@ -89,33 +88,34 @@
 <script>
 import { ASSETS_CONFIG } from '@/utils/assets-config.js'
 import { CATEGORIES } from '@/utils/poi-config.js'
+import { getDistance } from '@/utils/map-projection.js'
 
 // 所有路线的坐标和多边形配置 (放在组件外避免初始化顺序问题)
 const ROUTE_COORDS = {
   'laojie': [
-    { id: '01', name: '空谈误国', top: 30, left: 70, hotWidth: 320, hotHeight: 260, polygon: '0% 15%, 100% 0%, 100% 85%, 0% 100%' },
+    { id: '01', name: '"空谈误国,实干兴邦"标语牌', top: 30, left: 70, hotWidth: 320, hotHeight: 260, polygon: '0% 15%, 100% 0%, 100% 85%, 0% 100%' },
     { id: '02', name: '南玻集团', top: 34, left: 58, hotWidth: 280, hotHeight: 300, polygon: '20% 0%, 80% 0%, 100% 100%, 0% 100%' },
-    { id: '03', name: '育才一小', top: 38, left: 72, hotWidth: 300, hotHeight: 240, polygon: '0% 20%, 100% 0%, 100% 80%, 0% 100%' },
-    { id: '04', name: 'G&G', top: 44, left: 40, hotWidth: 340, hotHeight: 280, polygon: '10% 0%, 90% 10%, 100% 90%, 0% 100%' },
-    { id: '05', name: '水湾源华', top: 47, left: 65, hotWidth: 260, hotHeight: 220, polygon: '0% 0%, 100% 20%, 100% 100%, 0% 80%' },
-    { id: '06', name: '水湾村史馆', top: 52, left: 63, hotWidth: 240, hotHeight: 200, polygon: '10% 0%, 90% 0%, 100% 100%, 0% 100%' },
+    { id: '03', name: '育才中学', top: 38, left: 72, hotWidth: 300, hotHeight: 240, polygon: '0% 20%, 100% 0%, 100% 80%, 0% 100%' },
+    { id: '04', name: 'G&G创意社区', top: 44, left: 40, hotWidth: 340, hotHeight: 280, polygon: '10% 0%, 90% 10%, 100% 90%, 0% 100%' },
+    { id: '05', name: '水湾源华实业股份有限公司', top: 47, left: 65, hotWidth: 260, hotHeight: 220, polygon: '0% 0%, 100% 20%, 100% 100%, 0% 80%' },
+    { id: '06', name: '1979水湾村史馆', top: 52, left: 63, hotWidth: 240, hotHeight: 200, polygon: '10% 0%, 90% 0%, 100% 100%, 0% 100%' },
     { id: '07', name: '水湾炮楼', top: 59, left: 46, hotWidth: 240, hotHeight: 280, polygon: '20% 0%, 80% 0%, 100% 100%, 0% 100%' },
     { id: '08', name: '荔枝公园', top: 60, left: 22, hotWidth: 340, hotHeight: 320, polygon: '0% 30%, 100% 0%, 100% 70%, 0% 100%' },
     { id: '09', name: '南海意库', top: 70, left: 45, hotWidth: 320, hotHeight: 280, polygon: '0% 0%, 100% 0%, 90% 100%, 10% 100%' },
     { id: '10', name: '海滨花园', top: 78, left: 55, hotWidth: 300, hotHeight: 260, polygon: '0% 20%, 100% 0%, 100% 80%, 0% 100%' }
   ],
   'dengshan': [
-    { id: '17', name: '时间标语', top: 28, left: 40, hotWidth: 360, hotHeight: 320, polygon: '15% 0%, 85% 10%, 100% 85%, 0% 100%' },
+    { id: '17', name: '"时间就是金钱,效率就是生命"标语牌', top: 28, left: 40, hotWidth: 360, hotHeight: 320, polygon: '15% 0%, 85% 10%, 100% 85%, 0% 100%' },
     { id: '18', name: '微波山', top: 43, left: 52, hotWidth: 320, hotHeight: 280, polygon: '30% 0%, 70% 0%, 100% 100%, 0% 100%' },
     { id: '19', name: '招商局历史博物馆', top: 58, left: 55, hotWidth: 380, hotHeight: 320, polygon: '0% 20%, 100% 0%, 100% 80%, 0% 100%' }
   ],
   'binhai': [
-    { id: '11', name: '明华轮', top: 48, left: 40, hotWidth: 380, hotHeight: 280, polygon: '0% 40%, 100% 0%, 90% 100%, 10% 90%' },
-    { id: '12', name: '女娲像', top: 48, left: 65, hotWidth: 280, hotHeight: 340, polygon: '20% 0%, 80% 0%, 100% 100%, 0% 100%' },
-    { id: '13', name: '海上世界', top: 60, left: 60, hotWidth: 400, hotHeight: 300, polygon: '0% 0%, 100% 30%, 100% 100%, 0% 70%' },
-    { id: '14', name: '原耕', top: 62, left: 75, hotWidth: 220, hotHeight: 200, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
+    { id: '11', name: '海上世界明华轮', top: 48, left: 40, hotWidth: 380, hotHeight: 280, polygon: '0% 40%, 100% 0%, 90% 100%, 10% 90%' },
+    { id: '12', name: '女娲补天雕像', top: 48, left: 65, hotWidth: 280, hotHeight: 340, polygon: '20% 0%, 80% 0%, 100% 100%, 0% 100%' },
+    { id: '13', name: '海上世界文化艺术中心', top: 60, left: 60, hotWidth: 400, hotHeight: 300, polygon: '0% 0%, 100% 30%, 100% 100%, 0% 70%' },
+    { id: '14', name: '袁庚铜像', top: 62, left: 75, hotWidth: 220, hotHeight: 200, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
     { id: '15', name: '南海酒店', top: 65, left: 38, hotWidth: 340, hotHeight: 280, polygon: '10% 0%, 90% 0%, 100% 100%, 0% 100%' },
-    { id: '16', name: '碧涛苑', top: 55, left: 25, hotWidth: 300, hotHeight: 260, polygon: '0% 0%, 100% 20%, 100% 100%, 0% 80%' }
+    { id: '16', name: '碧涛苑别墅群', top: 55, left: 25, hotWidth: 300, hotHeight: 260, polygon: '0% 0%, 100% 20%, 100% 100%, 0% 80%' }
   ],
   'xican': [
     { id: '00', name: 'Benji Bakery', top: 43, left: 15, hotWidth: 280, hotHeight: 240, polygon: '0% 0%, 100% 0%, 100% 100%, 0% 100%' },
@@ -190,7 +190,8 @@ export default {
       const originalCoords = ROUTE_COORDS[this.routeId] || [];
       
       return originalCoords.map(coord => {
-        const itemInfo = catData.items[coord.name] || {};
+        // 优先通过 id 匹配，如果找不到再尝试用 name 匹配（兼容旧配置）
+        const itemInfo = catData.items[coord.id] || catData.items[coord.name] || {};
         return {
           ...itemInfo,
           ...coord
@@ -389,6 +390,39 @@ export default {
         return;
       }
 
+      // --- 新增：地理围栏判断 (300米) ---
+      // 获取用户当前位置 (这里假设页面已经开启了位置监听或可以实时获取)
+      uni.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          const dist = getDistance(
+            res.latitude, 
+            res.longitude,
+            this.currentPoi.lat,
+            this.currentPoi.lng
+          );
+          
+          console.log(`📏 路线打卡距离判断: 用户距离 [${poiName}] 约 ${Math.round(dist)} 米`);
+          
+          if (dist > 300) {
+            uni.showModal({
+              title: '打卡失败',
+              content: `当前您不在点位附近（约${Math.round(dist)}米），请靠近后再试。`,
+              showCancel: false,
+              confirmText: '我知道了'
+            });
+            return;
+          }
+
+          // 距离校验通过，执行打卡
+          this.executeCheckIn(poiName, cat);
+        },
+        fail: () => {
+          uni.showToast({ title: '请开启定位以进行打卡', icon: 'none' });
+        }
+      });
+    },
+    executeCheckIn(poiName, cat) {
       if (!this.checkInData[cat]) {
         this.checkInData[cat] = [];
       }
@@ -600,57 +634,41 @@ export default {
 
 .detail-popup-mask {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.8);
-  z-index: 200;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(8px);
+  pointer-events: auto;
 }
 
 .detail-popup-content {
-  width: 85%;
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   
-  .close-btn {
-    position: absolute;
-    top: 30rpx;
-    right: 30rpx;
-    width: 64rpx;
-    height: 64rpx;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 36rpx;
-    z-index: 100;
-    backdrop-filter: blur(4px);
-  }
-
   .detail-image {
-    width: 100%;
-    border-radius: 40rpx;
-    box-shadow: 0 10rpx 40rpx rgba(0,0,0,0.3);
+    width: 110%; // 放大到 110%
+    height: auto;
     display: block;
+    max-height: 90vh;
+    object-fit: contain;
   }
   
   .check-in-btn-container {
     width: 320rpx;
     height: 96rpx;
-    margin-top: -120rpx; // 向上移动，叠在卡片内容上，更靠近详情图片
+    margin-top: -120rpx; // 叠在图片底部
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10;
-    position: relative; // 使用相对定位配合 margin-top 更稳定
+    position: relative;
     left: 0;
     transform: none;
     margin-left: auto;
@@ -658,10 +676,7 @@ export default {
     
     .btn-bg {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       z-index: 1;
     }
     
@@ -683,6 +698,11 @@ export default {
       transform: scale(0.95);
     }
   }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 @keyframes slideUp {

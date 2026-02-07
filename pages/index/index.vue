@@ -163,8 +163,7 @@
 
     <!-- 详情弹窗 -->
     <view v-if="detailVisible" class="detail-popup-mask" @click="hideDetail">
-      <view class="detail-popup-content" @click.stop>
-        <view class="close-btn" @click="hideDetail">✕</view>
+      <view class="detail-popup-content">
         <image class="detail-image" :src="currentDetailImg" mode="widthFix"></image>
       </view>
     </view>
@@ -177,7 +176,7 @@ import SafeImage from '@/components/SafeImage.vue'
 import { ASSETS_CONFIG, checkCloudFile } from '@/utils/assets-config.js'
 import { POI_DATA } from '@/utils/poi-data.js'
 import { CATEGORIES } from '@/utils/poi-config.js'
-import { projectCoordinates } from '@/utils/map-projection.js'
+import { projectCoordinates, getDistance } from '@/utils/map-projection.js'
 
 export default {
   components: {
@@ -502,10 +501,13 @@ export default {
     goToDetail() {
       if (!this.selectedPoi) return;
       
-      // 在 CATEGORIES 中查找详情图
+      // 在 CATEGORIES 中查找详情图，优先使用 id 匹配，name 作为兜底
       let detailImg = '';
       Object.keys(CATEGORIES).some(catKey => {
-        const item = CATEGORIES[catKey].items[this.selectedPoi.name];
+        const items = CATEGORIES[catKey].items;
+        // 尝试用 id 匹配 (如果 POI 数据里有 id) 或直接用 name 匹配
+        const item = (this.selectedPoi.id && items[this.selectedPoi.id]) || items[this.selectedPoi.name];
+        
         if (item && item.detailImg) {
           detailImg = item.detailImg;
           return true;
@@ -564,7 +566,8 @@ export default {
       const result = projectCoordinates(lng, lat);
       this.userLocation = {
         top: result.top,
-        left: result.left
+        left: result.left,
+        raw: { longitude: lng, latitude: lat } // 保存原始经纬度用于距离计算
       };
       this.outOfBounds = !result.inBounds;
       
@@ -923,50 +926,35 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
   pointer-events: auto;
 }
 
 .detail-popup-content {
-  width: 85%;
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   
   .detail-image {
-    width: 100%;
-    border-radius: 40rpx;
-    box-shadow: 0 20rpx 60rpx rgba(0,0,0,0.4);
+    width: 110%; // 放大到 110%
+    height: auto; // 确保高度自动按比例缩放
     display: block;
-  }
-  
-  .close-btn {
-    position: absolute;
-    top: 30rpx;
-    right: 30rpx;
-    width: 64rpx;
-    height: 64rpx;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 36rpx;
-    z-index: 100;
-    backdrop-filter: blur(4px);
+    max-height: 95vh;
+    object-fit: contain;
   }
 
   .check-in-btn-container {
     width: 320rpx;
     height: 96rpx;
-    margin-top: -120rpx; // 向上移动，叠在卡片内容上，更靠近详情图片
+    margin-top: -120rpx;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10;
-    position: relative; // 使用相对定位更稳定
+    position: relative;
     left: 0;
     transform: none;
     margin-left: auto;
@@ -987,5 +975,10 @@ export default {
       letter-spacing: 4rpx;
     }
   }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 </style>
