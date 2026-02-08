@@ -27,6 +27,12 @@
 
     <!-- 主体内容 -->
     <view class="main-content">
+      <!-- 提示信息 -->
+      <view class="notice-bar">
+        <text class="notice-icon">i</text>
+        <text class="notice-text">游客即可访问，登录注册暂不启用</text>
+      </view>
+
       <!-- 快捷导航 -->
       <view class="link-group">
         <view class="link-item" @click="goTo('/pages/profile/settings')">
@@ -52,13 +58,6 @@
           <text class="label">名字</text>
           <view class="value-area">
             <text class="value-text">Happy</text>
-            <text class="arrow">〉</text>
-          </view>
-        </view>
-        <view class="info-row">
-          <text class="label">电话</text>
-          <view class="value-area">
-            <text class="value-text bold">130000000</text>
             <text class="arrow">〉</text>
           </view>
         </view>
@@ -192,6 +191,36 @@ export default {
 .main-content {
   padding: 0 45rpx;
   margin-top: 10rpx;
+}
+
+.notice-bar {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 40rpx;
+  padding: 15rpx 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30rpx;
+  
+  .notice-icon {
+    width: 32rpx;
+    height: 32rpx;
+    background: #00CCFF;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22rpx;
+    font-weight: bold;
+    margin-right: 15rpx;
+  }
+  
+  .notice-text {
+    color: #fff;
+    font-size: 26rpx;
+    font-weight: bold;
+  }
 }
 
 .link-group {
