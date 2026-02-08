@@ -417,8 +417,26 @@ export default {
           // 距离校验通过，执行打卡
           this.executeCheckIn(poiName, cat);
         },
-        fail: () => {
-          uni.showToast({ title: '请开启定位以进行打卡', icon: 'none' });
+        fail: (err) => {
+          console.error('❌ 获取位置失败:', err);
+          // 如果是用户拒绝授权，引导跳转设置页
+          if (err.errMsg && (err.errMsg.includes('auth deny') || err.errMsg.includes('authorize:fail'))) {
+            uni.showModal({
+              title: '需要定位权限',
+              content: '请开启定位权限，以便判断您是否在点位附近进行打卡。',
+              confirmText: '去设置',
+              success: (res) => {
+                if (res.confirm) {
+                  uni.openSetting();
+                }
+              }
+            });
+          } else {
+            uni.showToast({ 
+              title: '定位失败，请检查手机定位开关', 
+              icon: 'none' 
+            });
+          }
         }
       });
     },

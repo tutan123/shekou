@@ -59,14 +59,14 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.atlas.history.items['05'] 
   },
   { 
-    name: '1979水湾村史馆', top: 36, left: 29, 
-    lng: 113.912, lat: 22.493,
+    name: '1979水湾村史馆', top: 37, left: 32, 
+    lng: 113.914, lat: 22.493,
     desc: '展示水湾村历史变迁与民俗文化的窗口。', 
     img: ASSETS_CONFIG.atlas.history.items['06'] 
   },
   { 
-    name: '水湾炮楼', top: 38, left: 33, 
-    lng: 113.916, lat: 22.491,
+    name: '水湾炮楼', top: 42, left: 29, 
+    lng: 113.913, lat: 22.491,
     desc: '融合历史底缘与现代商业的时尚地标。', 
     img: ASSETS_CONFIG.images.markerPlaceholder 
   },
@@ -85,7 +85,7 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.images.markerPlaceholder 
   },
   { 
-    name: '海上世界文化艺术中心', top: 46, left: 26, 
+    name: '海上世界广场', top: 46, left: 26, 
     lng: 113.910, lat: 22.486,
     desc: '蛇口最著名的商业中心与地标，国际化生活的缩影。', 
     img: ASSETS_CONFIG.atlas.history.items['13'] 
@@ -115,8 +115,8 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.atlas.history.items['15'] 
   },
   { 
-    name: '碧涛苑别墅群', top: 52, left: 38, 
-    lng: 113.925, lat: 22.485,
+    name: '碧涛苑别墅群', top: 60, left: 24, 
+    lng: 113.911, lat: 22.484,
     desc: '蛇口早期的涉外别墅区，环境优美，充满异国风情。', 
     img: ASSETS_CONFIG.atlas.history.items['16'] 
   },
@@ -135,8 +135,8 @@ export const POI_DATA = [
     img: ASSETS_CONFIG.atlas.history.items['17']
   },
   { 
-    name: '微波山', top: 74, left: 21, 
-    lng: 113.908, lat: 22.479,
+    name: '微波山', top: 72, left: 21, 
+    lng: 113.909, lat: 22.479,
     desc: '中国改革开放“第一炮”炸响的地方。', 
     img: ASSETS_CONFIG.atlas.history.items['18'] 
   },

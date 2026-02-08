@@ -536,13 +536,19 @@ export default {
         fail: (err) => {
           console.error('❌ 获取位置失败:', err);
           // 提示用户开启权限
-          if (err.errMsg.includes('auth deny')) {
+          if (err.errMsg && (err.errMsg.includes('auth deny') || err.errMsg.includes('authorize:fail'))) {
             uni.showModal({
-              title: '提示',
-              content: '请开启位置权限，以便在手绘地图上定位你的位置',
+              title: '需要定位权限',
+              content: '请开启定位权限，以便在手绘地图上定位你的位置',
+              confirmText: '去设置',
               success: (res) => {
                 if (res.confirm) uni.openSetting();
               }
+            });
+          } else {
+            uni.showToast({ 
+              title: '定位失败，请检查手机定位开关', 
+              icon: 'none' 
             });
           }
         }
